@@ -1,12 +1,11 @@
-import './App.css'
-import { Button } from './components/ui/button'
+import { Login } from './features/login/Login'
 
 function App() {
 
   return (
-    <>
-      <Button>Button</Button>
-    </>
+    <div className='w-full'>
+      <Login />
+    </div>
   )
 }
 
