@@ -46,15 +46,14 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
   }
 
   return (
-    <div className={cn("flex flex-col gap-6 w-full", className)} {...props}>
-      <Card className="overflow-hidden p-0 w-full max-w-6xl mx-auto">
+    <div className={cn("flex w-full flex-col gap-6", className)} {...props}>
+      <Card className="mx-auto w-full max-w-6xl overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
-          {/* Formulario */}
           <form className="p-6 md:p-8 lg:p-10" onSubmit={form.handleSubmit(onSubmit)}>
             <FieldGroup>
-              <div className="flex flex-col items-center gap-2 text-center mb-6">
-                <h1 className="text-2xl md:text-3xl font-bold">React Auth API</h1>
-                <p className="text-muted-foreground text-balance text-sm md:text-base">Ingresá a nuestro sistema</p>
+              <div className="mb-6 flex flex-col items-center gap-2 text-center">
+                <h1 className="text-2xl font-bold md:text-3xl">React Auth API</h1>
+                <p className="text-muted-foreground text-sm text-balance md:text-base">Ingresá a nuestro sistema</p>
               </div>
               <Controller
                 name="email"
@@ -71,13 +70,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                 name="password"
                 control={form.control}
                 render={({ field, fieldState }) => (
-                  <Field aria-invalid={fieldState.invalid}>
-                    <div className="flex items-center justify-between">
-                      <FieldLabel htmlFor="password">Contraseña</FieldLabel>
-                      <a href="#" className="text-xs md:text-sm underline-offset-2 hover:underline">
-                        ¿Olvidaste tu contraseña?
-                      </a>
-                    </div>
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="password">Contraseña</FieldLabel>
                     <Input
                       {...field}
                       aria-invalid={fieldState.invalid}
@@ -85,15 +79,18 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                       className="h-11 md:h-12"
                       type="password"
                     />
-                    {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                   </Field>
                 )}
               />
               <Field>
-                <Button type="submit" className="w-full h-11 md:h-12">
+                <Button type="submit" className="h-11 w-full md:h-12">
                   Ingresar
                 </Button>
               </Field>
+              <a href="#" className="text-xs underline-offset-2 hover:underline md:text-xs">
+                ¿Olvidaste tu contraseña?
+              </a>
             </FieldGroup>
           </form>
           <div className="bg-muted relative hidden md:block">
