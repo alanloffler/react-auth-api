@@ -11,6 +11,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import { Link } from "react-router";
 
 export function NavMain({
   items,
@@ -42,9 +43,9 @@ export function NavMain({
                       <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                     </>
                   ) : (
-                    <a className="flex w-full" href={item.url}>
+                    <Link to={item.url} className="flex w-full">
                       {item.title}
-                    </a>
+                    </Link>
                   )}
                 </SidebarMenuButton>
               </CollapsibleTrigger>
