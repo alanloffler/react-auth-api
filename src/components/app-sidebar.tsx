@@ -1,12 +1,10 @@
-import { Bot, Frame, GalleryVerticalEnd, Map, PieChart, Settings, User } from "lucide-react";
+import { FileKey, GalleryVerticalEnd, KeyRound, Map, Settings, User2, UserPlus2 } from "lucide-react";
+import { NavMain } from "@components/nav-main";
+import { NavProjects } from "@components/nav-projects";
+import { NavUser } from "@components/nav-user";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@components/ui/sidebar";
+import { TeamSwitcher } from "@components/team-switcher";
 
-import { NavMain } from "@/components/nav-main";
-import { NavProjects } from "@/components/nav-projects";
-import { NavUser } from "@/components/nav-user";
-import { TeamSwitcher } from "@/components/team-switcher";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
-
-// This is sample data.
 const data = {
   user: {
     name: "shadcn",
@@ -16,19 +14,19 @@ const data = {
   teams: {
     name: "React Auth API",
     logo: GalleryVerticalEnd,
-    plan: "Auth",
+    plan: "v 0.1",
   },
   navMain: [
     {
       title: "Usuarios",
-      url: "#",
-      icon: User,
+      url: "/home/users",
+      icon: User2,
       isActive: true,
     },
     {
       title: "Roles",
-      url: "/settings/roles",
-      icon: Bot,
+      url: "/home/roles",
+      icon: KeyRound,
     },
     {
       title: "Configuraciones",
@@ -48,14 +46,14 @@ const data = {
   ],
   projects: [
     {
-      name: "Design Engineering",
+      name: "Crear administrador",
       url: "#",
-      icon: Frame,
+      icon: UserPlus2,
     },
     {
-      name: "Sales & Marketing",
+      name: "Crear rol",
       url: "#",
-      icon: PieChart,
+      icon: FileKey,
     },
     {
       name: "Travel",
