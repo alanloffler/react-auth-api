@@ -1,4 +1,5 @@
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import { Link } from "react-router";
 
 interface IProps {
   teams: {
@@ -12,10 +13,10 @@ export function TeamSwitcher({ teams }: IProps) {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <div>
+        <Link to="/home">
           <SidebarMenuButton
             size="lg"
-            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:cursor-pointer"
           >
             <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
               <teams.logo className="size-4" />
@@ -25,7 +26,7 @@ export function TeamSwitcher({ teams }: IProps) {
               <span className="truncate text-xs">{teams.plan}</span>
             </div>
           </SidebarMenuButton>
-        </div>
+        </Link>
       </SidebarMenuItem>
     </SidebarMenu>
   );
