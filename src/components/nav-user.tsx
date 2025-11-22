@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@components/ui/sidebar";
+import axios from "axios";
 import { AuthAPI } from "@/core/auth/auth.service";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
@@ -26,14 +27,20 @@ export function NavUser({
   const navigate = useNavigate();
 
   async function signOut() {
-    console.log("Signout action");
     try {
       const response = await AuthAPI.signOut();
-      console.log(response);
-      toast.success("Signed out successfully");
+      toast.success(response.message);
       navigate("/");
     } catch (error) {
-      toast.error("Failed to sign out");
+      if (axios.isAxiosError(error)) {
+        const message: string = error.response?.data?.message;
+
+        if (message) {
+          toast.error(message);
+        } else {
+          toast.error("Error desconocido en el servidor");
+        }
+      }
     }
   }
 
