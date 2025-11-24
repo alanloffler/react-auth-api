@@ -2,7 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import { Home } from "@/features/home/Home";
 import { Login } from "@login/Login";
 import { Toaster } from "@components/ui/sonner";
-import { Users } from "@/features/users/Users";
+import { Admin } from "@/features/admin/Admin";
 import { Roles } from "./features/roles/Roles";
 import { Dashboard } from "./features/dashboard/Dashboard";
 // import { Roles } from "@/features/users/Users";
@@ -22,8 +22,8 @@ function App() {
           element: <Dashboard />,
         },
         {
-          path: "/home/users",
-          element: <Users />,
+          path: "/home/admin",
+          element: <Admin />,
         },
         {
           path: "/home/roles",
