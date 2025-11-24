@@ -18,8 +18,8 @@ const data = {
   },
   navMain: [
     {
-      title: "Usuarios",
-      url: "/home/users",
+      title: "Administradores",
+      url: "/home/admin",
       icon: User2,
       isActive: true,
     },
