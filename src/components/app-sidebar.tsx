@@ -22,11 +22,13 @@ const data = {
       url: "/home/admin",
       icon: User2,
       isActive: true,
+      role: ["superadmin"],
     },
     {
       title: "Roles",
       url: "/home/roles",
       icon: KeyRound,
+      role: ["superadmin", "admin"],
     },
     {
       title: "Configuraciones",
@@ -35,13 +37,16 @@ const data = {
       items: [
         {
           title: "Aplicación",
-          url: "#",
+          url: "/settings/app",
+          role: ["superadmin", "admin"],
         },
         {
           title: "Roles",
-          url: "#",
+          url: "/settings/roles",
+          role: ["superadmin"],
         },
       ],
+      role: ["superadmin", "admin"],
     },
   ],
   projects: [

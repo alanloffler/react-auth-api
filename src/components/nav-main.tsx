@@ -1,6 +1,6 @@
 import { ChevronRight, type LucideIcon } from "lucide-react";
 
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -10,8 +10,12 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@/components/ui/sidebar";
+} from "@components/ui/sidebar";
 import { Link } from "react-router";
+
+import { useAuthStore } from "@core/auth/auth.store";
+import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
 
 export function NavMain({
   items,
@@ -24,9 +28,13 @@ export function NavMain({
     items?: {
       title: string;
       url: string;
+      role: string[];
     }[];
+    role?: string[];
   }[];
 }) {
+  const { admin } = useAuthStore();
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Aplicación</SidebarGroupLabel>
@@ -35,7 +43,10 @@ export function NavMain({
           <Collapsible key={item.title} asChild defaultOpen={item.isActive} className="group/collapsible">
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip={item.title}>
+                <SidebarMenuButton
+                  disabled={item.role && admin?.role && !item.role?.includes(admin.role.value)}
+                  tooltip={item.title}
+                >
                   {item.icon && <item.icon />}
                   {item.items ? (
                     <>
@@ -55,9 +66,16 @@ export function NavMain({
                     {item.items?.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild>
-                          <a href={subItem.url}>
+                          <Link
+                            to={subItem.url}
+                            className={cn(
+                              subItem.role && admin?.role && !subItem.role?.includes(admin.role.value)
+                                ? "pointer-events-none opacity-50"
+                                : "",
+                            )}
+                          >
                             <span>{subItem.title}</span>
-                          </a>
+                          </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                     ))}
