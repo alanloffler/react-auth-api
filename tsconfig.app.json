@@ -25,6 +25,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@admin/*": ["./src/features/admin/*"],
+      "@auth/*": ["./src/core/auth/*"],
       "@components/*": ["./src/components/*"],
       "@core/*": ["./src/core/*"],
       "@lib/*": ["./src/lib/*"],
