@@ -1,17 +1,23 @@
-import { createBrowserRouter, RouterProvider } from "react-router";
+import { Admin } from "@admin/Admin";
+import { Dashboard } from "@/features/dashboard/Dashboard";
+import { GuestRoute } from "@core/auth/components/GuestRoute";
 import { Home } from "@/features/home/Home";
 import { Login } from "@login/Login";
+import { Roles } from "@/features/roles/Roles";
 import { Toaster } from "@components/ui/sonner";
-import { Admin } from "@/features/admin/Admin";
-import { Roles } from "./features/roles/Roles";
-import { Dashboard } from "./features/dashboard/Dashboard";
 // import { Roles } from "@/features/users/Users";
+
+import { createBrowserRouter, RouterProvider } from "react-router";
 
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Login />,
+      element: (
+        <GuestRoute>
+          <Login />
+        </GuestRoute>
+      ),
     },
     {
       path: "/home",
