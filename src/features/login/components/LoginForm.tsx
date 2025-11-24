@@ -3,15 +3,18 @@ import { Card, CardContent } from "@components/ui/card";
 import { Controller } from "react-hook-form";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@components/ui/field";
 import { Input } from "@components/ui/input";
+
 import axios from "axios";
-import { AuthAPI } from "@core/auth/auth.service";
-import { cn } from "@lib/utils";
-import { loginSchema } from "@login/schemas/login.schema";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+
+import { AuthAPI } from "@core/auth/auth.service";
+import { cn } from "@lib/utils";
+import { loginSchema } from "@login/schemas/login.schema";
+import { useAuthStore } from "@core/auth/auth.store";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
   const navigate = useNavigate();
@@ -30,6 +33,13 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     try {
       const response = await AuthAPI.signIn({ email, password });
       toast.success(`Bienvenido ${response.data?.email}`);
+
+      if (response.statusCode === 200) {
+        const adminResponse = await AuthAPI.getAdmin();
+        if (adminResponse.statusCode === 200) {
+          useAuthStore.getState().setAdmin(adminResponse.data);
+        }
+      }
 
       navigate("/home");
     } catch (error) {
