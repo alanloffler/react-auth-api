@@ -3,7 +3,7 @@ import { DataTable } from "@/features/admin/components/DataTable";
 import { PageHeader } from "@components/pages/PageHeader";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { IAdmin } from "@admin/interfaces/admin.interface";
-import { adminService } from "@/features/admin/services/admin.service";
+import { AdminService } from "@admin/services/admin.service";
 import { cn } from "@/lib/utils";
 import { isAxiosError } from "axios";
 import { toast } from "sonner";
@@ -19,7 +19,7 @@ export function Admin() {
   useEffect(() => {
     async function fetchAdmins() {
       try {
-        const response = await adminService.getAll();
+        const response = await AdminService.getAll();
         console.log(response);
         setAdmins(response.data ?? []);
       } catch (error) {
