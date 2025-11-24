@@ -17,13 +17,14 @@ import { AuthService } from "@core/auth/auth.service";
 import { useAuthStore } from "@core/auth/auth.store";
 
 export function NavUser() {
-  const { admin } = useAuthStore();
+  const { admin, clearAdmin } = useAuthStore();
   const { isMobile } = useSidebar();
   const navigate = useNavigate();
 
   async function signOut() {
     try {
       const response = await AuthService.signOut();
+      clearAdmin();
       toast.success(response.message);
       navigate("/");
     } catch (error) {
