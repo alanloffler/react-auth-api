@@ -7,6 +7,8 @@ interface AuthState {
   admin?: IAdmin;
   setAdmin: (admin?: IAdmin) => void;
   clearAdmin: () => void;
+  loadingAdmin: boolean;
+  setLoadingAdmin: (loading: boolean) => void;
 }
 
 export const useAuthStore = create(
@@ -15,6 +17,9 @@ export const useAuthStore = create(
       admin: undefined,
       setAdmin: (admin) => set({ admin }),
       clearAdmin: () => set({ admin: undefined }),
+
+      loadingAdmin: true,
+      setLoadingAdmin: (loading) => set({ loadingAdmin: loading }),
     }),
     { name: "admin" },
   ),
