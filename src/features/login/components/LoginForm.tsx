@@ -11,7 +11,7 @@ import { useNavigate } from "react-router";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { AuthAPI } from "@core/auth/auth.service";
+import { AuthService } from "@core/auth/auth.service";
 import { cn } from "@lib/utils";
 import { loginSchema } from "@login/schemas/login.schema";
 import { useAuthStore } from "@core/auth/auth.store";
@@ -31,11 +31,11 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     const { email, password } = data;
 
     try {
-      const response = await AuthAPI.signIn({ email, password });
+      const response = await AuthService.signIn({ email, password });
       toast.success(`Bienvenido ${response.data?.email}`);
 
       if (response.statusCode === 200) {
-        const adminResponse = await AuthAPI.getAdmin();
+        const adminResponse = await AuthService.getAdmin();
         if (adminResponse.statusCode === 200) {
           useAuthStore.getState().setAdmin(adminResponse.data);
         }

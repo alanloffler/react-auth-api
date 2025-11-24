@@ -8,11 +8,13 @@ import {
   DropdownMenuTrigger,
 } from "@components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@components/ui/sidebar";
+
 import axios from "axios";
-import { AuthAPI } from "@/core/auth/auth.service";
 import { toast } from "sonner";
-import { useAuthStore } from "@core/auth/auth.store";
 import { useNavigate } from "react-router";
+
+import { AuthService } from "@core/auth/auth.service";
+import { useAuthStore } from "@core/auth/auth.store";
 
 export function NavUser() {
   const { admin } = useAuthStore();
@@ -21,7 +23,7 @@ export function NavUser() {
 
   async function signOut() {
     try {
-      const response = await AuthAPI.signOut();
+      const response = await AuthService.signOut();
       toast.success(response.message);
       navigate("/");
     } catch (error) {

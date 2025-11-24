@@ -3,15 +3,15 @@ import type { IApiResponse } from "@core/interfaces/api-response.interface";
 import type { ICredentials, ISignIn } from "@core/interfaces/auth.interface";
 import { apiClient } from "@core/client/client";
 
-class AuthService {
-  private static instance: AuthService;
+class AuthModuleService {
+  private static instance: AuthModuleService;
 
-  public static getInstance(): AuthService {
-    if (!AuthService.instance) {
-      AuthService.instance = new AuthService();
+  public static getInstance(): AuthModuleService {
+    if (!AuthModuleService.instance) {
+      AuthModuleService.instance = new AuthModuleService();
     }
 
-    return AuthService.instance;
+    return AuthModuleService.instance;
   }
 
   public async signIn(credentials: ICredentials): Promise<IApiResponse<ISignIn>> {
@@ -20,6 +20,7 @@ class AuthService {
   }
 
   public async signOut(): Promise<IApiResponse<null>> {
+    // TODO: type get()
     const response = await apiClient.get("/auth/signOut");
     return response.data;
   }
@@ -30,4 +31,4 @@ class AuthService {
   }
 }
 
-export const AuthAPI = AuthService.getInstance();
+export const AuthService = AuthModuleService.getInstance();
