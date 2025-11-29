@@ -6,11 +6,6 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } fr
 import { TeamSwitcher } from "@components/team-switcher";
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   teams: {
     name: "React Auth API",
     logo: GalleryVerticalEnd,
@@ -19,16 +14,16 @@ const data = {
   navMain: [
     {
       title: "Administradores",
-      url: "/home/admin",
+      url: "/admin",
       icon: User2,
       isActive: true,
       role: ["superadmin"],
     },
     {
       title: "Roles",
-      url: "/home/roles",
+      url: "/roles",
       icon: KeyRound,
-      role: ["superadmin", "admin"],
+      role: ["admin"],
     },
     {
       title: "Configuraciones",
@@ -79,7 +74,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
