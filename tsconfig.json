@@ -11,7 +11,14 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@admin/*": ["./src/features/admin/*"],
+      "@auth/*": ["./src/core/auth/*"],
+      "@components/*": ["./src/components/*"],
+      "@core/*": ["./src/core/*"],
+      "@lib/*": ["./src/lib/*"],
+      "@login/*": ["./src/features/login/*"],
+      "@roles/*": ["./src/features/roles/*"]
     }
   }
 }
