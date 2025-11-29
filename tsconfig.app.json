@@ -29,7 +29,8 @@
       "@components/*": ["./src/components/*"],
       "@core/*": ["./src/core/*"],
       "@lib/*": ["./src/lib/*"],
-      "@login/*": ["./src/features/login/*"]
+      "@login/*": ["./src/features/login/*"],
+      "@roles/*": ["./src/features/roles/*"]
     }
   },
   "include": ["src"]
