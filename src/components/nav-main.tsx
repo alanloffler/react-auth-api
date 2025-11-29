@@ -13,9 +13,8 @@ import {
 } from "@components/ui/sidebar";
 import { Link } from "react-router";
 
-import { useAuthStore } from "@core/auth/auth.store";
-import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@core/auth/auth.store";
 
 export function NavMain({
   items,
@@ -33,7 +32,7 @@ export function NavMain({
     role?: string[];
   }[];
 }) {
-  const { admin } = useAuthStore();
+  const admin = useAuthStore((state) => state.admin);
 
   return (
     <SidebarGroup>
