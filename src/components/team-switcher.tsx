@@ -13,7 +13,7 @@ export function TeamSwitcher({ teams }: IProps) {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <Link to="/home">
+        <Link to="/dashboard">
           <SidebarMenuButton
             size="lg"
             className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:cursor-pointer"
