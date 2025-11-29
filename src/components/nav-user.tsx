@@ -10,11 +10,10 @@ import {
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@components/ui/sidebar";
 
 import axios from "axios";
-import { toast } from "sonner";
-import { useNavigate } from "react-router";
-
 import { AuthService } from "@core/auth/auth.service";
+import { toast } from "sonner";
 import { useAuthStore } from "@core/auth/auth.store";
+import { useNavigate } from "react-router";
 
 export function NavUser() {
   const { admin, clearAdmin } = useAuthStore();
@@ -24,9 +23,7 @@ export function NavUser() {
   async function signOut() {
     try {
       const response = await AuthService.signOut();
-      clearAdmin();
       toast.success(response.message);
-      navigate("/");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const message: string = error.response?.data?.message;
@@ -37,6 +34,9 @@ export function NavUser() {
           toast.error("Error desconocido en el servidor");
         }
       }
+    } finally {
+      clearAdmin();
+      navigate("/");
     }
   }
 
