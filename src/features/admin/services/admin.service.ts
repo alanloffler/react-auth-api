@@ -13,8 +13,18 @@ class AdminModuleService {
     return AdminModuleService.instance;
   }
 
-  public async getAll(): Promise<IApiResponse<IAdmin[]>> {
+  public async findAll(): Promise<IApiResponse<IAdmin[]>> {
     const response = await apiClient.get("/admin");
+    return response.data;
+  }
+
+  public async findOneWithCredentials(id: string): Promise<IApiResponse<IAdmin>> {
+    const response = await apiClient.get(`/admin/${id}/credentials`);
+    return response.data;
+  }
+
+  public async update(id: string, data: Partial<IAdmin>): Promise<IApiResponse<IAdmin>> {
+    const response = await apiClient.patch(`/admin/${id}`, data);
     return response.data;
   }
 
