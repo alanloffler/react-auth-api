@@ -13,7 +13,7 @@ import {
 } from "@components/ui/sidebar";
 import { Link } from "react-router";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@lib/utils";
 import { useAuthStore } from "@core/auth/auth.store";
 
 export function NavMain({
