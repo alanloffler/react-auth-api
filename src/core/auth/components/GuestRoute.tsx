@@ -1,7 +1,5 @@
-import { useEffect, type ReactNode } from "react";
-import { useNavigate } from "react-router";
-
-import { AuthService } from "@auth/auth.service";
+import { Navigate } from "react-router";
+import { type ReactNode } from "react";
 import { useAuthStore } from "@core/auth/auth.store";
 
 interface IProps {
@@ -9,31 +7,11 @@ interface IProps {
 }
 
 export function GuestRoute({ children }: IProps) {
-  const navigate = useNavigate();
-  const { admin, setAdmin, loadingAdmin, setLoadingAdmin } = useAuthStore();
+  const admin = useAuthStore((state) => state.admin);
 
-  useEffect(() => {
-    async function getAdmin() {
-      try {
-        const response = await AuthService.getAdmin();
-        setAdmin(response.data);
-      } catch (error) {
-        setAdmin(undefined);
-      } finally {
-        setLoadingAdmin(false);
-      }
-    }
+  if (admin) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
-    if (loadingAdmin) getAdmin();
-  }, [loadingAdmin]);
-
-  useEffect(() => {
-    if (!loadingAdmin && admin) {
-      navigate("/home", { replace: true });
-    }
-  }, [loadingAdmin, admin]);
-
-  if (loadingAdmin) return null;
-
-  return children;
+  return <>{children}</>;
 }
