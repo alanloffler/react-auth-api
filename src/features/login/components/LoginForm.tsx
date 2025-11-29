@@ -41,7 +41,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         }
       }
 
-      navigate("/home");
+      navigate("/dashboard");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const message: string = error.response?.data?.message;
