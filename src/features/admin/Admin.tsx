@@ -1,15 +1,16 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@components/ui/button";
 import { DataTable } from "@/features/admin/components/DataTable";
+import { EditForm } from "@admin/components/EditForm";
 import { PageHeader } from "@components/pages/PageHeader";
+
 import type { ColumnDef } from "@tanstack/react-table";
-import type { IAdmin } from "@admin/interfaces/admin.interface";
-import { AdminService } from "@admin/services/admin.service";
-import { cn } from "@/lib/utils";
 import { isAxiosError } from "axios";
 import { toast } from "sonner";
-import { useAuthStore } from "@core/auth/auth.store";
 import { useEffect, useState } from "react";
-import { EditForm } from "./components/EditForm";
+
+import type { IAdmin } from "@admin/interfaces/admin.interface";
+import { AdminService } from "@admin/services/admin.service";
+import { cn } from "@lib/utils";
 
 interface IColumnVisibility {
   firstName: boolean;
@@ -21,7 +22,6 @@ export function Admin() {
   const [columnVisibility, setColumnVisibility] = useState<IColumnVisibility>({ firstName: true, lastName: true });
   const [openForm, setOpenForm] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<IAdmin | null>(null);
-  const admin = useAuthStore((state) => state.admin);
 
   useEffect(() => {
     async function fetchAdmins() {
