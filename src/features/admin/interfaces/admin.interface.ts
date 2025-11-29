@@ -1,21 +1,23 @@
 export interface IAdmin {
-  id: string;
-  ic: string;
-  userName: string;
-  firstName: string;
-  lastName: string;
+  createdAt: string;
   email: string;
+  firstName: string;
+  ic: string;
+  id: string;
+  lastName: string;
+  password: string;
   phoneNumber: string;
   role: IRole;
-  createdAt: string;
+  roleId: string;
   updatedAt: string;
+  userName: string;
 }
 
 interface IRole {
+  createdAt: string;
+  description: string;
   id: string;
   name: string;
-  value: string;
-  description: string;
-  createdAt: string;
   updatedAt: string;
+  value: string;
 }
