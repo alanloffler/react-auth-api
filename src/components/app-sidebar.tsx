@@ -17,13 +17,13 @@ const data = {
       url: "/admin",
       icon: User2,
       isActive: true,
-      role: ["superadmin"],
+      role: ["superadmin", "admin"],
     },
     {
       title: "Roles",
       url: "/roles",
       icon: KeyRound,
-      role: ["admin"],
+      role: ["superadmin", "admin"],
     },
     {
       title: "Configuraciones",
