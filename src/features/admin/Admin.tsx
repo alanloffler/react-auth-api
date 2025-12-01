@@ -11,6 +11,8 @@ import { useEffect, useState } from "react";
 import type { IAdmin } from "@admin/interfaces/admin.interface";
 import { AdminService } from "@admin/services/admin.service";
 import { cn } from "@lib/utils";
+import { Plus } from "lucide-react";
+import { Link } from "react-router";
 
 interface IColumnVisibility {
   firstName: boolean;
@@ -103,7 +105,14 @@ export function Admin() {
 
   return (
     <div className="flex flex-col gap-10">
-      <PageHeader title="Administradores" subtitle="Gestioná los usuarios del sistema." />
+      <PageHeader title="Administradores" subtitle="Gestioná los usuarios del sistema.">
+        <Button variant="default" size="lg" asChild>
+          <Link to="/admin/create">
+            <Plus />
+            Crear admin
+          </Link>
+        </Button>
+      </PageHeader>
       <div className={cn("flex gap-8")}>
         <DataTable
           columns={columns}
