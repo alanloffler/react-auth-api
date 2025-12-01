@@ -13,6 +13,11 @@ class AdminModuleService {
     return AdminModuleService.instance;
   }
 
+  public async create(data: Partial<IAdmin>): Promise<IApiResponse<IAdmin>> {
+    const response = await apiClient.post("/admin", data);
+    return response.data;
+  }
+
   public async findAll(): Promise<IApiResponse<IAdmin[]>> {
     const response = await apiClient.get("/admin");
     return response.data;
@@ -30,6 +35,11 @@ class AdminModuleService {
 
   public async remove(id: string): Promise<IApiResponse<any>> {
     const response = await apiClient.delete(`/admin/${id}`);
+    return response.data;
+  }
+
+  public async checkIcAvailability(id: string): Promise<IApiResponse<boolean>> {
+    const response = await apiClient.get(`/admin/ic-availability/${id}`);
     return response.data;
   }
 }
