@@ -1,3 +1,4 @@
+import CreateAdmin from "@/features/admin/views/CreateAdmin";
 import { Admin } from "@admin/Admin";
 import { AppInitializer } from "@core/auth/components/AppInitializer";
 import { Dashboard } from "@/features/dashboard/Dashboard";
@@ -24,7 +25,7 @@ const router = createBrowserRouter([
     element: <ProtectedLayout />,
     children: [
       {
-        path: "/dashboard",
+        path: "dashboard",
         element: <Dashboard />,
       },
       {
@@ -32,6 +33,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={["superadmin", "admin"]}>
             <Admin />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "admin/create",
+        element: (
+          <ProtectedRoute allowedRoles={["superadmin", "admin"]}>
+            <CreateAdmin />
           </ProtectedRoute>
         ),
       },
