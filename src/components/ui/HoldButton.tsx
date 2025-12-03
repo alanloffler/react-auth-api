@@ -1,20 +1,24 @@
-import { type MouseEvent, type PointerEvent, useRef } from "react";
+import { type MouseEvent, type PointerEvent, type ReactNode, useRef } from "react";
 import { cn } from "@lib/utils";
 
 interface IProps {
   callback: () => void;
+  children: ReactNode;
   className?: string;
+  disabled?: boolean;
   duration?: number;
-  text?: string;
   shortcut?: boolean;
+  variant?: string;
 }
 
 export function HoldButton({
   callback,
+  children,
   className,
+  disabled,
   duration = 1000,
   shortcut = false,
-  text = "Hold to Delete",
+  variant = "outline",
 }: IProps) {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -45,9 +49,12 @@ export function HoldButton({
   return (
     <button
       className={cn(
-        "group relative flex items-center justify-center gap-2 overflow-hidden rounded-md bg-[#f6f5f5] px-6 py-3 text-sm font-medium text-[#21201c] transition-transform duration-160 ease-out select-none [-webkit-touch-callout:none] active:scale-[0.97]",
+        "group relative flex items-center justify-center gap-2 overflow-hidden rounded-md bg-[#f6f5f5] px-6 py-3 text-sm font-medium text-[#21201c] transition-all duration-160 ease-out select-none [-webkit-touch-callout:none] active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50",
         className,
+        variant === "outline" &&
+          "bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-9 border px-4 py-2 shadow-xs has-[>svg]:px-3",
       )}
+      disabled={disabled}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}
@@ -60,41 +67,9 @@ export function HoldButton({
           transitionDuration: duration + "ms",
         }}
       >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M10 11v6" />
-          <path d="M14 11v6" />
-          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-          <path d="M3 6h18" />
-          <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-        </svg>
-        <>{text}</>
+        {children}
       </div>
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M10 11v6" />
-        <path d="M14 11v6" />
-        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-        <path d="M3 6h18" />
-        <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-      </svg>
-      <>{text}</>
+      {children}
     </button>
   );
 }
