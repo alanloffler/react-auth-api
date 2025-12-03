@@ -36,6 +36,7 @@ class ApiClient {
     let failedQueue: { resolve: (value: unknown) => void; reject: (reason: any) => void }[] = [];
     const processQueue = (error: AxiosError | null, success: boolean) => {
       failedQueue.forEach((promise) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         error ? promise.reject(error) : promise.resolve(success);
       });
 
