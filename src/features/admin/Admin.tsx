@@ -11,8 +11,9 @@ import { useEffect, useState } from "react";
 import type { IAdmin } from "@admin/interfaces/admin.interface";
 import { AdminService } from "@admin/services/admin.service";
 import { cn } from "@lib/utils";
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { Link } from "react-router";
+import { HoldButton } from "@/components/ui/HoldButton";
 
 interface IColumnVisibility {
   firstName: boolean;
@@ -25,25 +26,25 @@ export function Admin() {
   const [openForm, setOpenForm] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<IAdmin | null>(null);
 
-  useEffect(() => {
-    async function fetchAdmins() {
-      try {
-        const response = await AdminService.findAll();
-        setAdmins(response.data ?? []);
-      } catch (error) {
-        if (isAxiosError(error)) {
-          if ((error as any).isRefreshFail) {
-            return;
-          }
-
-          toast.error(error.response?.data.message ?? "Error en el servidor");
+  async function fetchAdmins() {
+    try {
+      const response = await AdminService.findAll();
+      setAdmins(response.data ?? []);
+    } catch (error) {
+      if (isAxiosError(error)) {
+        if ((error as any).isRefreshFail) {
           return;
         }
 
-        toast.error("Error desconocido en el servidor");
+        toast.error(error.response?.data.message ?? "Error en el servidor");
+        return;
       }
-    }
 
+      toast.error("Error desconocido en el servidor");
+    }
+  }
+
+  useEffect(() => {
     fetchAdmins();
   }, []);
 
@@ -58,6 +59,27 @@ export function Admin() {
     setOpenForm(true);
   }
 
+  async function removeAdmin(id: string): Promise<void> {
+    try {
+      const response = await AdminService.remove(id);
+      if (response.statusCode === 200) {
+        toast.success("Administrador eliminado");
+        fetchAdmins();
+      }
+    } catch (error) {
+      if (isAxiosError(error)) {
+        if ((error as any).isRefreshFail) {
+          return;
+        }
+
+        toast.error(error.response?.data.message ?? "Error en el servidor");
+        return;
+      }
+
+      toast.error("Error desconocido en el servidor");
+    }
+  }
+
   function closeForm(): void {
     setColumnVisibility({ firstName: true, lastName: true });
     setOpenForm(false);
@@ -70,6 +92,15 @@ export function Admin() {
       cell: ({ row }) => (
         <div className="flex w-fit place-self-center rounded-sm bg-neutral-100 px-2 py-1 text-xs text-neutral-600">
           {row.original.id.slice(0, 5)}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "ic",
+      header: "IC",
+      cell: ({ row }) => (
+        <div className="flex w-fit place-self-center rounded-sm bg-neutral-100 px-2 py-1 text-xs text-neutral-600">
+          {row.original.ic}
         </div>
       ),
     },
@@ -91,13 +122,16 @@ export function Admin() {
       id: "actions",
       cell: ({ row }) => (
         <div className="flex justify-end gap-2">
-          <Button variant="default" onClick={viewAdmin}>
+          <Button variant="outline" onClick={viewAdmin}>
             Ver
           </Button>
           <Button variant="outline" onClick={() => editAdmin(row.original)}>
             Editar
           </Button>
-          <Button variant="outline">Eliminar</Button>
+          <HoldButton callback={() => removeAdmin(row.original.id)} disabled={true} variant="outline">
+            <Trash2 className="h-4 w-4" />
+            Remove
+          </HoldButton>
         </div>
       ),
     },
