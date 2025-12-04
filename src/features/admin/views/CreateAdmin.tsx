@@ -5,7 +5,6 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "@components/ui/field"
 import { Input } from "@components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select";
 
-import axios from "axios";
 import z from "zod";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
@@ -54,23 +53,17 @@ export default function CreateAdmin() {
       return;
     }
 
-    try {
-      const response = await AdminService.create(data);
+    const [create, createError] = await tryCatch(AdminService.create(data));
 
-      if (response.statusCode === 201) {
-        toast.success(response.message);
-        navigate("/admin");
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const message: string = error.response?.data?.message;
+    if (createError) {
+      toast.error(createError.message);
 
-        if (message) {
-          toast.error(message);
-        } else {
-          toast.error("Error desconocido en el servidor");
-        }
-      }
+      return;
+    }
+
+    if (create?.statusCode === 201) {
+      toast.success(create.message);
+      navigate("/admin");
     }
   }
 
