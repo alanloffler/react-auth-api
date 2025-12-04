@@ -1,19 +1,21 @@
+import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@components/ui/button";
 import { DataTable } from "@/features/admin/components/DataTable";
 import { EditForm } from "@admin/components/EditForm";
+import { HoldButton } from "@/components/ui/HoldButton";
+import { Link } from "react-router";
 import { PageHeader } from "@components/pages/PageHeader";
 
 import type { ColumnDef } from "@tanstack/react-table";
 import { isAxiosError } from "axios";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import type { IAdmin } from "@admin/interfaces/admin.interface";
 import { AdminService } from "@admin/services/admin.service";
 import { cn } from "@lib/utils";
-import { Plus, Trash2 } from "lucide-react";
-import { Link } from "react-router";
-import { HoldButton } from "@/components/ui/HoldButton";
+import { tryCatch } from "@/core/utils/try-catch";
+import { useAuthStore } from "@/core/auth/auth.store";
 
 interface IColumnVisibility {
   firstName: boolean;
@@ -21,32 +23,28 @@ interface IColumnVisibility {
 }
 
 export function Admin() {
-  const [admins, setAdmins] = useState<IAdmin[]>([]);
+  const [admins, setAdmins] = useState<IAdmin[] | undefined>(undefined);
   const [columnVisibility, setColumnVisibility] = useState<IColumnVisibility>({ firstName: true, lastName: true });
   const [openForm, setOpenForm] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<IAdmin | null>(null);
+  const admin = useAuthStore((state) => state.admin);
 
-  async function fetchAdmins() {
-    try {
-      const response = await AdminService.findAll();
-      setAdmins(response.data ?? []);
-    } catch (error) {
-      if (isAxiosError(error)) {
-        if ((error as any).isRefreshFail) {
-          return;
-        }
+  const fetchAdmins = useCallback(async () => {
+    const [response, error] = await tryCatch(AdminService.findAll());
 
-        toast.error(error.response?.data.message ?? "Error en el servidor");
-        return;
-      }
-
-      toast.error("Error desconocido en el servidor");
+    if (error) {
+      toast.error(error.message);
+      return;
     }
-  }
+
+    if (response && response.statusCode === 200) {
+      setAdmins(response.data);
+    }
+  }, []);
 
   useEffect(() => {
     fetchAdmins();
-  }, []);
+  }, [fetchAdmins]);
 
   function viewAdmin(): void {
     setColumnVisibility({ firstName: false, lastName: false });
@@ -97,9 +95,9 @@ export function Admin() {
     },
     {
       accessorKey: "ic",
-      header: "IC",
+      header: () => <div className="text-center">DNI</div>,
       cell: ({ row }) => (
-        <div className="flex w-fit place-self-center rounded-sm bg-neutral-100 px-2 py-1 text-xs text-neutral-600">
+        <div className="flex w-fit place-self-center rounded-sm bg-neutral-200 px-2 py-1 text-xs text-neutral-700">
           {row.original.ic}
         </div>
       ),
@@ -128,7 +126,14 @@ export function Admin() {
           <Button variant="outline" onClick={() => editAdmin(row.original)}>
             Editar
           </Button>
-          <HoldButton callback={() => removeAdmin(row.original.id)} disabled={true} variant="outline">
+          <HoldButton
+            callback={() => removeAdmin(row.original.id)}
+            disabled={
+              admin?.role.value !== "superadmin" ||
+              (row.original.role.value === "superadmin" && row.original.ic === admin.ic)
+            }
+            variant="outline"
+          >
             <Trash2 className="h-4 w-4" />
             Remove
           </HoldButton>
