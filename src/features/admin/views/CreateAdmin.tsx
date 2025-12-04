@@ -92,7 +92,7 @@ export default function CreateAdmin() {
 
   return (
     <div>
-      <Card className="w-[60%]">
+      <Card className="mt-8 w-full lg:w-[80%] xl:w-[60%]">
         <CardHeader>
           <CardTitle>Nuevo Administrador</CardTitle>
           <CardDescription>Aquí puedes editar los datos del administrador</CardDescription>
@@ -182,12 +182,12 @@ export default function CreateAdmin() {
                 )}
               />
             </FieldGroup>
-            <FieldGroup className="grid grid-cols-3 gap-6">
+            <FieldGroup className="grid grid-cols-5 gap-6">
               <Controller
                 name="email"
                 control={form.control}
                 render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid} className="col-span-2">
+                  <Field data-invalid={fieldState.invalid} className="col-span-3">
                     <FieldLabel htmlFor="email">E-mail</FieldLabel>
                     <Input aria-invalid={fieldState.invalid} id="email" {...field} />
                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -199,7 +199,7 @@ export default function CreateAdmin() {
                 control={form.control}
                 render={({ field, fieldState }) => {
                   return (
-                    <Field data-invalid={fieldState.invalid} className="col-span-1">
+                    <Field data-invalid={fieldState.invalid} className="col-span-2">
                       <FieldLabel htmlFor="roleId">Rol</FieldLabel>
                       <Select disabled={!roles} key={field.value} value={field.value} onValueChange={field.onChange}>
                         <SelectTrigger id="roleId" aria-invalid={fieldState.invalid}>
@@ -219,12 +219,12 @@ export default function CreateAdmin() {
                 }}
               />
             </FieldGroup>
-            <FieldGroup className="grid grid-cols-3 gap-6">
+            <FieldGroup className="grid grid-cols-2 gap-6">
               <Controller
                 name="phoneNumber"
                 control={form.control}
                 render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid} className="col-span-2">
+                  <Field data-invalid={fieldState.invalid} className="col-span-1">
                     <FieldLabel htmlFor="phone">Teléfono</FieldLabel>
                     <Input
                       aria-invalid={fieldState.invalid}
