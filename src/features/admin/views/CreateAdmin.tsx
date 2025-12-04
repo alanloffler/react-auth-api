@@ -6,16 +6,18 @@ import { Input } from "@components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select";
 
 import axios from "axios";
-import type { IRole } from "@/features/roles/interfaces/role.interface";
 import z from "zod";
-import { AdminService } from "@admin/services/admin.service";
-import { RolesService } from "@/features/roles/services/roles.service";
-import { adminSchema } from "@admin/schemas/admin.schema";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
+
+import type { IRole } from "@/features/roles/interfaces/role.interface";
+import { AdminService } from "@admin/services/admin.service";
+import { RolesService } from "@/features/roles/services/roles.service";
+import { adminSchema } from "@admin/schemas/admin.schema";
+import { tryCatch } from "@/core/utils/try-catch";
+import { useNavigate } from "react-router";
 
 export default function CreateAdmin() {
   const [icError, setIcError] = useState<string | null>(null);
@@ -37,24 +39,24 @@ export default function CreateAdmin() {
   });
 
   async function onSubmit(data: z.infer<typeof adminSchema>) {
-    console.log(data);
-
     if (icError) {
       form.setError("ic", { message: icError });
       return;
     }
 
     const icAvailableResponse = await AdminService.checkIcAvailability(data.ic);
+
     if (icAvailableResponse.data === false) {
       const errorMsg = "DNI ya registrado";
       setIcError(errorMsg);
       form.setError("ic", { message: errorMsg });
+
       return;
     }
 
     try {
       const response = await AdminService.create(data);
-      console.log(response);
+
       if (response.statusCode === 201) {
         toast.success(response.message);
         navigate("/admin");
@@ -78,29 +80,22 @@ export default function CreateAdmin() {
 
   useEffect(() => {
     async function getRoles() {
-      try {
-        const response = await RolesService.findAll();
+      const [roles, rolesError] = await tryCatch(RolesService.findAll());
 
-        if (response.statusCode === 200) {
-          setRoles(response.data);
-        }
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const message: string = error.response?.data?.message;
+      if (rolesError) {
+        toast.error(rolesError.message);
+        form.control.setError("roleId", { message: "Error obteniendo roles" });
 
-          form.control.setError("roleId", { message: "Error obteniendo" });
+        return;
+      }
 
-          if (message) {
-            toast.error(message);
-          } else {
-            toast.error("Error desconocido en el servidor");
-          }
-        }
+      if (roles?.statusCode === 200) {
+        setRoles(roles?.data);
       }
     }
 
     getRoles();
-  }, []);
+  }, [form.control]);
 
   return (
     <div>
