@@ -69,6 +69,7 @@ export default function CreateAdmin() {
 
   function resetForm(): void {
     form.reset();
+    navigate("/admin");
   }
 
   useEffect(() => {
