@@ -47,7 +47,7 @@ const data = {
   projects: [
     {
       name: "Crear administrador",
-      url: "#",
+      url: "/admin/create",
       icon: UserPlus2,
     },
     {
