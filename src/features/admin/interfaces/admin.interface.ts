@@ -1,5 +1,6 @@
 export interface IAdmin {
   createdAt: string;
+  deletedAt?: string;
   email: string;
   firstName: string;
   ic: string;
