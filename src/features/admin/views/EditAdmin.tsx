@@ -6,7 +6,7 @@ export default function EditAdmin() {
   const { id } = useParams();
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex w-full flex-col gap-10 lg:w-[80%] xl:w-[60%]">
       <EditForm adminId={id!} />
     </div>
   );
