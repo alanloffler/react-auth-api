@@ -23,6 +23,11 @@ class AdminModuleService {
     return response.data;
   }
 
+  public async findAllSoftRemoved(): Promise<IApiResponse<IAdmin[]>> {
+    const response = await apiClient.get("/admin/softRemoved");
+    return response.data;
+  }
+
   public async findOne(id: string): Promise<IApiResponse<IAdmin>> {
     const response = await apiClient.get(`/admin/${id}`);
     return response.data;
@@ -40,6 +45,16 @@ class AdminModuleService {
 
   public async remove(id: string): Promise<IApiResponse<any>> {
     const response = await apiClient.delete(`/admin/${id}`);
+    return response.data;
+  }
+
+  public async softRemove(id: string): Promise<IApiResponse<any>> {
+    const response = await apiClient.delete(`/admin/soft-remove/${id}`);
+    return response.data;
+  }
+
+  public async restore(id: string): Promise<IApiResponse<any>> {
+    const response = await apiClient.patch(`/admin/restore/${id}`);
     return response.data;
   }
 
