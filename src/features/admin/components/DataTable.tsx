@@ -7,7 +7,7 @@ interface DataTableProps<TData, TValue> {
   className?: string;
   columns: ColumnDef<TData, TValue>[];
   data: TData[] | undefined;
-  columnVisibility: any;
+  columnVisibility?: any;
 }
 
 export function DataTable<TData, TValue>({
