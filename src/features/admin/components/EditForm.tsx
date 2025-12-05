@@ -18,10 +18,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 interface IProps {
   adminId: string;
-  closeForm: () => void;
 }
 
-export function EditForm({ adminId, closeForm }: IProps) {
+export function EditForm({ adminId }: IProps) {
   const [roles, setRoles] = useState<IRole[] | undefined>(undefined);
 
   const form = useForm<z.infer<typeof adminSchema>>({
@@ -92,7 +91,6 @@ export function EditForm({ adminId, closeForm }: IProps) {
 
   function resetForm(): void {
     form.reset();
-    closeForm();
   }
 
   useEffect(() => {
@@ -119,7 +117,7 @@ export function EditForm({ adminId, closeForm }: IProps) {
     }
 
     getRoles();
-  }, []);
+  }, [form.control]);
 
   return (
     <Card className="w-1/2">
