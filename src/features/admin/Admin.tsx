@@ -1,4 +1,4 @@
-import { Plus, Trash2 } from "lucide-react";
+import { OctagonX, Plus, Trash2 } from "lucide-react";
 import { Button } from "@components/ui/button";
 import { DataTable } from "@/features/admin/components/DataTable";
 import { HoldButton } from "@/components/ui/HoldButton";
@@ -20,7 +20,10 @@ export function Admin() {
   const admin = useAuthStore((state) => state.admin);
 
   const fetchAdmins = useCallback(async () => {
-    const [response, error] = await tryCatch(AdminService.findAll());
+    const isSuperAdmin = admin?.role.value === "superadmin";
+    const serviceByRole = isSuperAdmin ? AdminService.findAllSoftRemoved() : AdminService.findAll();
+
+    const [response, error] = await tryCatch(serviceByRole);
 
     if (error) {
       toast.error(error.message);
@@ -30,7 +33,7 @@ export function Admin() {
     if (response && response.statusCode === 200) {
       setAdmins(response.data);
     }
-  }, []);
+  }, [admin?.role.value]);
 
   useEffect(() => {
     fetchAdmins();
@@ -38,7 +41,7 @@ export function Admin() {
 
   async function removeAdmin(id: string): Promise<void> {
     try {
-      const response = await AdminService.remove(id);
+      const response = await AdminService.softRemove(id);
       if (response.statusCode === 200) {
         toast.success("Administrador eliminado");
         fetchAdmins();
@@ -54,6 +57,21 @@ export function Admin() {
       }
 
       toast.error("Error desconocido en el servidor");
+    }
+  }
+
+  async function restoreAdmin(id: string) {
+    const [response, error] = await tryCatch(AdminService.restore(id));
+
+    if (error) {
+      toast.error(error.message);
+
+      return;
+    }
+
+    if (response && response.statusCode === 200) {
+      toast.success(response.message);
+      fetchAdmins();
     }
   }
 
@@ -79,7 +97,12 @@ export function Admin() {
     {
       accessorKey: "userName",
       header: "Usuario",
-      cell: ({ row }) => <span>{`@${row.original.userName}`}</span>,
+      cell: ({ row }) => (
+        <div className="flex items-center gap-3">
+          <span>{`@${row.original.userName}`}</span>
+          {row.original.deletedAt && <OctagonX className="h-5 w-5 text-rose-500" />}
+        </div>
+      ),
     },
     {
       accessorKey: "firstName",
@@ -100,17 +123,23 @@ export function Admin() {
           <Button variant="outline" asChild>
             <Link to={`/admin/edit/${row.original.id}`}>Editar</Link>
           </Button>
-          <HoldButton
-            callback={() => removeAdmin(row.original.id)}
-            disabled={
-              admin?.role.value !== "superadmin" ||
-              (row.original.role.value === "superadmin" && row.original.ic === admin.ic)
-            }
-            variant="outline"
-          >
-            <Trash2 className="h-4 w-4" />
-            Remove
-          </HoldButton>
+          {row.original.deletedAt ? (
+            <Button variant="outline" onClick={() => restoreAdmin(row.original.id)}>
+              Restore
+            </Button>
+          ) : (
+            <HoldButton
+              callback={() => removeAdmin(row.original.id)}
+              disabled={
+                admin?.role.value !== "superadmin" ||
+                (row.original.role.value === "superadmin" && row.original.ic === admin.ic)
+              }
+              variant="outline"
+            >
+              <Trash2 className="h-4 w-4" />
+              Remove
+            </HoldButton>
+          )}
         </div>
       ),
     },
