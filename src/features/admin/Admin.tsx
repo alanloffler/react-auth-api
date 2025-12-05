@@ -12,19 +12,11 @@ import { useCallback, useEffect, useState } from "react";
 
 import type { IAdmin } from "@admin/interfaces/admin.interface";
 import { AdminService } from "@admin/services/admin.service";
-import { cn } from "@lib/utils";
 import { tryCatch } from "@/core/utils/try-catch";
 import { useAuthStore } from "@/core/auth/auth.store";
 
-interface IColumnVisibility {
-  firstName: boolean;
-  lastName: boolean;
-}
-
 export function Admin() {
   const [admins, setAdmins] = useState<IAdmin[] | undefined>(undefined);
-  const [columnVisibility, setColumnVisibility] = useState<IColumnVisibility>({ firstName: true, lastName: true });
-  const [openForm, setOpenForm] = useState<boolean>(false);
   const admin = useAuthStore((state) => state.admin);
 
   const fetchAdmins = useCallback(async () => {
@@ -43,11 +35,6 @@ export function Admin() {
   useEffect(() => {
     fetchAdmins();
   }, [fetchAdmins]);
-
-  function viewAdmin(): void {
-    setColumnVisibility({ firstName: false, lastName: false });
-    setOpenForm(true);
-  }
 
   async function removeAdmin(id: string): Promise<void> {
     try {
@@ -107,11 +94,11 @@ export function Admin() {
       id: "actions",
       cell: ({ row }) => (
         <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={viewAdmin}>
-            Ver
+          <Button variant="outline" asChild>
+            <Link to={`/admin/view/${row.original.id}`}>Ver</Link>
           </Button>
           <Button variant="outline" asChild>
-            <Link to={`/admin/edit/${row.original.id}`}>Editar </Link>
+            <Link to={`/admin/edit/${row.original.id}`}>Editar</Link>
           </Button>
           <HoldButton
             callback={() => removeAdmin(row.original.id)}
@@ -139,15 +126,7 @@ export function Admin() {
           </Link>
         </Button>
       </PageHeader>
-      <div className={cn("flex gap-8")}>
-        <DataTable
-          columns={columns}
-          columnVisibility={columnVisibility}
-          data={admins}
-          className={cn("transition-all duration-200 ease-in-out", openForm ? "w-1/2" : "w-full")}
-        />
-        {/* {openForm && selectedUser && <EditForm adminId={selectedUser.id} closeForm={closeForm} />} */}
-      </div>
+      <DataTable columns={columns} data={admins} />
     </div>
   );
 }
