@@ -8,7 +8,7 @@ export function Dashboard() {
     <div>
       <PageHeader title="Panel de control" subtitle="Administra tu aplicación" />
       <div className="mt-10 grid grid-cols-4 gap-8 lg:grid-cols-6 xl:grid-cols-8">
-        <Link className="col-span-2" to="/admin/create">
+        <Link className="col-span-2" to="/admin">
           <Card className="items-center gap-3 px-6 font-medium hover:bg-neutral-50">
             <UsersRound className="h-6 w-6" />
             <span>Administradores</span>
