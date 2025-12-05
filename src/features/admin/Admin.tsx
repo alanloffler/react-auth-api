@@ -1,7 +1,6 @@
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@components/ui/button";
 import { DataTable } from "@/features/admin/components/DataTable";
-import { EditForm } from "@admin/components/EditForm";
 import { HoldButton } from "@/components/ui/HoldButton";
 import { Link } from "react-router";
 import { PageHeader } from "@components/pages/PageHeader";
@@ -26,7 +25,6 @@ export function Admin() {
   const [admins, setAdmins] = useState<IAdmin[] | undefined>(undefined);
   const [columnVisibility, setColumnVisibility] = useState<IColumnVisibility>({ firstName: true, lastName: true });
   const [openForm, setOpenForm] = useState<boolean>(false);
-  const [selectedUser, setSelectedUser] = useState<IAdmin | null>(null);
   const admin = useAuthStore((state) => state.admin);
 
   const fetchAdmins = useCallback(async () => {
@@ -51,12 +49,6 @@ export function Admin() {
     setOpenForm(true);
   }
 
-  function editAdmin(user: IAdmin): void {
-    setSelectedUser(user);
-    setColumnVisibility({ firstName: false, lastName: false });
-    setOpenForm(true);
-  }
-
   async function removeAdmin(id: string): Promise<void> {
     try {
       const response = await AdminService.remove(id);
@@ -76,11 +68,6 @@ export function Admin() {
 
       toast.error("Error desconocido en el servidor");
     }
-  }
-
-  function closeForm(): void {
-    setColumnVisibility({ firstName: true, lastName: true });
-    setOpenForm(false);
   }
 
   const columns: ColumnDef<IAdmin>[] = [
@@ -123,8 +110,8 @@ export function Admin() {
           <Button variant="outline" onClick={viewAdmin}>
             Ver
           </Button>
-          <Button variant="outline" onClick={() => editAdmin(row.original)}>
-            Editar
+          <Button variant="outline" asChild>
+            <Link to={`/admin/edit/${row.original.id}`}>Editar </Link>
           </Button>
           <HoldButton
             callback={() => removeAdmin(row.original.id)}
@@ -159,7 +146,7 @@ export function Admin() {
           data={admins}
           className={cn("transition-all duration-200 ease-in-out", openForm ? "w-1/2" : "w-full")}
         />
-        {openForm && selectedUser && <EditForm adminId={selectedUser.id} closeForm={closeForm} />}
+        {/* {openForm && selectedUser && <EditForm adminId={selectedUser.id} closeForm={closeForm} />} */}
       </div>
     </div>
   );
