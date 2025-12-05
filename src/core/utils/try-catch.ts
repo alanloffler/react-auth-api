@@ -16,8 +16,15 @@ export async function tryCatch<T>(promise: Promise<T>): Promise<Result<T | null,
   } catch (error) {
     if (axios.isAxiosError(error)) {
       const rawMessage = error.response?.data?.message;
-      const validation = typeof rawMessage === "string" && rawMessage.trim() !== "";
-      const message = validation ? rawMessage : "Error desconocido en el servidor";
+      const arrayValidation = Array.isArray(rawMessage) && rawMessage.length > 0;
+      const stringValidation = typeof rawMessage === "string" && rawMessage.trim() !== "";
+      let message = "Error desconocido en el servidor";
+
+      if (arrayValidation) {
+        message = rawMessage[0];
+      } else if (stringValidation) {
+        message = rawMessage;
+      }
 
       return [
         null,
