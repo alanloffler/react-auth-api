@@ -1,5 +1,6 @@
 import CreateAdmin from "@/features/admin/views/CreateAdmin";
 import CreateRol from "@/features/roles/views/CreateRol";
+import EditAdmin from "@/features/admin/views/EditAdmin";
 import { Admin } from "@admin/Admin";
 import { AppInitializer } from "@core/auth/components/AppInitializer";
 import { Dashboard } from "@/features/dashboard/Dashboard";
@@ -42,6 +43,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={["superadmin", "admin"]}>
             <CreateAdmin />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "admin/edit/:id",
+        element: (
+          <ProtectedRoute allowedRoles={["superadmin", "admin"]}>
+            <EditAdmin />
           </ProtectedRoute>
         ),
       },
