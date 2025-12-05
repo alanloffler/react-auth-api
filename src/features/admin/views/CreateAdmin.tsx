@@ -92,7 +92,7 @@ export default function CreateAdmin() {
 
   return (
     <div>
-      <Card className="mt-8 w-full lg:w-[80%] xl:w-[60%]">
+      <Card className="w-full lg:w-[80%] xl:w-[60%]">
         <CardHeader>
           <CardTitle>Nuevo Administrador</CardTitle>
           <CardDescription>Aquí puedes editar los datos del administrador</CardDescription>
