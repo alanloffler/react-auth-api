@@ -16,6 +16,7 @@
       "@auth/*": ["./src/core/auth/*"],
       "@components/*": ["./src/components/*"],
       "@core/*": ["./src/core/*"],
+      "@dashboard/*": ["./src/features/dashboard/*"],
       "@lib/*": ["./src/lib/*"],
       "@login/*": ["./src/features/login/*"],
       "@roles/*": ["./src/features/roles/*"]
