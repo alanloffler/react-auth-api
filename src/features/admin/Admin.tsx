@@ -12,6 +12,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import type { IAdmin } from "@admin/interfaces/admin.interface";
 import { AdminService } from "@admin/services/admin.service";
+import { ERoles } from "@/core/auth/enums/role.enum";
 import { tryCatch } from "@/core/utils/try-catch";
 import { useAuthStore } from "@/core/auth/auth.store";
 
@@ -20,7 +21,7 @@ export function Admin() {
   const admin = useAuthStore((state) => state.admin);
 
   const fetchAdmins = useCallback(async () => {
-    const isSuperAdmin = admin?.role.value === "superadmin";
+    const isSuperAdmin = admin?.role.value === ERoles.SUPER;
     const serviceByRole = isSuperAdmin ? AdminService.findAllSoftRemoved() : AdminService.findAll();
 
     const [response, error] = await tryCatch(serviceByRole);
@@ -131,8 +132,8 @@ export function Admin() {
             <HoldButton
               callback={() => removeAdmin(row.original.id)}
               disabled={
-                admin?.role.value !== "superadmin" ||
-                (row.original.role.value === "superadmin" && row.original.ic === admin.ic)
+                admin?.role.value !== ERoles.SUPER ||
+                (row.original.role.value === ERoles.SUPER && row.original.ic === admin.ic)
               }
               variant="outline"
             >
