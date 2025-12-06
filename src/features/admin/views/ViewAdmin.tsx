@@ -1,12 +1,14 @@
 import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@components/ui/card";
+import { Forbidden } from "@auth/components/Forbidden";
 import { Link } from "react-router";
 
 import type { IAdmin } from "@admin/interfaces/admin.interface";
 import { AdminService } from "@admin/services/admin.service";
+import { ERole } from "@auth/enums/role.enum";
 import { toast } from "sonner";
-import { tryCatch } from "@/core/utils/try-catch";
+import { tryCatch } from "@core/utils/try-catch";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 
@@ -68,7 +70,11 @@ export default function ViewAdmin() {
         <Button variant="outline" asChild>
           <Link to={`/admin/edit/${id}`}>Editar</Link>
         </Button>
-        <Button variant="destructive">Eliminar</Button>
+        <Forbidden to={[ERole.TEACHER]} variant="invisible">
+          <Button variant="destructive" onClick={() => console.log("eliminar")}>
+            Eliminar
+          </Button>
+        </Forbidden>
       </CardFooter>
     </Card>
   );
