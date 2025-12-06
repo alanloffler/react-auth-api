@@ -1,9 +1,12 @@
 import { FileKey, GalleryVerticalEnd, KeyRound, Map, Settings, User2, UserPlus2 } from "lucide-react";
+
 import { NavMain } from "@components/nav-main";
 import { NavProjects } from "@components/nav-projects";
 import { NavUser } from "@components/nav-user";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@components/ui/sidebar";
 import { TeamSwitcher } from "@components/team-switcher";
+
+import { ERoles } from "@auth/enums/role.enum";
 
 const data = {
   teams: {
@@ -17,13 +20,13 @@ const data = {
       url: "/admin",
       icon: User2,
       isActive: true,
-      role: ["superadmin", "admin"],
+      role: [ERoles.SUPER, ERoles.ADMIN],
     },
     {
       title: "Roles",
       url: "/roles",
       icon: KeyRound,
-      role: ["superadmin", "admin"],
+      role: [ERoles.SUPER, ERoles.ADMIN],
     },
     {
       title: "Configuraciones",
@@ -33,15 +36,15 @@ const data = {
         {
           title: "Aplicación",
           url: "/settings/app",
-          role: ["superadmin", "admin"],
+          role: [ERoles.SUPER, ERoles.ADMIN],
         },
         {
           title: "Roles",
           url: "/settings/roles",
-          role: ["superadmin"],
+          role: [ERoles.SUPER],
         },
       ],
-      role: ["superadmin", "admin"],
+      role: [ERoles.SUPER, ERoles.ADMIN],
     },
   ],
   projects: [
