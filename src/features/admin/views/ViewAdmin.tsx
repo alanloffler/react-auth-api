@@ -6,7 +6,7 @@ import { Link } from "react-router";
 
 import type { IAdmin } from "@admin/interfaces/admin.interface";
 import { AdminService } from "@admin/services/admin.service";
-import { ERole } from "@auth/enums/role.enum";
+import { ERoles } from "@auth/enums/role.enum";
 import { toast } from "sonner";
 import { tryCatch } from "@core/utils/try-catch";
 import { useEffect, useState } from "react";
@@ -70,7 +70,7 @@ export default function ViewAdmin() {
         <Button variant="outline" asChild>
           <Link to={`/admin/edit/${id}`}>Editar</Link>
         </Button>
-        <Forbidden to={[ERole.TEACHER]} variant="invisible">
+        <Forbidden to={[ERoles.TEACHER]} variant="invisible">
           <Button variant="destructive" onClick={() => console.log("eliminar")}>
             Eliminar
           </Button>
