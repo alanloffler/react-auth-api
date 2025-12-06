@@ -1,18 +1,19 @@
-import CreateAdmin from "@/features/admin/views/CreateAdmin";
-import CreateRol from "@/features/roles/views/CreateRol";
-import EditAdmin from "@/features/admin/views/EditAdmin";
-import ViewAdmin from "@/features/admin/views/ViewAdmin";
+import CreateAdmin from "@admin/views/CreateAdmin";
+import CreateRol from "@roles/views/CreateRol";
+import EditAdmin from "@admin/views/EditAdmin";
+import ViewAdmin from "@admin/views/ViewAdmin";
 import { Admin } from "@admin/Admin";
-import { AppInitializer } from "@core/auth/components/AppInitializer";
-import { Dashboard } from "@/features/dashboard/Dashboard";
-import { GuestRoute } from "@core/auth/components/GuestRoute";
+import { AppInitializer } from "@auth/components/AppInitializer";
+import { Dashboard } from "@dashboard/Dashboard";
+import { GuestRoute } from "@auth/components/GuestRoute";
 import { Login } from "@login/Login";
-import { ProtectedLayout } from "@core/auth/components/ProtectedLayout";
-import { ProtectedRoute } from "@core/auth/components/ProtectedRoute";
-import { Roles } from "@/features/roles/Roles";
+import { ProtectedLayout } from "@auth/components/ProtectedLayout";
+import { ProtectedRoute } from "@auth/components/ProtectedRoute";
+import { Roles } from "@roles/Roles";
 import { Toaster } from "@components/ui/sonner";
 
 import { createBrowserRouter, RouterProvider } from "react-router";
+import { ERoles } from "./core/auth/enums/role.enum";
 
 const router = createBrowserRouter([
   {
@@ -34,7 +35,7 @@ const router = createBrowserRouter([
       {
         path: "admin",
         element: (
-          <ProtectedRoute allowedRoles={["superadmin", "admin"]}>
+          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN]}>
             <Admin />
           </ProtectedRoute>
         ),
@@ -42,7 +43,7 @@ const router = createBrowserRouter([
       {
         path: "admin/create",
         element: (
-          <ProtectedRoute allowedRoles={["superadmin", "admin"]}>
+          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN]}>
             <CreateAdmin />
           </ProtectedRoute>
         ),
@@ -50,7 +51,7 @@ const router = createBrowserRouter([
       {
         path: "admin/edit/:id",
         element: (
-          <ProtectedRoute allowedRoles={["superadmin", "admin"]}>
+          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN]}>
             <EditAdmin />
           </ProtectedRoute>
         ),
@@ -58,7 +59,7 @@ const router = createBrowserRouter([
       {
         path: "admin/view/:id",
         element: (
-          <ProtectedRoute allowedRoles={["superadmin", "admin"]}>
+          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN]}>
             <ViewAdmin />
           </ProtectedRoute>
         ),
@@ -66,7 +67,7 @@ const router = createBrowserRouter([
       {
         path: "roles",
         element: (
-          <ProtectedRoute allowedRoles={["superadmin", "admin"]}>
+          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN]}>
             <Roles />
           </ProtectedRoute>
         ),
@@ -74,7 +75,7 @@ const router = createBrowserRouter([
       {
         path: "roles/create",
         element: (
-          <ProtectedRoute allowedRoles={["superadmin", "admin"]}>
+          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN]}>
             <CreateRol />
           </ProtectedRoute>
         ),
