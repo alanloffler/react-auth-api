@@ -27,6 +27,7 @@
       "@admin/*": ["./src/features/admin/*"],
       "@auth/*": ["./src/core/auth/*"],
       "@components/*": ["./src/components/*"],
+      "@dashboard/*": ["./src/features/dashboard/*"],
       "@core/*": ["./src/core/*"],
       "@lib/*": ["./src/lib/*"],
       "@login/*": ["./src/features/login/*"],
