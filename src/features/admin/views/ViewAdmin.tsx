@@ -1,7 +1,9 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, RotateCcw, Trash2 } from "lucide-react";
+
 import { Button } from "@components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@components/ui/card";
 import { Forbidden } from "@auth/components/Forbidden";
+import { HoldButton } from "@components/ui/HoldButton";
 import { Link } from "react-router";
 
 import { toast } from "sonner";
@@ -82,19 +84,22 @@ export default function ViewAdmin() {
             </ul>
             <p className="text-muted-foreground px-0">{`Usuario desde el ${admin && new Date(admin.createdAt.split("T")[0]).toLocaleDateString()}`}</p>
           </CardContent>
-
           <Forbidden to={[ERoles.TEACHER]} variant="invisible">
             <CardFooter className="justify-end gap-3 px-0">
               {admin?.deletedAt && admin?.deletedAt !== null ? (
-                <Button variant="outline">Restaurar</Button>
+                <HoldButton callback={() => console.log("restaurar")} type="restore" variant="outline">
+                  <RotateCcw className="h-4 w-4" />
+                  Restaurar
+                </HoldButton>
               ) : (
                 <>
                   <Button variant="outline" asChild>
                     <Link to={`/admin/edit/${id}`}>Editar</Link>
                   </Button>
-                  <Button variant="destructive" onClick={() => console.log("eliminar")}>
+                  <HoldButton callback={() => console.log("eliminar")} type="delete" variant="outline">
+                    <Trash2 className="h-4 w-4" />
                     Eliminar
-                  </Button>
+                  </HoldButton>
                 </>
               )}
             </CardFooter>
