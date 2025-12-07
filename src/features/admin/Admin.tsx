@@ -1,20 +1,20 @@
 import { OctagonX, Plus, Trash2 } from "lucide-react";
+
 import { Button } from "@components/ui/button";
-import { DataTable } from "@/features/admin/components/DataTable";
-import { HoldButton } from "@/components/ui/HoldButton";
+import { DataTable } from "@admin/components/DataTable";
+import { HoldButton } from "@components/ui/HoldButton";
 import { Link } from "react-router";
 import { PageHeader } from "@components/pages/PageHeader";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import { isAxiosError } from "axios";
 import { toast } from "sonner";
 import { useCallback, useEffect, useState } from "react";
 
 import type { IAdmin } from "@admin/interfaces/admin.interface";
 import { AdminService } from "@admin/services/admin.service";
-import { ERoles } from "@/core/auth/enums/role.enum";
-import { tryCatch } from "@/core/utils/try-catch";
-import { useAuthStore } from "@/core/auth/auth.store";
+import { ERoles } from "@auth/enums/role.enum";
+import { tryCatch } from "@core/utils/try-catch";
+import { useAuthStore } from "@auth/auth.store";
 
 export function Admin() {
   const [admins, setAdmins] = useState<IAdmin[] | undefined>(undefined);
@@ -41,23 +41,16 @@ export function Admin() {
   }, [fetchAdmins]);
 
   async function removeAdmin(id: string): Promise<void> {
-    try {
-      const response = await AdminService.softRemove(id);
-      if (response.statusCode === 200) {
-        toast.success("Administrador eliminado");
-        fetchAdmins();
-      }
-    } catch (error) {
-      if (isAxiosError(error)) {
-        if ((error as any).isRefreshFail) {
-          return;
-        }
+    const [response, error] = await tryCatch(AdminService.softRemove(id));
 
-        toast.error(error.response?.data.message ?? "Error en el servidor");
-        return;
-      }
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
 
-      toast.error("Error desconocido en el servidor");
+    if (response && response.statusCode === 200) {
+      toast.success(response.message);
+      fetchAdmins();
     }
   }
 
