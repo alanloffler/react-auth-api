@@ -1,7 +1,7 @@
 import { Ban, Plus, RotateCcw, Trash2 } from "lucide-react";
 
 import { Button } from "@components/ui/button";
-import { DataTable } from "@admin/components/DataTable";
+import { DataTable } from "@components/DataTable";
 import { Forbidden } from "@auth/components/Forbidden";
 import { HoldButton } from "@components/ui/HoldButton";
 import { Link } from "react-router";
