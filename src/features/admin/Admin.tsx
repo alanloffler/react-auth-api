@@ -1,7 +1,8 @@
-import { OctagonX, Plus, Trash2 } from "lucide-react";
+import { Ban, Plus, RotateCcw, Trash2 } from "lucide-react";
 
 import { Button } from "@components/ui/button";
 import { DataTable } from "@admin/components/DataTable";
+import { Forbidden } from "@auth/components/Forbidden";
 import { HoldButton } from "@components/ui/HoldButton";
 import { Link } from "react-router";
 import { PageHeader } from "@components/pages/PageHeader";
@@ -15,7 +16,6 @@ import { AdminService } from "@admin/services/admin.service";
 import { ERoles } from "@auth/enums/role.enum";
 import { tryCatch } from "@core/utils/try-catch";
 import { useAuthStore } from "@auth/auth.store";
-import { Forbidden } from "@/core/auth/components/Forbidden";
 
 export function Admin() {
   const [admins, setAdmins] = useState<IAdmin[] | undefined>(undefined);
@@ -95,7 +95,7 @@ export function Admin() {
       cell: ({ row }) => (
         <div className="flex items-center gap-3">
           <span>{`@${row.original.userName}`}</span>
-          {row.original.deletedAt && <OctagonX className="h-5 w-5 text-rose-500" />}
+          {row.original.deletedAt && <Ban className="h-4 w-4 text-rose-500" />}
         </div>
       ),
     },
@@ -123,15 +123,16 @@ export function Admin() {
             </Forbidden>
           )}
           {row.original.deletedAt ? (
-            <Button variant="outline" onClick={() => restoreAdmin(row.original.id)}>
-              Restore
-            </Button>
+            <HoldButton callback={() => restoreAdmin(row.original.id)} type="restore" variant="outline">
+              <RotateCcw className="h-4 w-4" />
+              Restaurar
+            </HoldButton>
           ) : (
             <Forbidden to={[ERoles.TEACHER]} variant="invisible">
               {admin && row.original.ic !== admin.ic && (
-                <HoldButton callback={() => removeAdmin(row.original.id)} variant="outline">
+                <HoldButton callback={() => removeAdmin(row.original.id)} type="delete" variant="outline">
                   <Trash2 className="h-4 w-4" />
-                  Remove
+                  Eliminar
                 </HoldButton>
               )}
             </Forbidden>
