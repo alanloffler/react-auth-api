@@ -24,12 +24,17 @@ class AdminModuleService {
   }
 
   public async findAllSoftRemoved(): Promise<IApiResponse<IAdmin[]>> {
-    const response = await apiClient.get("/admin/softRemoved");
+    const response = await apiClient.get("/admin/soft-removed");
     return response.data;
   }
 
   public async findOne(id: string): Promise<IApiResponse<IAdmin>> {
     const response = await apiClient.get(`/admin/${id}`);
+    return response.data;
+  }
+
+  public async findOneSoftRemoved(id: string): Promise<IApiResponse<IAdmin>> {
+    const response = await apiClient.get(`/admin/${id}/soft-removed`);
     return response.data;
   }
 
