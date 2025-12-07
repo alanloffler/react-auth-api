@@ -8,6 +8,7 @@ interface IProps {
   disabled?: boolean;
   duration?: number;
   shortcut?: boolean;
+  type?: "confirm" | "default" | "delete" | "restore";
   variant?: string;
 }
 
@@ -18,6 +19,7 @@ export function HoldButton({
   disabled,
   duration = 1000,
   shortcut = false,
+  type = "default",
   variant = "outline",
 }: IProps) {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -62,7 +64,14 @@ export function HoldButton({
     >
       <div
         aria-hidden="true"
-        className="absolute inset-0 flex items-center justify-center gap-2 rounded-md bg-[#ffdbdc] text-[#e5484d] transition-[clip-path] duration-160 ease-out [clip-path:inset(0px_100%_0px_0px)] group-active:ease-linear group-active:[clip-path:inset(0px_0px_0px_0px)]"
+        className={cn(
+          "absolute inset-0 flex items-center justify-center gap-2 rounded-md transition-[clip-path] duration-160 ease-out [clip-path:inset(0px_100%_0px_0px)] group-active:ease-linear group-active:[clip-path:inset(0px_0px_0px_0px)]",
+          type === "confirm" && "bg-sky-200 text-sky-700",
+          type === "default" && "bg-gray-200",
+          // type === "delete" && "bg-[#ffdbdc] text-[#e5484d]",
+          type === "delete" && "bg-rose-200 text-rose-700",
+          type === "restore" && "bg-amber-200 text-amber-700",
+        )}
         style={{
           transitionDuration: duration + "ms",
         }}
