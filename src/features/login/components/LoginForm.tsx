@@ -4,17 +4,17 @@ import { Controller } from "react-hook-form";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@components/ui/field";
 import { Input } from "@components/ui/input";
 
-import axios from "axios";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { AuthService } from "@core/auth/auth.service";
+import { AuthService } from "@auth/auth.service";
 import { cn } from "@lib/utils";
 import { loginSchema } from "@login/schemas/login.schema";
-import { useAuthStore } from "@core/auth/auth.store";
+import { tryCatch } from "@core/utils/try-catch";
+import { useAuthStore } from "@auth/auth.store";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
   const navigate = useNavigate();
@@ -29,28 +29,23 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 
   async function onSubmit(data: z.infer<typeof loginSchema>) {
     const { email, password } = data;
+    const [response, error] = await tryCatch(AuthService.signIn({ email, password }));
 
-    try {
-      const response = await AuthService.signIn({ email, password });
-      toast.success(`Bienvenido ${response.data?.email}`);
+    if (error) {
+      toast.error(error.message);
+    }
 
-      if (response.statusCode === 200) {
-        const adminResponse = await AuthService.getAdmin();
-        if (adminResponse.statusCode === 200) {
-          useAuthStore.getState().setAdmin(adminResponse.data);
-        }
+    if (response && response.statusCode === 200) {
+      const [adminResponse, adminError] = await tryCatch(AuthService.getAdmin());
+
+      if (adminError) {
+        toast.error(adminError.message);
       }
 
-      navigate("/dashboard");
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const message: string = error.response?.data?.message;
-
-        if (message) {
-          toast.error(message);
-        } else {
-          toast.error("Error desconocido en el servidor");
-        }
+      if (adminResponse && adminResponse.statusCode === 200) {
+        useAuthStore.getState().setAdmin(adminResponse.data);
+        toast.success(`Bienvenido ${adminResponse.data?.firstName} ${adminResponse.data?.lastName}`);
+        navigate("/dashboard");
       }
     }
   }
@@ -63,7 +58,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
             <FieldGroup>
               <div className="mb-6 flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold md:text-3xl">React Auth API</h1>
-                <p className="text-muted-foreground text-sm text-balance md:text-base">Ingresá a nuestro sistema</p>
+                <p className="text-muted-foreground text-sm text-balance md:text-base">Ingresá al sistema</p>
               </div>
               <Controller
                 name="email"
