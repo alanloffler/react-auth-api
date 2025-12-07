@@ -4,13 +4,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Forbidden } from "@auth/components/Forbidden";
 import { Link } from "react-router";
 
+import { toast } from "sonner";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router";
+
 import type { IAdmin } from "@admin/interfaces/admin.interface";
 import { AdminService } from "@admin/services/admin.service";
 import { ERoles } from "@auth/enums/role.enum";
-import { toast } from "sonner";
 import { tryCatch } from "@core/utils/try-catch";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router";
 
 export default function ViewAdmin() {
   const [admin, setAdmin] = useState<IAdmin | undefined>(undefined);
