@@ -17,6 +17,21 @@ class RolesModuleService {
     const response = await apiClient.get("/roles");
     return response.data;
   }
+
+  public async findAllSoftRemoved(): Promise<IApiResponse<IRole[]>> {
+    const response = await apiClient.get("/roles/soft-removed");
+    return response.data;
+  }
+
+  public async softRemove(id: string): Promise<IApiResponse<IRole>> {
+    const response = await apiClient.delete(`/roles/soft-remove/${id}`);
+    return response.data;
+  }
+
+  public async restore(id: string): Promise<IApiResponse<IRole>> {
+    const response = await apiClient.patch(`/roles/restore/${id}`);
+    return response.data;
+  }
 }
 
 export const RolesService = RolesModuleService.getInstance();
