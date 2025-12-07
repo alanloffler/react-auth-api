@@ -15,6 +15,7 @@ import { AdminService } from "@admin/services/admin.service";
 import { ERoles } from "@auth/enums/role.enum";
 import { tryCatch } from "@core/utils/try-catch";
 import { useAuthStore } from "@auth/auth.store";
+import { Forbidden } from "@/core/auth/components/Forbidden";
 
 export function Admin() {
   const [admins, setAdmins] = useState<IAdmin[] | undefined>(undefined);
@@ -114,25 +115,26 @@ export function Admin() {
           <Button variant="outline" asChild>
             <Link to={`/admin/view/${row.original.id}`}>Ver</Link>
           </Button>
-          <Button variant="outline" asChild>
-            <Link to={`/admin/edit/${row.original.id}`}>Editar</Link>
-          </Button>
+          {!row.original.deletedAt && (
+            <Forbidden to={[ERoles.TEACHER]} variant="invisible">
+              <Button variant="outline" asChild>
+                <Link to={`/admin/edit/${row.original.id}`}>Editar</Link>
+              </Button>
+            </Forbidden>
+          )}
           {row.original.deletedAt ? (
             <Button variant="outline" onClick={() => restoreAdmin(row.original.id)}>
               Restore
             </Button>
           ) : (
-            <HoldButton
-              callback={() => removeAdmin(row.original.id)}
-              disabled={
-                admin?.role.value !== ERoles.SUPER ||
-                (row.original.role.value === ERoles.SUPER && row.original.ic === admin.ic)
-              }
-              variant="outline"
-            >
-              <Trash2 className="h-4 w-4" />
-              Remove
-            </HoldButton>
+            <Forbidden to={[ERoles.TEACHER]} variant="invisible">
+              {admin && row.original.ic !== admin.ic && (
+                <HoldButton callback={() => removeAdmin(row.original.id)} variant="outline">
+                  <Trash2 className="h-4 w-4" />
+                  Remove
+                </HoldButton>
+              )}
+            </Forbidden>
           )}
         </div>
       ),
