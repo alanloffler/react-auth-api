@@ -1,4 +1,5 @@
 import { BadgeCheck, Ellipsis, LogOut } from "lucide-react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,10 +10,10 @@ import {
 } from "@components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@components/ui/sidebar";
 
-import axios from "axios";
-import { AuthService } from "@core/auth/auth.service";
+import { AuthService } from "@auth/auth.service";
 import { toast } from "sonner";
-import { useAuthStore } from "@core/auth/auth.store";
+import { tryCatch } from "@core/utils/try-catch";
+import { useAuthStore } from "@auth/auth.store";
 import { useNavigate } from "react-router";
 
 export function NavUser() {
@@ -21,20 +22,18 @@ export function NavUser() {
   const navigate = useNavigate();
 
   async function signOut() {
-    try {
-      const response = await AuthService.signOut();
-      toast.success(response.message);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const message: string = error.response?.data?.message;
+    const [response, error] = await tryCatch(AuthService.signOut());
 
-        if (message) {
-          toast.error(message);
-        } else {
-          toast.error("Error desconocido en el servidor");
-        }
-      }
-    } finally {
+    if (error) {
+      toast.error(error.message);
+      clearAdmin();
+      navigate("/");
+
+      return;
+    }
+
+    if (response && response.statusCode === 200) {
+      toast.success(response.message);
       clearAdmin();
       navigate("/");
     }
