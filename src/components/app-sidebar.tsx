@@ -20,7 +20,7 @@ const data = {
       url: "/admin",
       icon: User2,
       isActive: true,
-      role: [ERoles.SUPER, ERoles.ADMIN],
+      role: [ERoles.SUPER, ERoles.ADMIN, ERoles.TEACHER],
     },
     {
       title: "Roles",
