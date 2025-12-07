@@ -5,17 +5,18 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "@components/ui/field"
 import { Input } from "@components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select";
 
-import type { IRole } from "@/features/roles/interfaces/role.interface";
 import z from "zod";
-import { AdminService } from "@admin/services/admin.service";
-import { RolesService } from "@/features/roles/services/roles.service";
-import { adminSchema } from "@admin/schemas/admin.schema";
 import { toast } from "sonner";
-import { tryCatch } from "@/core/utils/try-catch";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
+
+import type { IRole } from "@roles/interfaces/role.interface";
+import { AdminService } from "@admin/services/admin.service";
+import { RolesService } from "@roles/services/roles.service";
+import { adminSchema } from "@admin/schemas/admin.schema";
+import { tryCatch } from "@core/utils/try-catch";
 
 interface IProps {
   adminId: string;
@@ -82,9 +83,9 @@ export function EditForm({ adminId }: IProps) {
     }
   }
 
-  function resetForm(): void {
+  function handleCancel(): void {
     form.reset();
-    navigate("/admin");
+    navigate(-1);
   }
 
   useEffect(() => {
@@ -248,7 +249,7 @@ export function EditForm({ adminId }: IProps) {
         </form>
       </CardContent>
       <CardFooter className="justify-end gap-4 pt-4">
-        <Button variant="ghost" onClick={resetForm}>
+        <Button variant="ghost" onClick={handleCancel}>
           Cancelar
         </Button>
         <Button disabled={!form.formState.isDirty} form="edit-form" type="submit" variant="default">
