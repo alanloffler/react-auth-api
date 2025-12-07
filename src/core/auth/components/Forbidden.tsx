@@ -21,4 +21,6 @@ export function Forbidden({ children, to, variant = "disabled" }: IProps) {
 
     return;
   }
+
+  return <>{children}</>;
 }
