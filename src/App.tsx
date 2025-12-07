@@ -35,7 +35,7 @@ const router = createBrowserRouter([
       {
         path: "admin",
         element: (
-          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN]}>
+          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN, ERoles.TEACHER]}>
             <Admin />
           </ProtectedRoute>
         ),
@@ -59,7 +59,7 @@ const router = createBrowserRouter([
       {
         path: "admin/view/:id",
         element: (
-          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN]}>
+          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN, ERoles.TEACHER]}>
             <ViewAdmin />
           </ProtectedRoute>
         ),
