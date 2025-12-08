@@ -1,17 +1,26 @@
 import { Button } from "@components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@components/ui/card";
+import { Checkbox } from "@components/ui/checkbox";
 import { Controller } from "react-hook-form";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@components/ui/field";
 import { Input } from "@components/ui/input";
+import { Label } from "@components/ui/label";
 
 import type z from "zod";
+import { toast } from "sonner";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import type { IPermission } from "@roles/interfaces/permission.interface";
+import { RolesService } from "@roles/services/roles.service";
+import { cn } from "@lib/utils";
 import { roleSchema } from "@roles/schemas/role.schema";
+import { tryCatch } from "@core/utils/try-catch";
 
 export default function CreateRol() {
+  const [permissions, setPermissions] = useState<IPermission[] | null>(null);
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof roleSchema>>({
@@ -20,11 +29,39 @@ export default function CreateRol() {
       description: "",
       name: "",
       value: "",
+      permissions: [],
     },
   });
 
+  useEffect(() => {
+    async function fetchPermissions() {
+      const [response, error] = await tryCatch(RolesService.getDefaultPermissions());
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+
+      if (response && response.statusCode === 200) {
+        setPermissions(response.data);
+        form.setValue("permissions", response.data);
+      }
+    }
+
+    fetchPermissions();
+  }, [form]);
+
   async function onSubmit(data: z.infer<typeof roleSchema>) {
-    console.log(data);
+    const [response, error] = await tryCatch(RolesService.create(data));
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    if (response && response.statusCode === 201) {
+      toast.success(response.message);
+      resetForm();
+    }
   }
 
   function resetForm(): void {
@@ -78,6 +115,54 @@ export default function CreateRol() {
                 )}
               />
             </FieldGroup>
+            <div className="flex flex-col gap-3">
+              <Label>Permisos</Label>
+              <div
+                className={cn(
+                  "flex flex-col gap-5 rounded-md border border-gray-200 p-5",
+                  form.formState.errors.permissions && "border-red-500",
+                )}
+              >
+                <FieldGroup>
+                  <ul className="grid grid-cols-2 gap-5">
+                    {permissions &&
+                      permissions.map((permission: IPermission, permIndex: number) => (
+                        <li className="flex flex-col gap-3" key={permission.id}>
+                          <h2 className="text-xxs font-medium uppercase">{permission.name}</h2>
+                          <ul className="flex flex-col gap-3 pl-4">
+                            {permission.actions.map((action, actionIndex) => (
+                              <li className="flex items-center gap-2" key={action.id}>
+                                <Controller
+                                  name={`permissions.${permIndex}.actions.${actionIndex}.value`}
+                                  control={form.control}
+                                  render={({ field }) => (
+                                    <Checkbox
+                                      id={action.key}
+                                      checked={field.value}
+                                      onCheckedChange={(checked) => {
+                                        field.onChange(checked);
+                                        if (form.formState.errors.permissions) {
+                                          form.clearErrors("permissions");
+                                        }
+                                      }}
+                                    />
+                                  )}
+                                />
+                                <Label htmlFor={action.key}>{action.name}</Label>
+                              </li>
+                            ))}
+                          </ul>
+                        </li>
+                      ))}
+                  </ul>
+                  {form.formState.errors.permissions && (
+                    <FieldError
+                      errors={[{ message: form.formState.errors.permissions.root?.message || "Error en permisos" }]}
+                    />
+                  )}
+                </FieldGroup>
+              </div>
+            </div>
           </form>
         </CardContent>
         <CardFooter className="justify-end gap-4 pt-4">
