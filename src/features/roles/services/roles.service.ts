@@ -13,15 +13,10 @@ class RolesModuleService {
     return RolesModuleService.instance;
   }
 
-  public async create(role: Partial<IRole>) {
-    console.log(role);
-    return { statusCode: 201, message: "Rol creado fake", data: role };
+  public async create(role: Partial<IRole>): Promise<IApiResponse<IRole>> {
+    const response = await apiClient.post("/roles", role);
+    return response.data;
   }
-
-  // public async create(role: Partial<IRole>): Promise<IApiResponse<IRole>> {
-  //   const response = await apiClient.post("/roles", role);
-  //   return response.data;
-  // }
 
   public async findAll(): Promise<IApiResponse<IRole[]>> {
     const response = await apiClient.get("/roles");
