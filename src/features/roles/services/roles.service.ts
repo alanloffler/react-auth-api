@@ -52,12 +52,18 @@ class RolesModuleService {
         actions: [
           {
             id: 10,
+            name: "Ver administradores",
+            key: "admin-view",
+            value: false,
+          },
+          {
+            id: 11,
             name: "Crear administrador",
             key: "admin-create",
             value: false,
           },
           {
-            id: 11,
+            id: 12,
             name: "Eliminar administrador",
             key: "admin-remove",
             value: false,
@@ -71,14 +77,45 @@ class RolesModuleService {
         actions: [
           {
             id: 20,
+            name: "Ver roles",
+            key: "roles-view",
+            value: false,
+          },
+          {
+            id: 21,
             name: "Crear rol",
             key: "roles-create",
             value: false,
           },
           {
-            id: 21,
+            id: 22,
             name: "Eliminar rol",
             key: "roles-remove",
+            value: false,
+          },
+        ],
+      },
+      {
+        id: 3,
+        name: "Configuraciones",
+        module: "settings",
+        actions: [
+          {
+            id: 30,
+            name: "Ver configuraciones",
+            key: "settings-view",
+            value: false,
+          },
+          {
+            id: 31,
+            name: "Crear configuración",
+            key: "settings-create",
+            value: false,
+          },
+          {
+            id: 32,
+            name: "Eliminar configuración",
+            key: "settings-remove",
             value: false,
           },
         ],
