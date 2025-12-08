@@ -1,6 +1,8 @@
 import CreateAdmin from "@admin/views/CreateAdmin";
+import CreatePermission from "@permissions/views/CreatePermission";
 import CreateRole from "@roles/views/CreateRole";
 import EditAdmin from "@admin/views/EditAdmin";
+import Permissions from "@permissions/Permissions";
 import Roles from "@roles/Roles";
 import ViewAdmin from "@admin/views/ViewAdmin";
 import ViewRole from "@roles/views/ViewRole";
@@ -86,6 +88,22 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN, ERoles.TEACHER]}>
             <ViewRole />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "permissions",
+        element: (
+          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN]}>
+            <Permissions />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "permissions/create",
+        element: (
+          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN]}>
+            <CreatePermission />
           </ProtectedRoute>
         ),
       },
