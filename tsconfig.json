@@ -19,6 +19,7 @@
       "@dashboard/*": ["./src/features/dashboard/*"],
       "@lib/*": ["./src/lib/*"],
       "@login/*": ["./src/features/login/*"],
+      "@permissions/*": ["./src/features/permissions/*"],
       "@roles/*": ["./src/features/roles/*"]
     }
   }
