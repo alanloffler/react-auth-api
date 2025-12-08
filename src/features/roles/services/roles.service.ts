@@ -13,6 +13,11 @@ class RolesModuleService {
     return RolesModuleService.instance;
   }
 
+  public async create(role: IRole): Promise<IApiResponse<IRole>> {
+    const response = await apiClient.post("/roles", role);
+    return response.data;
+  }
+
   public async findAll(): Promise<IApiResponse<IRole[]>> {
     const response = await apiClient.get("/roles");
     return response.data;
