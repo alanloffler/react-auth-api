@@ -126,7 +126,7 @@ export default function Roles() {
     <div className="flex flex-col gap-10">
       <PageHeader title="Roles" subtitle="Gestioná los roles para los usuarios del sistema.">
         <Button variant="default" size="lg" asChild>
-          <Link to="/role/create">
+          <Link to="/roles/create">
             <Plus />
             Crear rol
           </Link>
