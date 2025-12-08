@@ -14,14 +14,15 @@ import { useNavigate } from "react-router";
 import { useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import type { IPermission } from "@roles/interfaces/permission.interface";
+import type { IPermissionGroup } from "@permissions/interfaces/permission-group.interface";
+import { PermissionsService } from "@permissions/services/permissions.service";
 import { RolesService } from "@roles/services/roles.service";
 import { cn } from "@lib/utils";
 import { roleSchema } from "@roles/schemas/role.schema";
 import { tryCatch } from "@core/utils/try-catch";
 
-export default function CreateRol() {
-  const [permissions, setPermissions] = useState<IPermission[] | null>(null);
+export default function CreateRole() {
+  const [permissions, setPermissions] = useState<IPermissionGroup[] | undefined>(undefined);
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof roleSchema>>({
@@ -41,7 +42,8 @@ export default function CreateRol() {
 
   useEffect(() => {
     async function fetchPermissions() {
-      const [response, error] = await tryCatch(RolesService.getDefaultPermissions());
+      const [response, error] = await tryCatch(PermissionsService.findAllGrouped());
+
       if (error) {
         toast.error(error.message);
         return;
@@ -49,7 +51,7 @@ export default function CreateRol() {
 
       if (response && response.statusCode === 200) {
         setPermissions(response.data);
-        form.setValue("permissions", response.data);
+        form.setValue("permissions", response.data || []);
       }
     }
 
@@ -130,9 +132,9 @@ export default function CreateRol() {
                     form.formState.errors.permissions && "border-destructive",
                   )}
                 >
-                  <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3">
-                    {permissions &&
-                      permissions.map((permission: IPermission, permIndex: number) => (
+                  {permissions ? (
+                    <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3">
+                      {permissions.map((permission: IPermissionGroup, permIndex: number) => (
                         <li className="flex flex-col gap-3" key={permission.id}>
                           <h2 className="text-xxs font-medium uppercase">{permission.name}</h2>
                           <ul className="flex flex-col gap-3 pl-4">
@@ -188,7 +190,10 @@ export default function CreateRol() {
                           </ul>
                         </li>
                       ))}
-                  </ul>
+                    </ul>
+                  ) : (
+                    <span className="text-destructive text-center text-sm">Error cargando permisos</span>
+                  )}
                 </div>
               </FieldGroup>
               {form.formState.errors.permissions && (
