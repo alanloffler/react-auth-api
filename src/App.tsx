@@ -1,5 +1,5 @@
 import CreateAdmin from "@admin/views/CreateAdmin";
-import CreateRol from "@roles/views/CreateRol";
+import CreateRole from "@roles/views/CreateRole";
 import EditAdmin from "@admin/views/EditAdmin";
 import Roles from "@roles/Roles";
 import ViewAdmin from "@admin/views/ViewAdmin";
@@ -77,7 +77,7 @@ const router = createBrowserRouter([
         path: "roles/create",
         element: (
           <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN]}>
-            <CreateRol />
+            <CreateRole />
           </ProtectedRoute>
         ),
       },
