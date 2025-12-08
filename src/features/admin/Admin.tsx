@@ -145,12 +145,14 @@ export function Admin() {
   return (
     <div className="flex flex-col gap-10">
       <PageHeader title="Administradores" subtitle="Gestioná los usuarios del sistema.">
-        <Button variant="default" size="lg" asChild>
-          <Link to="/admin/create">
-            <Plus />
-            Crear admin
-          </Link>
-        </Button>
+        <Forbidden to={[ERoles.TEACHER]} variant="invisible">
+          <Button variant="default" size="lg" asChild>
+            <Link to="/admin/create">
+              <Plus />
+              Crear admin
+            </Link>
+          </Button>
+        </Forbidden>
       </PageHeader>
       <DataTable columns={columns} data={admins} />
     </div>
