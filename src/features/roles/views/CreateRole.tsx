@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
+import { useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import type { IPermission } from "@roles/interfaces/permission.interface";
@@ -31,6 +32,11 @@ export default function CreateRol() {
       value: "",
       permissions: [],
     },
+  });
+
+  const permissionsWatch = useWatch({
+    control: form.control,
+    name: "permissions",
   });
 
   useEffect(() => {
@@ -116,15 +122,15 @@ export default function CreateRol() {
               />
             </FieldGroup>
             <div className="flex flex-col gap-3">
-              <Label>Permisos</Label>
-              <div
-                className={cn(
-                  "flex flex-col gap-5 rounded-md border border-gray-200 p-5",
-                  form.formState.errors.permissions && "border-red-500",
-                )}
-              >
-                <FieldGroup>
-                  <ul className="grid grid-cols-2 gap-5">
+              <Label className={form.formState.errors.permissions && "text-destructive"}>Permisos</Label>
+              <FieldGroup>
+                <div
+                  className={cn(
+                    "flex flex-col gap-5 rounded-md border border-gray-200 p-6",
+                    form.formState.errors.permissions && "border-destructive",
+                  )}
+                >
+                  <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3">
                     {permissions &&
                       permissions.map((permission: IPermission, permIndex: number) => (
                         <li className="flex flex-col gap-3" key={permission.id}>
@@ -135,18 +141,46 @@ export default function CreateRol() {
                                 <Controller
                                   name={`permissions.${permIndex}.actions.${actionIndex}.value`}
                                   control={form.control}
-                                  render={({ field }) => (
-                                    <Checkbox
-                                      id={action.key}
-                                      checked={field.value}
-                                      onCheckedChange={(checked) => {
-                                        field.onChange(checked);
-                                        if (form.formState.errors.permissions) {
-                                          form.clearErrors("permissions");
-                                        }
-                                      }}
-                                    />
-                                  )}
+                                  render={({ field }) => {
+                                    const isViewPermission = action.key.endsWith("-view");
+
+                                    const hasOtherPermissionsChecked = isViewPermission
+                                      ? permission.actions.some(
+                                          (a, idx) =>
+                                            !a.key.endsWith("-view") &&
+                                            permissionsWatch?.[permIndex]?.actions?.[idx]?.value,
+                                        )
+                                      : false;
+
+                                    return (
+                                      <Checkbox
+                                        id={action.key}
+                                        checked={field.value}
+                                        disabled={hasOtherPermissionsChecked}
+                                        onCheckedChange={(checked) => {
+                                          field.onChange(checked);
+
+                                          if (checked && !action.key.endsWith("-view")) {
+                                            const viewActionIndex = permission.actions.findIndex(
+                                              (a) => a.key === `${permission.module}-view`,
+                                            );
+
+                                            if (viewActionIndex !== -1) {
+                                              form.setValue(
+                                                `permissions.${permIndex}.actions.${viewActionIndex}.value`,
+                                                true,
+                                                { shouldDirty: true },
+                                              );
+                                            }
+                                          }
+
+                                          if (form.formState.errors.permissions) {
+                                            form.clearErrors("permissions");
+                                          }
+                                        }}
+                                      />
+                                    );
+                                  }}
                                 />
                                 <Label htmlFor={action.key}>{action.name}</Label>
                               </li>
@@ -155,13 +189,13 @@ export default function CreateRol() {
                         </li>
                       ))}
                   </ul>
-                  {form.formState.errors.permissions && (
-                    <FieldError
-                      errors={[{ message: form.formState.errors.permissions.root?.message || "Error en permisos" }]}
-                    />
-                  )}
-                </FieldGroup>
-              </div>
+                </div>
+              </FieldGroup>
+              {form.formState.errors.permissions && (
+                <FieldError
+                  errors={[{ message: form.formState.errors.permissions.root?.message || "Error en permisos" }]}
+                />
+              )}
             </div>
           </form>
         </CardContent>
