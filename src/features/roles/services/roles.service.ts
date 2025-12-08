@@ -13,10 +13,15 @@ class RolesModuleService {
     return RolesModuleService.instance;
   }
 
-  public async create(role: IRole): Promise<IApiResponse<IRole>> {
-    const response = await apiClient.post("/roles", role);
-    return response.data;
+  public async create(role: Partial<IRole>) {
+    console.log(role);
+    return { statusCode: 201, message: "Rol creado fake", data: role };
   }
+
+  // public async create(role: Partial<IRole>): Promise<IApiResponse<IRole>> {
+  //   const response = await apiClient.post("/roles", role);
+  //   return response.data;
+  // }
 
   public async findAll(): Promise<IApiResponse<IRole[]>> {
     const response = await apiClient.get("/roles");
@@ -36,6 +41,51 @@ class RolesModuleService {
   public async restore(id: string): Promise<IApiResponse<IRole>> {
     const response = await apiClient.patch(`/roles/restore/${id}`);
     return response.data;
+  }
+
+  public async getDefaultPermissions() {
+    const PERMISSIONS = [
+      {
+        id: 1,
+        name: "Administradores",
+        module: "admin",
+        actions: [
+          {
+            id: 10,
+            name: "Crear administrador",
+            key: "admin-create",
+            value: false,
+          },
+          {
+            id: 11,
+            name: "Eliminar administrador",
+            key: "admin-remove",
+            value: false,
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: "Roles",
+        module: "roles",
+        actions: [
+          {
+            id: 20,
+            name: "Crear rol",
+            key: "roles-create",
+            value: false,
+          },
+          {
+            id: 21,
+            name: "Eliminar rol",
+            key: "roles-remove",
+            value: false,
+          },
+        ],
+      },
+    ];
+
+    return { statusCode: 200, data: PERMISSIONS };
   }
 }
 
