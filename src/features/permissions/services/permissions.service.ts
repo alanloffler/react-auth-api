@@ -1,5 +1,6 @@
 import type { IApiResponse } from "@core/interfaces/api-response.interface";
 import type { IPermission } from "@permissions/interfaces/permission.interface";
+import type { IPermissionGroup } from "@permissions/interfaces/permission-group.interface";
 import { apiClient } from "@core/client/client";
 
 class PermissionsModuleService {
@@ -23,7 +24,7 @@ class PermissionsModuleService {
     return response.data;
   }
 
-  public async findAllGrouped(): Promise<IApiResponse<any[]>> {
+  public async findAllGrouped(): Promise<IApiResponse<IPermissionGroup[]>> {
     const response = await apiClient.get("/permissions/grouped");
     return response.data;
   }
