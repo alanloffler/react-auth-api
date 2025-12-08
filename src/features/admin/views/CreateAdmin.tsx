@@ -99,7 +99,7 @@ export default function CreateAdmin() {
           <CardDescription>Aquí puedes editar los datos del administrador</CardDescription>
         </CardHeader>
         <CardContent className="flex-1">
-          <form className="grid grid-cols-1 gap-6" id="edit-form" onSubmit={form.handleSubmit(onSubmit)}>
+          <form className="grid grid-cols-1 gap-6" id="create-admin" onSubmit={form.handleSubmit(onSubmit)}>
             <FieldGroup className="grid grid-cols-2 gap-6">
               <Controller
                 name="ic"
@@ -247,7 +247,7 @@ export default function CreateAdmin() {
           <Button variant="ghost" onClick={resetForm}>
             Cancelar
           </Button>
-          <Button disabled={!form.formState.isDirty} form="edit-form" type="submit" variant="default">
+          <Button disabled={!form.formState.isDirty} form="create-admin" type="submit" variant="default">
             Guardar
           </Button>
         </CardFooter>
