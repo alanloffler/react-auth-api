@@ -101,8 +101,8 @@ export default function Roles() {
       id: "actions",
       cell: ({ row }) => (
         <div className="flex justify-end gap-2">
-          <Button variant="outline" asChild>
-            <Link to={`/roles/view/${row.original.id}`}>Ver</Link>
+          <Button variant="outline" onClick={() => console.log(row.original)}>
+            Ver
           </Button>
           {row.original.deletedAt ? (
             <HoldButton callback={() => restoreRole(row.original.id)} type="restore" variant="outline">
