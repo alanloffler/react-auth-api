@@ -34,8 +34,8 @@ const data = {
       icon: Settings,
       items: [
         {
-          title: "Aplicación",
-          url: "/settings/app",
+          title: "Permisos",
+          url: "/permissions",
           role: [ERoles.SUPER, ERoles.ADMIN],
         },
         {
