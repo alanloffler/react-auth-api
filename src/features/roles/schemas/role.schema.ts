@@ -1,14 +1,14 @@
 import z from "zod";
 
 const actionSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   name: z.string(),
   key: z.string(),
   value: z.boolean(),
 });
 
 const permissionSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   name: z.string(),
   module: z.string(),
   actions: z.array(actionSchema),
