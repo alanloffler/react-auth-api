@@ -28,6 +28,16 @@ class RolesModuleService {
     return response.data;
   }
 
+  public async findOne(id: string): Promise<IApiResponse<IRole>> {
+    const response = await apiClient.get(`/roles/${id}`);
+    return response.data;
+  }
+
+  public async remove(id: string): Promise<IApiResponse<IRole>> {
+    const response = await apiClient.delete(`/roles/${id}`);
+    return response.data;
+  }
+
   public async softRemove(id: string): Promise<IApiResponse<IRole>> {
     const response = await apiClient.delete(`/roles/soft-remove/${id}`);
     return response.data;
