@@ -37,18 +37,17 @@ export default function Permissions() {
   }, [fetchPermissions]);
 
   async function removeHardPermission(id: string): Promise<void> {
-    console.log("Remove hard", id);
-    // const [response, error] = await tryCatch(PermissionsService.softRemove(id));
-    //
-    // if (error) {
-    //   toast.error(error.message);
-    //   return;
-    // }
-    //
-    // if (response && response.statusCode === 200) {
-    //   toast.success(response.message);
-    //   fetchPermissions();
-    // }
+    const [response, error] = await tryCatch(PermissionsService.remove(id));
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    if (response && response.statusCode === 200) {
+      toast.success(response.message);
+      fetchPermissions();
+    }
   }
 
   const columns: ColumnDef<IPermission>[] = [
