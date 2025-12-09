@@ -28,6 +28,11 @@ class PermissionsModuleService {
     const response = await apiClient.get("/permissions/grouped");
     return response.data;
   }
+
+  public async remove(id: string): Promise<IApiResponse<IPermission>> {
+    const response = await apiClient.delete(`/permissions/${id}`);
+    return response.data;
+  }
 }
 
 export const PermissionsService = PermissionsModuleService.getInstance();
