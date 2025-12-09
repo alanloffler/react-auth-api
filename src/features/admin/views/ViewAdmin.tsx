@@ -6,6 +6,7 @@ import { Forbidden } from "@auth/components/Forbidden";
 import { HoldButton } from "@components/ui/HoldButton";
 import { Link } from "react-router";
 
+import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router";
@@ -20,6 +21,7 @@ export default function ViewAdmin() {
   const [admin, setAdmin] = useState<IAdmin | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const adminAuth = useAuthStore((state) => state.admin);
+  const navigate = useNavigate();
   const { id } = useParams();
 
   const findOneAdmin = useCallback(
@@ -54,10 +56,8 @@ export default function ViewAdmin() {
         <div className="min-w-80">Cargando...</div>
       ) : (
         <>
-          <Button className="absolute top-5 right-5" variant="ghost" size="icon-lg" asChild>
-            <Link to="/admin">
-              <ArrowLeft className="size-5 cursor-pointer" />
-            </Link>
+          <Button className="absolute top-5 right-5" variant="ghost" size="icon-lg" onClick={() => navigate(-1)}>
+            <ArrowLeft className="size-5 cursor-pointer" />
           </Button>
           <CardHeader>
             <CardTitle className="text-xl">{`${admin?.firstName} ${admin?.lastName}`}</CardTitle>
