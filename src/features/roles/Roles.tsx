@@ -1,4 +1,4 @@
-import { Ban, Plus, RotateCcw, Trash2 } from "lucide-react";
+import { Ban, Eye, Plus, RotateCcw, Trash2, TriangleAlert } from "lucide-react";
 
 import { Button } from "@components/ui/button";
 import { DataTable } from "@components/DataTable";
@@ -55,6 +55,20 @@ export default function Roles() {
     }
   }
 
+  async function hardRemoveRole(id: string): Promise<void> {
+    const [response, error] = await tryCatch(RolesService.remove(id));
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    if (response && response.statusCode === 200) {
+      toast.success(response.message);
+      fetchRoles();
+    }
+  }
+
   async function restoreRole(id: string): Promise<void> {
     const [response, error] = await tryCatch(RolesService.restore(id));
 
@@ -94,28 +108,37 @@ export default function Roles() {
       header: "Valor",
     },
     {
-      accessorKey: "description",
-      header: "Descripción",
-    },
-    {
       id: "actions",
       cell: ({ row }) => (
         <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={() => console.log(row.original)}>
-            Ver
-          </Button>
           {row.original.deletedAt ? (
-            <HoldButton callback={() => restoreRole(row.original.id)} type="restore" variant="outline">
+            <HoldButton callback={() => restoreRole(row.original.id)} size="icon" type="restore" variant="outline">
               <RotateCcw className="h-4 w-4" />
-              Restaurar
             </HoldButton>
           ) : (
-            <Forbidden to={[ERoles.ADMIN, ERoles.TEACHER]}>
-              <HoldButton callback={() => removeRole(row.original.id)} type="delete" variant="outline">
-                <Trash2 className="h-4 w-4" />
-                Eliminar
-              </HoldButton>
-            </Forbidden>
+            <>
+              <Button className="px-5!" variant="outline" asChild>
+                <Link to={`/roles/view/${row.original.id}`}>
+                  <Eye className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Forbidden to={[ERoles.ADMIN, ERoles.TEACHER]}>
+                <HoldButton callback={() => removeRole(row.original.id)} size="icon" type="delete" variant="outline">
+                  <Trash2 className="h-4 w-4" />
+                </HoldButton>
+              </Forbidden>
+              <Forbidden to={[ERoles.ADMIN, ERoles.TEACHER]} variant="invisible">
+                <HoldButton
+                  callback={() => hardRemoveRole(row.original.id)}
+                  size="icon"
+                  type="delete"
+                  variant="outline"
+                >
+                  <TriangleAlert className="h-4 w-4 stroke-red-500" />
+                  <Trash2 className="h-4 w-4" />
+                </HoldButton>
+              </Forbidden>
+            </>
           )}
         </div>
       ),
