@@ -8,6 +8,7 @@ interface IProps {
   disabled?: boolean;
   duration?: number;
   shortcut?: boolean;
+  size?: "default" | "icon";
   type?: "confirm" | "default" | "delete" | "restore";
   variant?: string;
 }
@@ -19,6 +20,7 @@ export function HoldButton({
   disabled,
   duration = 1000,
   shortcut = false,
+  size = "default",
   type = "default",
   variant = "outline",
 }: IProps) {
@@ -55,6 +57,7 @@ export function HoldButton({
         className,
         variant === "outline" &&
           "bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-9 border px-4 py-2 shadow-xs has-[>svg]:px-3",
+        size === "icon" && "px-5!",
       )}
       disabled={disabled}
       onPointerDown={handlePointerDown}
@@ -66,6 +69,7 @@ export function HoldButton({
         aria-hidden="true"
         className={cn(
           "absolute inset-0 flex items-center justify-center gap-2 rounded-md transition-[clip-path] duration-160 ease-out [clip-path:inset(0px_100%_0px_0px)] group-active:ease-linear group-active:[clip-path:inset(0px_0px_0px_0px)]",
+          size === "icon" && "px-5!",
           type === "confirm" && "bg-sky-200 text-sky-700",
           type === "default" && "bg-gray-200",
           // type === "delete" && "bg-[#ffdbdc] text-[#e5484d]",
