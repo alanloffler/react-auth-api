@@ -8,4 +8,5 @@ export const PERMISSION_ACTIONS = [
   { name: "Editar", value: "update" },
   { name: "Eliminar", value: "delete" },
   { name: "Ver", value: "view" },
+  { name: "Test", value: "test" },
 ];
