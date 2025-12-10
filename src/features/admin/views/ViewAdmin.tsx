@@ -2,13 +2,13 @@ import { ArrowLeft, RotateCcw, Trash2 } from "lucide-react";
 
 import { Button } from "@components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@components/ui/card";
-import { Forbidden } from "@auth/components/Forbidden";
 import { HoldButton } from "@components/ui/HoldButton";
 import { Link } from "react-router";
+import { Protected } from "@auth/components/Protected";
 
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
-import { useCallback, useEffect, useState } from "react";
+import { Activity, useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router";
 
 import type { IAdmin } from "@admin/interfaces/admin.interface";
@@ -16,11 +16,13 @@ import { AdminService } from "@admin/services/admin.service";
 import { ERoles } from "@auth/enums/role.enum";
 import { tryCatch } from "@core/utils/try-catch";
 import { useAuthStore } from "@auth/auth.store";
+import { usePermission } from "@/core/hooks/usePermission";
 
 export default function ViewAdmin() {
   const [admin, setAdmin] = useState<IAdmin | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const adminAuth = useAuthStore((state) => state.admin);
+  const hasPermissions = usePermission(["admin-update", "admin-delete"], "some");
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -84,7 +86,7 @@ export default function ViewAdmin() {
             </ul>
             <p className="text-muted-foreground px-0">{`Usuario desde el ${admin && new Date(admin.createdAt.split("T")[0]).toLocaleDateString()}`}</p>
           </CardContent>
-          <Forbidden to={[ERoles.TEACHER]} variant="invisible">
+          <Activity mode={hasPermissions ? "visible" : "hidden"}>
             <CardFooter className="justify-end gap-3 px-0">
               {admin?.deletedAt && admin?.deletedAt !== null ? (
                 <HoldButton callback={() => console.log("restaurar")} type="restore" variant="outline">
@@ -93,17 +95,21 @@ export default function ViewAdmin() {
                 </HoldButton>
               ) : (
                 <>
-                  <Button variant="outline" asChild>
-                    <Link to={`/admin/edit/${id}`}>Editar</Link>
-                  </Button>
-                  <HoldButton callback={() => console.log("eliminar")} type="delete" variant="outline">
-                    <Trash2 className="h-4 w-4" />
-                    Eliminar
-                  </HoldButton>
+                  <Protected requiredPermission="admin-update">
+                    <Button variant="outline" asChild>
+                      <Link to={`/admin/edit/${id}`}>Editar</Link>
+                    </Button>
+                  </Protected>
+                  <Protected requiredPermission="admin-delete">
+                    <HoldButton callback={() => console.log("eliminar")} type="delete" variant="outline">
+                      <Trash2 className="h-4 w-4" />
+                      Eliminar
+                    </HoldButton>
+                  </Protected>
                 </>
               )}
             </CardFooter>
-          </Forbidden>
+          </Activity>
         </>
       )}
     </Card>
