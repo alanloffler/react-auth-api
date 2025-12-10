@@ -1,12 +1,10 @@
-import { FileKey, GalleryVerticalEnd, KeyRound, Map, Settings, User2, UserPlus2 } from "lucide-react";
+import { FileKey, GalleryVerticalEnd, KeyRound, Map, Settings, Shield, User2, UserPlus2 } from "lucide-react";
 
 import { NavMain } from "@components/nav-main";
 import { NavProjects } from "@components/nav-projects";
 import { NavUser } from "@components/nav-user";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@components/ui/sidebar";
 import { TeamSwitcher } from "@components/team-switcher";
-
-import { ERoles } from "@auth/enums/role.enum";
 
 const data = {
   teams: {
@@ -25,8 +23,14 @@ const data = {
     {
       title: "Roles",
       url: "/roles",
-      icon: KeyRound,
+      icon: Shield,
       permission: "roles-view",
+    },
+    {
+      title: "Permisos",
+      url: "/permissions",
+      icon: KeyRound,
+      permission: "permissions-view",
     },
     {
       title: "Configuraciones",
@@ -34,14 +38,12 @@ const data = {
       icon: Settings,
       items: [
         {
-          title: "Permisos",
-          url: "/permissions",
-          role: [ERoles.SUPER, ERoles.ADMIN],
+          title: "Item 1",
+          url: "/#",
         },
         {
-          title: "Roles",
-          url: "/settings/roles",
-          role: [ERoles.SUPER],
+          title: "Item 2",
+          url: "/#",
         },
       ],
       permission: "*",
