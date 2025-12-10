@@ -20,13 +20,13 @@ const data = {
       url: "/admin",
       icon: User2,
       isActive: true,
-      role: [ERoles.SUPER, ERoles.ADMIN, ERoles.TEACHER],
+      permission: "admin-view",
     },
     {
       title: "Roles",
       url: "/roles",
       icon: KeyRound,
-      role: [ERoles.SUPER, ERoles.ADMIN],
+      permission: "roles-view",
     },
     {
       title: "Configuraciones",
@@ -44,7 +44,7 @@ const data = {
           role: [ERoles.SUPER],
         },
       ],
-      role: [ERoles.SUPER, ERoles.ADMIN],
+      permission: "*",
     },
   ],
   projects: [

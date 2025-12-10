@@ -33,6 +33,13 @@ class RolesModuleService {
     return response.data;
   }
 
+  public async update(id: string, role: Partial<IRole>): Promise<IApiResponse<IRole>> {
+    console.log("update role");
+    console.log(role);
+    const response = await apiClient.patch(`/roles/${id}`, role);
+    return response.data;
+  }
+
   public async remove(id: string): Promise<IApiResponse<IRole>> {
     const response = await apiClient.delete(`/roles/${id}`);
     return response.data;

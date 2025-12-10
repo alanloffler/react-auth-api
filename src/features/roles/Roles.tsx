@@ -1,4 +1,4 @@
-import { Ban, Eye, Plus, RotateCcw, Trash2, TriangleAlert } from "lucide-react";
+import { Ban, Eye, FilePenLine, Plus, RotateCcw, Trash2, TriangleAlert } from "lucide-react";
 
 import { Button } from "@components/ui/button";
 import { DataTable } from "@components/DataTable";
@@ -16,6 +16,7 @@ import { ERoles } from "@auth/enums/role.enum";
 import { RolesService } from "@roles/services/roles.service";
 import { tryCatch } from "@core/utils/try-catch";
 import { useAuthStore } from "@auth/auth.store";
+import { Protected } from "@/core/auth/components/Protected";
 
 export default function Roles() {
   const [roles, setRoles] = useState<IRole[] | undefined>(undefined);
@@ -122,6 +123,13 @@ export default function Roles() {
                   <Eye className="h-4 w-4" />
                 </Link>
               </Button>
+              <Forbidden to={[ERoles.TEACHER]}>
+                <Button className="px-5!" variant="outline" asChild>
+                  <Link to={`/roles/edit/${row.original.id}`}>
+                    <FilePenLine className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </Forbidden>
               <Forbidden to={[ERoles.ADMIN, ERoles.TEACHER]}>
                 <HoldButton callback={() => removeRole(row.original.id)} size="icon" type="delete" variant="outline">
                   <Trash2 className="h-4 w-4" />
@@ -148,12 +156,14 @@ export default function Roles() {
   return (
     <div className="flex flex-col gap-10">
       <PageHeader title="Roles" subtitle="Gestioná los roles para los usuarios del sistema.">
-        <Button variant="default" size="lg" asChild>
-          <Link to="/roles/create">
-            <Plus />
-            Crear rol
-          </Link>
-        </Button>
+        <Protected requiredPermission="roles-create" variant="disabled">
+          <Button variant="default" size="lg" asChild>
+            <Link to="/roles/create">
+              <Plus />
+              Crear rol
+            </Link>
+          </Button>
+        </Protected>
       </PageHeader>
       <DataTable columns={columns} data={roles} />
     </div>

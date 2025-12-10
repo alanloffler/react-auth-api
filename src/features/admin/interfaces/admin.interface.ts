@@ -1,3 +1,5 @@
+import type { IRole } from "@roles/interfaces/role.interface";
+
 export interface IAdmin {
   createdAt: string;
   deletedAt?: string;
@@ -12,13 +14,4 @@ export interface IAdmin {
   roleId: string;
   updatedAt: string;
   userName: string;
-}
-
-interface IRole {
-  createdAt: string;
-  description: string;
-  id: string;
-  name: string;
-  updatedAt: string;
-  value: string;
 }

@@ -15,6 +15,7 @@ import { Link } from "react-router";
 
 import { cn } from "@lib/utils";
 import { useAuthStore } from "@core/auth/auth.store";
+import { Protected } from "@/core/auth/components/Protected";
 
 export function NavMain({
   items,
@@ -29,6 +30,7 @@ export function NavMain({
       url: string;
       role: string[];
     }[];
+    permission: string;
     role?: string[];
   }[];
 }) {
@@ -41,24 +43,23 @@ export function NavMain({
         {items.map((item) => (
           <Collapsible key={item.title} asChild defaultOpen={item.isActive} className="group/collapsible">
             <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton
-                  disabled={item.role && admin?.role && !item.role?.includes(admin.role.value)}
-                  tooltip={item.title}
-                >
-                  {item.icon && <item.icon />}
-                  {item.items ? (
-                    <>
-                      <span>{item.title}</span>
-                      <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                    </>
-                  ) : (
-                    <Link to={item.url} className="flex w-full">
-                      {item.title}
-                    </Link>
-                  )}
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
+              <Protected requiredPermission={item.permission}>
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuButton tooltip={item.title}>
+                    {item.icon && <item.icon />}
+                    {item.items ? (
+                      <>
+                        <span>{item.title}</span>
+                        <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                      </>
+                    ) : (
+                      <Link to={item.url} className="flex w-full">
+                        {item.title}
+                      </Link>
+                    )}
+                  </SidebarMenuButton>
+                </CollapsibleTrigger>
+              </Protected>
               {item.items && (
                 <CollapsibleContent>
                   <SidebarMenuSub>
