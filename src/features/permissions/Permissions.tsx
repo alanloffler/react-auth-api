@@ -1,18 +1,17 @@
-import { Ban, Plus, Trash2 } from "lucide-react";
+import { Ban, Eye, Plus, Trash2, TriangleAlert } from "lucide-react";
 
 import { Button } from "@components/ui/button";
 import { DataTable } from "@components/DataTable";
-import { Forbidden } from "@auth/components/Forbidden";
 import { HoldButton } from "@components/ui/HoldButton";
 import { Link } from "react-router";
 import { PageHeader } from "@components/pages/PageHeader";
+import { Protected } from "@auth/components/Protected";
 
 import type { ColumnDef } from "@tanstack/react-table";
 import { toast } from "sonner";
 import { useCallback, useEffect, useState } from "react";
 
 import type { IPermission } from "@permissions/interfaces/permission.interface";
-import { ERoles } from "@auth/enums/role.enum";
 import { PermissionsService } from "@permissions/services/permissions.service";
 import { tryCatch } from "@core/utils/try-catch";
 
@@ -86,15 +85,27 @@ export default function Permissions() {
       id: "actions",
       cell: ({ row }) => (
         <div className="flex justify-end gap-2">
-          <Button variant="outline" asChild>
-            <Link to={`/roles/view/${row.original.id}`}>Ver</Link>
+          <Button className="px-5!" variant="outline" asChild>
+            <Link to={`/roles/view/${row.original.id}`}>
+              <Eye className="h-4 w-4" />
+            </Link>
           </Button>
-          <Forbidden to={[ERoles.ADMIN, ERoles.TEACHER]}>
-            <HoldButton callback={() => removeHardPermission(row.original.id)} type="delete" variant="outline">
+          <Protected requiredPermission="permissions-delete">
+            <HoldButton
+              callback={() => removeHardPermission(row.original.id)}
+              size="icon"
+              type="delete"
+              variant="outline"
+            >
               <Trash2 className="h-4 w-4" />
-              Eliminar
             </HoldButton>
-          </Forbidden>
+          </Protected>
+          <Protected requiredPermission="permissions-delete-hard">
+            <HoldButton callback={() => console.log(row.original.id)} size="icon" type="delete" variant="outline">
+              <TriangleAlert className="h-4 w-4 stroke-red-500" />
+              <Trash2 className="h-4 w-4" />
+            </HoldButton>
+          </Protected>
         </div>
       ),
     },
@@ -103,12 +114,14 @@ export default function Permissions() {
   return (
     <div className="flex flex-col gap-10">
       <PageHeader title="Permisos" subtitle="Gestioná los permisos de acceso para los roles del sistema.">
-        <Button variant="default" size="lg" asChild>
-          <Link to="/permissions/create">
-            <Plus />
-            Crear permiso
-          </Link>
-        </Button>
+        <Protected requiredPermission="permissions-create">
+          <Button variant="default" size="lg" asChild>
+            <Link to="/permissions/create">
+              <Plus />
+              Crear permiso
+            </Link>
+          </Button>
+        </Protected>
       </PageHeader>
       <DataTable columns={columns} data={permissions} />
     </div>
