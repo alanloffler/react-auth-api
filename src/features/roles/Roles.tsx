@@ -2,10 +2,10 @@ import { Ban, Eye, FilePenLine, Plus, RotateCcw, Trash2, TriangleAlert } from "l
 
 import { Button } from "@components/ui/button";
 import { DataTable } from "@components/DataTable";
-import { Forbidden } from "@auth/components/Forbidden";
 import { HoldButton } from "@components/ui/HoldButton";
 import { Link } from "react-router";
 import { PageHeader } from "@components/pages/PageHeader";
+import { Protected } from "@auth/components/Protected";
 
 import type { ColumnDef } from "@tanstack/react-table";
 import { toast } from "sonner";
@@ -16,7 +16,6 @@ import { ERoles } from "@auth/enums/role.enum";
 import { RolesService } from "@roles/services/roles.service";
 import { tryCatch } from "@core/utils/try-catch";
 import { useAuthStore } from "@auth/auth.store";
-import { Protected } from "@/core/auth/components/Protected";
 
 export default function Roles() {
   const [roles, setRoles] = useState<IRole[] | undefined>(undefined);
@@ -123,19 +122,19 @@ export default function Roles() {
                   <Eye className="h-4 w-4" />
                 </Link>
               </Button>
-              <Forbidden to={[ERoles.TEACHER]}>
+              <Protected requiredPermission="roles-update">
                 <Button className="px-5!" variant="outline" asChild>
                   <Link to={`/roles/edit/${row.original.id}`}>
                     <FilePenLine className="h-4 w-4" />
                   </Link>
                 </Button>
-              </Forbidden>
-              <Forbidden to={[ERoles.ADMIN, ERoles.TEACHER]}>
+              </Protected>
+              <Protected requiredPermission="roles-delete">
                 <HoldButton callback={() => removeRole(row.original.id)} size="icon" type="delete" variant="outline">
                   <Trash2 className="h-4 w-4" />
                 </HoldButton>
-              </Forbidden>
-              <Forbidden to={[ERoles.ADMIN, ERoles.TEACHER]} variant="invisible">
+              </Protected>
+              <Protected requiredPermission="roles-delete-hard">
                 <HoldButton
                   callback={() => hardRemoveRole(row.original.id)}
                   size="icon"
@@ -145,7 +144,7 @@ export default function Roles() {
                   <TriangleAlert className="h-4 w-4 stroke-red-500" />
                   <Trash2 className="h-4 w-4" />
                 </HoldButton>
-              </Forbidden>
+              </Protected>
             </>
           )}
         </div>
