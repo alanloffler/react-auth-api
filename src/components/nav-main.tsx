@@ -12,10 +12,7 @@ import {
   SidebarMenuSubItem,
 } from "@components/ui/sidebar";
 import { Link } from "react-router";
-
-import { cn } from "@lib/utils";
-import { useAuthStore } from "@core/auth/auth.store";
-import { Protected } from "@/core/auth/components/Protected";
+import { Protected } from "@auth/components/Protected";
 
 export function NavMain({
   items,
@@ -28,14 +25,10 @@ export function NavMain({
     items?: {
       title: string;
       url: string;
-      role: string[];
     }[];
     permission: string;
-    role?: string[];
   }[];
 }) {
-  const admin = useAuthStore((state) => state.admin);
-
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Aplicación</SidebarGroupLabel>
@@ -66,14 +59,12 @@ export function NavMain({
                     {item.items?.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild>
-                          <Link
-                            to={subItem.url}
-                            className={cn(
-                              subItem.role && admin?.role && !subItem.role?.includes(admin.role.value)
-                                ? "pointer-events-none opacity-50"
-                                : "",
-                            )}
-                          >
+                          {/* className={cn( */}
+                          {/*   subItem.role && admin?.role && !subItem.role?.includes(admin.role.value) */}
+                          {/*     ? "pointer-events-none opacity-50" */}
+                          {/*     : "", */}
+                          {/* )} */}
+                          <Link to={subItem.url}>
                             <span>{subItem.title}</span>
                           </Link>
                         </SidebarMenuSubButton>
