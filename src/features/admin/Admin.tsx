@@ -2,10 +2,10 @@ import { Ban, Plus, RotateCcw, Trash2 } from "lucide-react";
 
 import { Button } from "@components/ui/button";
 import { DataTable } from "@components/DataTable";
-import { Forbidden } from "@auth/components/Forbidden";
 import { HoldButton } from "@components/ui/HoldButton";
 import { Link } from "react-router";
 import { PageHeader } from "@components/pages/PageHeader";
+import { Protected } from "@auth/components/Protected";
 
 import type { ColumnDef } from "@tanstack/react-table";
 import { toast } from "sonner";
@@ -116,11 +116,11 @@ export function Admin() {
             <Link to={`/admin/view/${row.original.id}`}>Ver</Link>
           </Button>
           {!row.original.deletedAt && (
-            <Forbidden to={[ERoles.TEACHER]} variant="invisible">
+            <Protected requiredPermission="admin-update">
               <Button variant="outline" asChild>
                 <Link to={`/admin/edit/${row.original.id}`}>Editar</Link>
               </Button>
-            </Forbidden>
+            </Protected>
           )}
           {row.original.deletedAt ? (
             <HoldButton callback={() => restoreAdmin(row.original.id)} type="restore" variant="outline">
@@ -128,14 +128,14 @@ export function Admin() {
               Restaurar
             </HoldButton>
           ) : (
-            <Forbidden to={[ERoles.TEACHER]} variant="invisible">
+            <Protected requiredPermission="admin-delete">
               {admin && row.original.ic !== admin.ic && (
                 <HoldButton callback={() => removeAdmin(row.original.id)} type="delete" variant="outline">
                   <Trash2 className="h-4 w-4" />
                   Eliminar
                 </HoldButton>
               )}
-            </Forbidden>
+            </Protected>
           )}
         </div>
       ),
@@ -145,14 +145,14 @@ export function Admin() {
   return (
     <div className="flex flex-col gap-10">
       <PageHeader title="Administradores" subtitle="Gestioná los usuarios del sistema.">
-        <Forbidden to={[ERoles.TEACHER]} variant="invisible">
+        <Protected requiredPermission="admin-create">
           <Button variant="default" size="lg" asChild>
             <Link to="/admin/create">
               <Plus />
               Crear admin
             </Link>
           </Button>
-        </Forbidden>
+        </Protected>
       </PageHeader>
       <DataTable columns={columns} data={admins} />
     </div>
