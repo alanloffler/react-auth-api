@@ -1,4 +1,4 @@
-import { Ban, Eye, Plus, Trash2, TriangleAlert } from "lucide-react";
+import { Ban, Eye, FilePenLine, Plus, Trash2, TriangleAlert } from "lucide-react";
 
 import { Button } from "@components/ui/button";
 import { DataTable } from "@components/DataTable";
@@ -78,10 +78,6 @@ export default function Permissions() {
       ),
     },
     {
-      accessorKey: "description",
-      header: "Descripción",
-    },
-    {
       id: "actions",
       cell: ({ row }) => (
         <div className="flex justify-end gap-2">
@@ -90,6 +86,13 @@ export default function Permissions() {
               <Eye className="h-4 w-4" />
             </Link>
           </Button>
+          <Protected requiredPermission="permissions-update">
+            <Button className="px-5!" variant="outline" asChild>
+              <Link to={`/permissions/edit/${row.original.id}`}>
+                <FilePenLine className="h4- w-4" />
+              </Link>
+            </Button>
+          </Protected>
           <Protected requiredPermission="permissions-delete">
             <HoldButton
               callback={() => removeHardPermission(row.original.id)}
