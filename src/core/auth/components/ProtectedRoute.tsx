@@ -1,21 +1,33 @@
-import type { ReactNode } from "react";
 import { Navigate, Outlet } from "react-router";
-import { useAuthStore } from "@core/auth/auth.store";
+
+import type { ReactNode } from "react";
+
+import { useAuthStore } from "@auth/auth.store";
 
 interface IProps {
-  allowedRoles?: string[];
   children: ReactNode;
   redirectTo?: string;
+  requiredPermission?: string | string[];
 }
 
-export function ProtectedRoute({ children, allowedRoles, redirectTo = "/" }: IProps) {
+export function ProtectedRoute({ children, redirectTo = "/", requiredPermission }: IProps) {
   const admin = useAuthStore((state) => state.admin);
 
   if (!admin) {
     return <Navigate to="/" replace />;
   }
 
-  if (allowedRoles && !allowedRoles.includes(admin.role.value)) {
+  const adminPermissions = admin.role.rolePermissions ?? [];
+
+  const required = Array.isArray(requiredPermission)
+    ? requiredPermission
+    : requiredPermission
+      ? [requiredPermission]
+      : [];
+
+  const hasAllPermissions = required.every((r) => adminPermissions.some((p) => p.permission.actionKey === r));
+
+  if (required.length > 0 && !hasAllPermissions) {
     return <Navigate to={redirectTo} replace />;
   }
 
