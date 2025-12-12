@@ -2,6 +2,7 @@ import CreateAdmin from "@admin/views/CreateAdmin";
 import CreatePermission from "@permissions/views/CreatePermission";
 import CreateRole from "@roles/views/CreateRole";
 import EditAdmin from "@admin/views/EditAdmin";
+import EditPermission from "@permissions/views/EditPermission";
 import EditRole from "@roles/views/EditRole";
 import Permissions from "@permissions/Permissions";
 import Roles from "@roles/Roles";
@@ -113,6 +114,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN]}>
             <CreatePermission />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "permissions/edit/:id",
+        element: (
+          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN]}>
+            <EditPermission />
           </ProtectedRoute>
         ),
       },
