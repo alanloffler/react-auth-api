@@ -29,8 +29,23 @@ class PermissionsModuleService {
     return response.data;
   }
 
+  public async findOne(id: string): Promise<IApiResponse<IPermission>> {
+    const response = await apiClient.get(`/permissions/${id}`);
+    return response.data;
+  }
+
+  public async update(id: string, permission: Partial<IPermission>): Promise<IApiResponse<IPermission>> {
+    const response = await apiClient.patch(`/permissions/${id}`, permission);
+    return response.data;
+  }
+
   public async remove(id: string): Promise<IApiResponse<IPermission>> {
     const response = await apiClient.delete(`/permissions/${id}`);
+    return response.data;
+  }
+
+  public async permissionGuard(): Promise<string> {
+    const response = await apiClient.get("/permissions/permission-guard");
     return response.data;
   }
 }
