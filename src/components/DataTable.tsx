@@ -1,6 +1,16 @@
+import { Pagination } from "@components/Pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@components/ui/table";
 
-import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import {
+  type ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  type PaginationState,
+  useReactTable,
+} from "@tanstack/react-table";
+
+import { useState } from "react";
 import { cn } from "@lib/utils";
 
 interface DataTableProps<TData, TValue> {
@@ -16,12 +26,17 @@ export function DataTable<TData, TValue>({
   columnVisibility,
   data,
 }: DataTableProps<TData, TValue>) {
+  const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 5 });
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: data || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onPaginationChange: setPagination,
     state: {
       columnVisibility: columnVisibility,
+      pagination: pagination,
     },
   });
 
@@ -53,12 +68,13 @@ export function DataTable<TData, TValue>({
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
+                Sin resultados
               </TableCell>
             </TableRow>
           )}
         </TableBody>
       </Table>
+      <Pagination table={table} setPagination={setPagination} pagination={pagination} />
     </div>
   );
 }
