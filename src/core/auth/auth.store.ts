@@ -1,7 +1,7 @@
 import type { IAdmin } from "@admin/interfaces/admin.interface";
 import { AdminService } from "@/features/admin/services/admin.service";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 interface AuthState {
   admin?: IAdmin;
@@ -39,6 +39,9 @@ export const useAuthStore = create(
         }
       },
     }),
-    { name: "admin" },
+    {
+      name: "admin",
+      storage: createJSONStorage(() => localStorage),
+    },
   ),
 );
