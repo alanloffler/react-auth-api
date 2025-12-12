@@ -17,7 +17,6 @@ import { ProtectedLayout } from "@auth/components/ProtectedLayout";
 import { ProtectedRoute } from "@auth/components/ProtectedRoute";
 import { Toaster } from "@components/ui/sonner";
 
-import { ERoles } from "@auth/enums/role.enum";
 import { createBrowserRouter, RouterProvider } from "react-router";
 
 const router = createBrowserRouter([
@@ -40,7 +39,7 @@ const router = createBrowserRouter([
       {
         path: "admin",
         element: (
-          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN, ERoles.TEACHER]}>
+          <ProtectedRoute requiredPermission="admin-view">
             <Admin />
           </ProtectedRoute>
         ),
@@ -48,7 +47,7 @@ const router = createBrowserRouter([
       {
         path: "admin/create",
         element: (
-          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN]}>
+          <ProtectedRoute requiredPermission={["admin-view", "admin-create"]}>
             <CreateAdmin />
           </ProtectedRoute>
         ),
@@ -56,7 +55,7 @@ const router = createBrowserRouter([
       {
         path: "admin/edit/:id",
         element: (
-          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN]}>
+          <ProtectedRoute requiredPermission={["admin-view", "admin-update"]}>
             <EditAdmin />
           </ProtectedRoute>
         ),
@@ -64,7 +63,7 @@ const router = createBrowserRouter([
       {
         path: "admin/view/:id",
         element: (
-          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN, ERoles.TEACHER]}>
+          <ProtectedRoute requiredPermission="admin-view">
             <ViewAdmin />
           </ProtectedRoute>
         ),
@@ -72,7 +71,7 @@ const router = createBrowserRouter([
       {
         path: "roles",
         element: (
-          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN]}>
+          <ProtectedRoute requiredPermission="roles-view">
             <Roles />
           </ProtectedRoute>
         ),
@@ -80,7 +79,7 @@ const router = createBrowserRouter([
       {
         path: "roles/create",
         element: (
-          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN]}>
+          <ProtectedRoute requiredPermission={["roles-view", "roles-create"]}>
             <CreateRole />
           </ProtectedRoute>
         ),
@@ -88,7 +87,7 @@ const router = createBrowserRouter([
       {
         path: "roles/edit/:id",
         element: (
-          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN]}>
+          <ProtectedRoute requiredPermission={["roles-view", "roles-update"]}>
             <EditRole />
           </ProtectedRoute>
         ),
@@ -96,7 +95,7 @@ const router = createBrowserRouter([
       {
         path: "roles/view/:id",
         element: (
-          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN, ERoles.TEACHER]}>
+          <ProtectedRoute requiredPermission="roles-view">
             <ViewRole />
           </ProtectedRoute>
         ),
@@ -104,7 +103,7 @@ const router = createBrowserRouter([
       {
         path: "permissions",
         element: (
-          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN]}>
+          <ProtectedRoute requiredPermission="permissions-view">
             <Permissions />
           </ProtectedRoute>
         ),
@@ -112,7 +111,7 @@ const router = createBrowserRouter([
       {
         path: "permissions/create",
         element: (
-          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN]}>
+          <ProtectedRoute requiredPermission={["permissions-view", "permissions-create"]}>
             <CreatePermission />
           </ProtectedRoute>
         ),
@@ -120,7 +119,7 @@ const router = createBrowserRouter([
       {
         path: "permissions/edit/:id",
         element: (
-          <ProtectedRoute allowedRoles={[ERoles.SUPER, ERoles.ADMIN]}>
+          <ProtectedRoute requiredPermission={["permissions-view", "permissions-update"]}>
             <EditPermission />
           </ProtectedRoute>
         ),
