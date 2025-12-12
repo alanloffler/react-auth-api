@@ -16,6 +16,7 @@ import { ERoles } from "@auth/enums/role.enum";
 import { RolesService } from "@roles/services/roles.service";
 import { tryCatch } from "@core/utils/try-catch";
 import { useAuthStore } from "@auth/auth.store";
+import { PermissionsService } from "../permissions/services/permissions.service";
 
 export default function Roles() {
   const [roles, setRoles] = useState<IRole[] | undefined>(undefined);
@@ -80,6 +81,21 @@ export default function Roles() {
     if (response && response.statusCode === 200) {
       toast.success(response.message);
       fetchRoles();
+    }
+  }
+
+  async function fetchPermissionGuard() {
+    const [response, error] = await tryCatch(PermissionsService.permissionGuard());
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    if (response) {
+      console.log(response);
+      toast.success(response);
+      return response.data;
     }
   }
 
@@ -165,6 +181,9 @@ export default function Roles() {
         </Protected>
       </PageHeader>
       <DataTable columns={columns} data={roles} />
+      <Button className="w-fit" onClick={fetchPermissionGuard} variant="default" size="lg">
+        Llamar a getPermissionGuard
+      </Button>
     </div>
   );
 }
