@@ -1,4 +1,4 @@
-import { Ban, Plus, RotateCcw, Trash2 } from "lucide-react";
+import { Ban, Eye, FilePenLine, Plus, RotateCcw, Trash2 } from "lucide-react";
 
 import { Button } from "@components/ui/button";
 import { DataTable } from "@components/DataTable";
@@ -70,6 +70,21 @@ export function Admin() {
     }
   }
 
+  async function hardRemoveAdmin(id: string): Promise<void> {
+    console.log(id);
+    // const [response, error] = await tryCatch(AdminService.softRemove(id));
+    //
+    // if (error) {
+    //   toast.error(error.message);
+    //   return;
+    // }
+    //
+    // if (response && response.statusCode === 200) {
+    //   toast.success(response.message);
+    //   fetchAdmins();
+    // }
+  }
+
   const columns: ColumnDef<IAdmin>[] = [
     {
       accessorKey: "id",
@@ -112,7 +127,7 @@ export function Admin() {
       accessorKey: "role.name",
       header: () => <div className="text-center">Role</div>,
       cell: ({ row }) => (
-        <div className="text-xxs bg-brand flex w-fit place-self-center rounded-sm px-2 py-1 font-medium text-white uppercase">
+        <div className="text-xxs bg-brand text-brand-foreground flex w-fit place-self-center rounded-sm px-2 py-1 font-medium uppercase">
           {row.original.role.name}
         </div>
       ),
@@ -121,30 +136,42 @@ export function Admin() {
       id: "actions",
       cell: ({ row }) => (
         <div className="flex justify-end gap-2">
-          <Button variant="outline" asChild>
-            <Link to={`/admin/view/${row.original.id}`}>Ver</Link>
+          <Button className="px-5!" variant="outline" asChild>
+            <Link to={`/admin/view/${row.original.id}`}>
+              <Eye className="h-4 w-4" />
+            </Link>
           </Button>
           {!row.original.deletedAt && (
             <Protected requiredPermission="admin-update">
-              <Button variant="outline" asChild>
-                <Link to={`/admin/edit/${row.original.id}`}>Editar</Link>
+              <Button className="px-5!" variant="outline" asChild>
+                <Link to={`/admin/edit/${row.original.id}`}>
+                  <FilePenLine className="h-4 w-4" />
+                </Link>
               </Button>
             </Protected>
           )}
           {row.original.deletedAt ? (
-            <HoldButton callback={() => restoreAdmin(row.original.id)} type="restore" variant="outline">
+            <HoldButton callback={() => restoreAdmin(row.original.id)} size="icon" type="restore" variant="outline">
               <RotateCcw className="h-4 w-4" />
-              Restaurar
             </HoldButton>
           ) : (
-            <Protected requiredPermission="admin-delete">
-              {admin && row.original.ic !== admin.ic && (
-                <HoldButton callback={() => removeAdmin(row.original.id)} type="delete" variant="outline">
-                  <Trash2 className="h-4 w-4" />
-                  Eliminar
-                </HoldButton>
-              )}
-            </Protected>
+            <>
+              <Protected requiredPermission="admin-delete">
+                {admin && row.original.ic !== admin.ic && (
+                  <HoldButton callback={() => removeAdmin(row.original.id)} size="icon" type="delete" variant="outline">
+                    <Trash2 className="h-4 w-4" />
+                  </HoldButton>
+                )}
+              </Protected>
+              <Protected requiredPermission="admin-delete-hard">
+                {admin && row.original.ic !== admin.ic && (
+                  <HoldButton callback={() => hardRemoveAdmin(row.original.id)} type="hard-delete" variant="outline">
+                    <Trash2 className="h-4 w-4" />
+                    <span>!</span>
+                  </HoldButton>
+                )}
+              </Protected>
+            </>
           )}
         </div>
       ),
