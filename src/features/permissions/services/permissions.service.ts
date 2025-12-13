@@ -43,11 +43,6 @@ class PermissionsModuleService {
     const response = await apiClient.delete(`/permissions/${id}`);
     return response.data;
   }
-
-  public async permissionGuard(): Promise<string> {
-    const response = await apiClient.get("/permissions/permission-guard");
-    return response.data;
-  }
 }
 
 export const PermissionsService = PermissionsModuleService.getInstance();
