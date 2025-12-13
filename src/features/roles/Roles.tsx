@@ -16,7 +16,6 @@ import { ERoles } from "@auth/enums/role.enum";
 import { RolesService } from "@roles/services/roles.service";
 import { tryCatch } from "@core/utils/try-catch";
 import { useAuthStore } from "@auth/auth.store";
-import { PermissionsService } from "../permissions/services/permissions.service";
 
 export default function Roles() {
   const [roles, setRoles] = useState<IRole[] | undefined>(undefined);
@@ -84,21 +83,6 @@ export default function Roles() {
     }
   }
 
-  async function fetchPermissionGuard() {
-    const [response, error] = await tryCatch(PermissionsService.permissionGuard());
-
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-
-    if (response) {
-      console.log(response);
-      toast.success(response);
-      return response.data;
-    }
-  }
-
   const columns: ColumnDef<IRole>[] = [
     {
       accessorKey: "id",
@@ -145,22 +129,31 @@ export default function Roles() {
                   </Link>
                 </Button>
               </Protected>
-              <Protected requiredPermission="roles-delete">
-                <HoldButton callback={() => removeRole(row.original.id)} size="icon" type="delete" variant="outline">
-                  <Trash2 className="h-4 w-4" />
-                </HoldButton>
-              </Protected>
-              <Protected requiredPermission="roles-delete-hard">
-                <HoldButton
-                  callback={() => hardRemoveRole(row.original.id)}
-                  size="icon"
-                  type="delete"
-                  variant="outline"
-                >
-                  <TriangleAlert className="h-4 w-4 stroke-red-500" />
-                  <Trash2 className="h-4 w-4" />
-                </HoldButton>
-              </Protected>
+              {row.original.value !== ERoles.SUPER && (
+                <>
+                  <Protected requiredPermission="roles-delete">
+                    <HoldButton
+                      callback={() => removeRole(row.original.id)}
+                      size="icon"
+                      type="delete"
+                      variant="outline"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </HoldButton>
+                  </Protected>
+                  <Protected requiredPermission="roles-delete-hard">
+                    <HoldButton
+                      callback={() => hardRemoveRole(row.original.id)}
+                      size="icon"
+                      type="delete"
+                      variant="outline"
+                    >
+                      <TriangleAlert className="h-4 w-4 stroke-red-500" />
+                      <Trash2 className="h-4 w-4" />
+                    </HoldButton>
+                  </Protected>
+                </>
+              )}
             </>
           )}
         </div>
@@ -181,9 +174,6 @@ export default function Roles() {
         </Protected>
       </PageHeader>
       <DataTable columns={columns} data={roles} />
-      <Button className="w-fit" onClick={fetchPermissionGuard} variant="default" size="lg">
-        Llamar a getPermissionGuard
-      </Button>
     </div>
   );
 }
