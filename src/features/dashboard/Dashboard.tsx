@@ -28,7 +28,7 @@ export function Dashboard() {
           </div>
         </Protected>
         <Protected requiredPermission="roles-view">
-          <div className="grid grid-cols-8 gap-8">
+          <div className="grid grid-cols-4 gap-8 lg:grid-cols-6 xl:grid-cols-8">
             <Link className="col-span-2" to="/roles">
               <Card className="items-center gap-3 px-6 font-medium hover:bg-neutral-50">
                 <Shield className="h-6 w-6" />
@@ -46,7 +46,7 @@ export function Dashboard() {
           </div>
         </Protected>
         <Protected requiredPermission="permissions-view">
-          <div className="grid grid-cols-8 gap-8">
+          <div className="grid grid-cols-4 gap-8 lg:grid-cols-6 xl:grid-cols-8">
             <Link className="col-span-2" to="/permissions">
               <Card className="items-center gap-3 px-6 font-medium hover:bg-neutral-50">
                 <KeyRound className="h-6 w-6" />
