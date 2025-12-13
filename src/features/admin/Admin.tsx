@@ -109,6 +109,15 @@ export function Admin() {
       header: "Apellido",
     },
     {
+      accessorKey: "role.name",
+      header: () => <div className="text-center">Role</div>,
+      cell: ({ row }) => (
+        <div className="text-xxs bg-brand flex w-fit place-self-center rounded-sm px-2 py-1 font-medium text-white uppercase">
+          {row.original.role.name}
+        </div>
+      ),
+    },
+    {
       id: "actions",
       cell: ({ row }) => (
         <div className="flex justify-end gap-2">
