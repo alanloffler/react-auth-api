@@ -1,10 +1,11 @@
 import { ArrowLeft, Check, RotateCcw, Trash2, TriangleAlert } from "lucide-react";
 
+import { Activity } from "react";
 import { Button } from "@components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@components/ui/card";
-import { Forbidden } from "@auth/components/Forbidden";
 import { HoldButton } from "@components/ui/HoldButton";
 import { Link } from "react-router";
+import { Protected } from "@core/auth/components/Protected";
 
 import { toast } from "sonner";
 import { useCallback, useEffect, useState } from "react";
@@ -15,29 +16,41 @@ import type { IRole, IRolePermissions } from "@roles/interfaces/role.interface";
 import { ERoles } from "@auth/enums/role.enum";
 import { RolesService } from "@roles/services/roles.service";
 import { tryCatch } from "@core/utils/try-catch";
+import { useAuthStore } from "@auth/auth.store";
+
+const FOOTER_ACTIONS = ["roles-delete", "roles-delete-hard", "roles-restore", "roles-update"];
 
 export default function ViewRole() {
-  const [role, setRole] = useState<IRole | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [role, setRole] = useState<IRole | undefined>(undefined);
+  const [showFooter, setShowFooter] = useState<boolean>(false);
+  const admin = useAuthStore((state) => state.admin);
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const findOneRole = useCallback(async function (id: string) {
-    setIsLoading(true);
+  const findOneRole = useCallback(
+    async function (id: string) {
+      setIsLoading(true);
 
-    const [response, responseError] = await tryCatch(RolesService.findOne(id));
+      const [response, responseError] = await tryCatch(RolesService.findOne(id));
 
-    setIsLoading(false);
+      setIsLoading(false);
 
-    if (responseError) {
-      toast.error(responseError.message);
-      return;
-    }
+      if (responseError) {
+        toast.error(responseError.message);
+        return;
+      }
 
-    if (response && response.statusCode === 200) {
-      setRole(response.data);
-    }
-  }, []);
+      if (response && response.statusCode === 200) {
+        setRole(response.data);
+
+        setShowFooter(
+          admin?.role?.rolePermissions?.some((p) => FOOTER_ACTIONS.includes(p.permission.actionKey)) ?? false,
+        );
+      }
+    },
+    [admin],
+  );
 
   useEffect(() => {
     findOneRole(id!);
@@ -163,30 +176,50 @@ export default function ViewRole() {
             </ul>
             <p className="text-muted-foreground px-0 text-left">{`Creado el ${role && new Date(role.createdAt.split("T")[0]).toLocaleDateString()}`}</p>
           </CardContent>
-          <Forbidden to={[ERoles.TEACHER]} variant="invisible">
+          <Activity mode={showFooter ? "visible" : "hidden"}>
             <CardFooter className="justify-end gap-3 px-0">
               {role?.deletedAt && role?.deletedAt !== null ? (
-                <HoldButton callback={() => console.log("restaurar")} size="icon" type="restore" variant="outline">
-                  <RotateCcw className="h-4 w-4" />
-                </HoldButton>
+                <Protected requiredPermission="roles-restore">
+                  <HoldButton callback={() => console.log("restaurar")} size="icon" type="restore" variant="outline">
+                    <RotateCcw className="h-4 w-4" />
+                  </HoldButton>
+                </Protected>
               ) : (
                 <>
-                  <Button variant="outline" asChild>
-                    <Link to={`/roles/edit/${id}`}>Editar</Link>
-                  </Button>
-                  <HoldButton callback={() => removeRole(id!)} size="icon" type="delete" variant="outline">
-                    <Trash2 className="h-4 w-4" />
-                  </HoldButton>
-                  <Forbidden to={[ERoles.ADMIN, ERoles.TEACHER]} variant="invisible">
-                    <HoldButton callback={() => hardRemoveRole(id!)} size="icon" type="delete" variant="outline">
-                      <TriangleAlert className="h-4 w-4 stroke-red-500" />
-                      <Trash2 className="h-4 w-4" />
-                    </HoldButton>
-                  </Forbidden>
+                  {role?.value !== ERoles.SUPER ? (
+                    <Protected requiredPermission="roles-update">
+                      <Button variant="outline" asChild>
+                        <Link to={`/roles/edit/${id}`}>Editar</Link>
+                      </Button>
+                    </Protected>
+                  ) : (
+                    admin?.role.value === ERoles.SUPER && (
+                      <Protected requiredPermission="roles-update">
+                        <Button variant="outline" asChild>
+                          <Link to={`/roles/edit/${id}`}>Editar</Link>
+                        </Button>
+                      </Protected>
+                    )
+                  )}
+                  {role?.value !== ERoles.SUPER && (
+                    <>
+                      <Protected requiredPermission="roles-delete">
+                        <HoldButton callback={() => removeRole(id!)} size="icon" type="delete" variant="outline">
+                          <Trash2 className="h-4 w-4" />
+                        </HoldButton>
+                      </Protected>
+                      <Protected requiredPermission="roles-delete-hard">
+                        <HoldButton callback={() => hardRemoveRole(id!)} size="icon" type="delete" variant="outline">
+                          <TriangleAlert className="h-4 w-4 stroke-red-500" />
+                          <Trash2 className="h-4 w-4" />
+                        </HoldButton>
+                      </Protected>
+                    </>
+                  )}
                 </>
               )}
             </CardFooter>
-          </Forbidden>
+          </Activity>
         </>
       )}
     </Card>
