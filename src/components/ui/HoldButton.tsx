@@ -9,7 +9,7 @@ interface IProps {
   duration?: number;
   shortcut?: boolean;
   size?: "default" | "icon";
-  type?: "confirm" | "default" | "delete" | "restore";
+  type?: "confirm" | "default" | "delete" | "hard-delete" | "restore";
   variant?: string;
 }
 
@@ -58,6 +58,7 @@ export function HoldButton({
         variant === "outline" &&
           "bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-9 border px-4 py-2 shadow-xs has-[>svg]:px-3",
         size === "icon" && "px-5!",
+        type === "hard-delete" && "gap-0 text-rose-500",
       )}
       disabled={disabled}
       onPointerDown={handlePointerDown}
@@ -74,6 +75,7 @@ export function HoldButton({
           type === "default" && "bg-gray-200",
           // type === "delete" && "bg-[#ffdbdc] text-[#e5484d]",
           type === "delete" && "bg-rose-200 text-rose-700",
+          type === "hard-delete" && "gap-0 bg-rose-500 text-white",
           type === "restore" && "bg-amber-200 text-amber-700",
         )}
         style={{
