@@ -27,9 +27,10 @@
   --card-foreground: oklch(0.141 0.005 285.823);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.141 0.005 285.823);
-  --primary: oklch(0.21 0.006 285.885);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.967 0.001 286.375);
+  /* --primary: oklch(0.21 0.006 285.885); #18181b */
+  --primary: oklch(68.5% 0.169 237.323); /* sky-500 */
+  --primary-foreground: oklch(0.985 0 0); /* #fafafa */
+  --secondary: oklch(0.967 0.001 286.375); /* #f4f4f5 */
   --secondary-foreground: oklch(0.21 0.006 285.885);
   --muted: oklch(0.967 0.001 286.375);
   --muted-foreground: oklch(0.552 0.016 285.938);
@@ -44,17 +45,25 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  /*--sidebar: oklch(0.985 0 0);*/
+
+  /* --sidebar: oklch(0.985 0 0); #fafafa */
+  /* --sidebar-foreground: oklch(0.141 0.005 285.823); #09090b */
+  /* --sidebar-accent: oklch(0.967 0.001 286.375); #f4f4f5 */
+
   --sidebar: oklch(0.98 0.01 237) /* sky-50 */;
-  /*--sidebar-foreground: oklch(0.141 0.005 285.823);*/
   --sidebar-foreground: oklch(0.28 0.09 268) /* blue-950 */;
   --sidebar-primary: oklch(0.21 0.006 285.885);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  /*--sidebar-accent: oklch(0.967 0.001 286.375);*/
   --sidebar-accent: oklch(0.95 0.03 237) /* sky-100 */;
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.705 0.015 286.067);
+
+  /* Custom app vars */
+  --brand: oklch(93% 0.034 272.788); /* indigo-100 */
+  --brand-foreground: oklch(51.1% 0.262 276.966); /* indigo-600 */
+  --font-size-xxs: 0.625rem; /* 10px */
+  --font-size-xxs--line-height: 1.5; /* 15px */
 }
 
 @supports (font-variation-settings: normal) {
@@ -107,11 +116,12 @@ body {
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --text-xxs: 0.625rem;
-  --text-xxs--line-height: 1.2;
 
-  --color-brand: oklch(51.1% 0.262 276.966); /* indigo-600 */
-  --color-brand-foreground: oklch(93% 0.034 272.788); /* indigo-100 */
+  /* Custom app vars */
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --text-xxs: var(--font-size-xxs);
+  --text-xxs--line-height: var(--font-size-xxs--line-height);
 }
 
 .dark {
