@@ -92,166 +92,164 @@ export default function CreateAdmin() {
   }, [form.control]);
 
   return (
-    <div>
-      <Card className="w-full lg:w-[80%] xl:w-[60%]">
-        <CardHeader>
-          <CardTitle>Nuevo Administrador</CardTitle>
-          <CardDescription>Aquí puedes editar los datos del administrador</CardDescription>
-        </CardHeader>
-        <CardContent className="flex-1">
-          <form className="grid grid-cols-1 gap-6" id="create-admin" onSubmit={form.handleSubmit(onSubmit)}>
-            <FieldGroup className="grid grid-cols-2 gap-6">
-              <Controller
-                name="ic"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid || !!icError}>
-                    <FieldLabel htmlFor="ic">DNI</FieldLabel>
-                    <Input
-                      aria-invalid={fieldState.invalid || !!icError}
-                      id="ic"
-                      {...field}
-                      onChange={async (e) => {
-                        const value = e.target.value.replace(/\D/g, "");
-                        field.onChange(value);
+    <Card className="w-full lg:w-[80%] xl:w-[60%]">
+      <CardHeader>
+        <CardTitle>Nuevo Administrador</CardTitle>
+        <CardDescription>Aquí puedes editar los datos del administrador</CardDescription>
+      </CardHeader>
+      <CardContent className="flex-1">
+        <form className="grid grid-cols-1 gap-6" id="create-admin" onSubmit={form.handleSubmit(onSubmit)}>
+          <FieldGroup className="grid grid-cols-2 gap-6">
+            <Controller
+              name="ic"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid || !!icError}>
+                  <FieldLabel htmlFor="ic">DNI</FieldLabel>
+                  <Input
+                    aria-invalid={fieldState.invalid || !!icError}
+                    id="ic"
+                    {...field}
+                    onChange={async (e) => {
+                      const value = e.target.value.replace(/\D/g, "");
+                      field.onChange(value);
 
-                        setIcError(null);
-                        form.clearErrors("ic");
+                      setIcError(null);
+                      form.clearErrors("ic");
 
-                        if (value.length > 0) {
-                          const response = await AdminService.checkIcAvailability(value);
-                          if (response.data === false) {
-                            const errorMsg = "DNI ya registrado";
-                            setIcError(errorMsg);
-                            form.setError("ic", { message: errorMsg });
-                          }
+                      if (value.length > 0) {
+                        const response = await AdminService.checkIcAvailability(value);
+                        if (response.data === false) {
+                          const errorMsg = "DNI ya registrado";
+                          setIcError(errorMsg);
+                          form.setError("ic", { message: errorMsg });
                         }
-                      }}
-                    />
-                    {(fieldState.invalid || icError) && (
-                      <FieldError errors={icError ? [{ message: icError }] : [fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </FieldGroup>
-            <FieldGroup className="grid grid-cols-2 gap-6">
-              <Controller
-                name="userName"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="userName">Usuario</FieldLabel>
-                    <Input aria-invalid={fieldState.invalid} id="userName" {...field} />
+                      }
+                    }}
+                  />
+                  {(fieldState.invalid || icError) && (
+                    <FieldError errors={icError ? [{ message: icError }] : [fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          </FieldGroup>
+          <FieldGroup className="grid grid-cols-2 gap-6">
+            <Controller
+              name="userName"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="userName">Usuario</FieldLabel>
+                  <Input aria-invalid={fieldState.invalid} id="userName" {...field} />
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
+              )}
+            />
+            <Controller
+              name="password"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="password">Contraseña</FieldLabel>
+                  <Input aria-invalid={fieldState.invalid} id="password" {...field} />
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
+              )}
+            />
+          </FieldGroup>
+          <FieldGroup className="grid grid-cols-2 gap-6">
+            <Controller
+              name="firstName"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="firstName">Nombre</FieldLabel>
+                  <Input aria-invalid={fieldState.invalid} id="firstName" {...field} />
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
+              )}
+            />
+            <Controller
+              name="lastName"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="lastName">Apellido</FieldLabel>
+                  <Input aria-invalid={fieldState.invalid} id="lastName" {...field} />
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
+              )}
+            />
+          </FieldGroup>
+          <FieldGroup className="grid grid-cols-5 gap-6">
+            <Controller
+              name="email"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid} className="col-span-3">
+                  <FieldLabel htmlFor="email">E-mail</FieldLabel>
+                  <Input aria-invalid={fieldState.invalid} id="email" {...field} />
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
+              )}
+            />
+            <Controller
+              name="roleId"
+              control={form.control}
+              render={({ field, fieldState }) => {
+                return (
+                  <Field data-invalid={fieldState.invalid} className="col-span-2">
+                    <FieldLabel htmlFor="roleId">Rol</FieldLabel>
+                    <Select disabled={!roles} key={field.value} value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger id="roleId" aria-invalid={fieldState.invalid}>
+                        <SelectValue placeholder="Seleccione" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {roles?.map((role) => (
+                          <SelectItem key={role.id} value={role.id}>
+                            {role.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                   </Field>
-                )}
-              />
-              <Controller
-                name="password"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="password">Contraseña</FieldLabel>
-                    <Input aria-invalid={fieldState.invalid} id="password" {...field} />
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                  </Field>
-                )}
-              />
-            </FieldGroup>
-            <FieldGroup className="grid grid-cols-2 gap-6">
-              <Controller
-                name="firstName"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="firstName">Nombre</FieldLabel>
-                    <Input aria-invalid={fieldState.invalid} id="firstName" {...field} />
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                  </Field>
-                )}
-              />
-              <Controller
-                name="lastName"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="lastName">Apellido</FieldLabel>
-                    <Input aria-invalid={fieldState.invalid} id="lastName" {...field} />
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                  </Field>
-                )}
-              />
-            </FieldGroup>
-            <FieldGroup className="grid grid-cols-5 gap-6">
-              <Controller
-                name="email"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid} className="col-span-3">
-                    <FieldLabel htmlFor="email">E-mail</FieldLabel>
-                    <Input aria-invalid={fieldState.invalid} id="email" {...field} />
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                  </Field>
-                )}
-              />
-              <Controller
-                name="roleId"
-                control={form.control}
-                render={({ field, fieldState }) => {
-                  return (
-                    <Field data-invalid={fieldState.invalid} className="col-span-2">
-                      <FieldLabel htmlFor="roleId">Rol</FieldLabel>
-                      <Select disabled={!roles} key={field.value} value={field.value} onValueChange={field.onChange}>
-                        <SelectTrigger id="roleId" aria-invalid={fieldState.invalid}>
-                          <SelectValue placeholder="Seleccione" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {roles?.map((role) => (
-                            <SelectItem key={role.id} value={role.id}>
-                              {role.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                    </Field>
-                  );
-                }}
-              />
-            </FieldGroup>
-            <FieldGroup className="grid grid-cols-2 gap-6">
-              <Controller
-                name="phoneNumber"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid} className="col-span-1">
-                    <FieldLabel htmlFor="phone">Teléfono</FieldLabel>
-                    <Input
-                      aria-invalid={fieldState.invalid}
-                      {...field}
-                      onChange={(e) => {
-                        const value = e.target.value.replace(/\D/g, "");
-                        field.onChange(value);
-                      }}
-                      id="phone"
-                    />
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                  </Field>
-                )}
-              />
-            </FieldGroup>
-          </form>
-        </CardContent>
-        <CardFooter className="justify-end gap-4 pt-4">
-          <Button variant="ghost" onClick={resetForm}>
-            Cancelar
-          </Button>
-          <Button disabled={!form.formState.isDirty} form="create-admin" type="submit" variant="default">
-            Guardar
-          </Button>
-        </CardFooter>
-      </Card>
-    </div>
+                );
+              }}
+            />
+          </FieldGroup>
+          <FieldGroup className="grid grid-cols-2 gap-6">
+            <Controller
+              name="phoneNumber"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid} className="col-span-1">
+                  <FieldLabel htmlFor="phone">Teléfono</FieldLabel>
+                  <Input
+                    aria-invalid={fieldState.invalid}
+                    {...field}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, "");
+                      field.onChange(value);
+                    }}
+                    id="phone"
+                  />
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
+              )}
+            />
+          </FieldGroup>
+        </form>
+      </CardContent>
+      <CardFooter className="justify-end gap-4 pt-4">
+        <Button variant="ghost" onClick={resetForm}>
+          Cancelar
+        </Button>
+        <Button disabled={!form.formState.isDirty} form="create-admin" type="submit" variant="default">
+          Guardar
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }
