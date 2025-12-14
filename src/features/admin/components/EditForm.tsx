@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { IRole } from "@roles/interfaces/role.interface";
 import { AdminService } from "@admin/services/admin.service";
 import { RolesService } from "@roles/services/roles.service";
-import { updateAdminSchema } from "@admin/schemas/admin.schema";
+import { updateAdminSchema } from "@admin/schemas/update-admin.schema";
 import { tryCatch } from "@core/utils/try-catch";
 
 interface IProps {
