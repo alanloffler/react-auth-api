@@ -14,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { IRole } from "@/features/roles/interfaces/role.interface";
 import { AdminService } from "@admin/services/admin.service";
 import { RolesService } from "@/features/roles/services/roles.service";
-import { adminSchema } from "@admin/schemas/admin.schema";
+import { createAdminSchema } from "@admin/schemas/create-admin.schema";
 import { tryCatch } from "@/core/utils/try-catch";
 import { useNavigate } from "react-router";
 
@@ -23,8 +23,8 @@ export default function CreateAdmin() {
   const [roles, setRoles] = useState<IRole[] | undefined>(undefined);
   const navigate = useNavigate();
 
-  const form = useForm<z.infer<typeof adminSchema>>({
-    resolver: zodResolver(adminSchema),
+  const form = useForm<z.infer<typeof createAdminSchema>>({
+    resolver: zodResolver(createAdminSchema),
     defaultValues: {
       ic: "",
       userName: "",
@@ -37,7 +37,7 @@ export default function CreateAdmin() {
     },
   });
 
-  async function onSubmit(data: z.infer<typeof adminSchema>) {
+  async function onSubmit(data: z.infer<typeof createAdminSchema>) {
     if (icError) {
       form.setError("ic", { message: icError });
       return;
