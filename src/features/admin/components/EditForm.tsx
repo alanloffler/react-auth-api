@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { IRole } from "@roles/interfaces/role.interface";
 import { AdminService } from "@admin/services/admin.service";
 import { RolesService } from "@roles/services/roles.service";
-import { adminSchema } from "@admin/schemas/admin.schema";
+import { updateAdminSchema } from "@admin/schemas/admin.schema";
 import { tryCatch } from "@core/utils/try-catch";
 
 interface IProps {
@@ -26,8 +26,8 @@ export function EditForm({ adminId }: IProps) {
   const [roles, setRoles] = useState<IRole[] | undefined>(undefined);
   const navigate = useNavigate();
 
-  const form = useForm<z.infer<typeof adminSchema>>({
-    resolver: zodResolver(adminSchema),
+  const form = useForm<z.infer<typeof updateAdminSchema>>({
+    resolver: zodResolver(updateAdminSchema),
     defaultValues: {
       ic: "",
       userName: "",
@@ -55,7 +55,7 @@ export function EditForm({ adminId }: IProps) {
           form.reset({
             ic: admin.data.ic,
             userName: admin.data.userName,
-            password: admin.data.password,
+            password: "",
             firstName: admin.data.firstName,
             lastName: admin.data.lastName,
             email: admin.data.email,
@@ -68,8 +68,12 @@ export function EditForm({ adminId }: IProps) {
     findOneWithCredentials();
   }, [adminId, form]);
 
-  async function onSubmit(data: z.infer<typeof adminSchema>) {
-    const [update, updateError] = await tryCatch(AdminService.update(adminId, data));
+  async function onSubmit(data: z.infer<typeof updateAdminSchema>) {
+    const updateData = data.password
+      ? data
+      : Object.fromEntries(Object.entries(data).filter(([key]) => key !== "password"));
+
+    const [update, updateError] = await tryCatch(AdminService.update(adminId, updateData));
 
     if (updateError) {
       toast.error(updateError.message);
@@ -157,8 +161,8 @@ export function EditForm({ adminId }: IProps) {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="password">Contraseña</FieldLabel>
-                  <Input aria-invalid={fieldState.invalid} id="password" {...field} />
+                  <FieldLabel htmlFor="password">Nueva Contraseña (opcional)</FieldLabel>
+                  <Input aria-invalid={fieldState.invalid} id="password" type="password" {...field} />
                   {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                 </Field>
               )}
