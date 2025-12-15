@@ -174,7 +174,7 @@ export default function Roles() {
           </Button>
         </Protected>
       </PageHeader>
-      <DataTable columns={columns} data={roles} />
+      <DataTable columns={columns} data={roles} defaultPageSize={10} defaultSorting={[{ id: "name", desc: false }]} />
     </div>
   );
 }
