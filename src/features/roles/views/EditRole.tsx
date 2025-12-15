@@ -20,7 +20,7 @@ import { RolesService } from "@roles/services/roles.service";
 import { cn } from "@lib/utils";
 import { roleSchema } from "@roles/schemas/role.schema";
 import { tryCatch } from "@core/utils/try-catch";
-import { useAuthStore } from "@/core/auth/auth.store";
+import { useAuthStore } from "@core/auth/auth.store";
 
 export default function EditRole() {
   const [permissions, setPermissions] = useState<any | undefined>(undefined);
@@ -61,15 +61,18 @@ export default function EditRole() {
 
       if (permissionsResponse?.statusCode === 200 && permissionsResponse.data) {
         const rolePermissionKeys = new Set(
-          roleResponse?.data?.rolePermissions?.map((rp) => rp.permission.actionKey) || [],
+          roleResponse?.data?.rolePermissions?.map((rp) => rp.permission?.actionKey) || [],
         );
 
         const processedPermissions = permissionsResponse.data.map((permGroup) => ({
           ...permGroup,
-          actions: permGroup.actions.map((action) => ({
-            ...action,
-            value: rolePermissionKeys.has(action.key),
-          })),
+          actions: permGroup.actions.map((action) => {
+            return {
+              ...action,
+              value: rolePermissionKeys.has(action.key),
+              deletedAt: action.deletedAt,
+            };
+          }),
         }));
 
         setPermissions(processedPermissions);
@@ -81,7 +84,15 @@ export default function EditRole() {
   }, [id, form]);
 
   async function onSubmit(data: z.infer<typeof roleSchema>) {
-    const [response, error] = await tryCatch(RolesService.update(id!, data));
+    const cleanedData = {
+      ...data,
+      permissions: data.permissions.map((permGroup) => ({
+        ...permGroup,
+        actions: permGroup.actions.filter((action) => !action.deletedAt),
+      })),
+    };
+
+    const [response, error] = await tryCatch(RolesService.update(id!, cleanedData));
 
     if (error) {
       toast.error(error.message);
@@ -89,8 +100,8 @@ export default function EditRole() {
     }
 
     if (response && response.statusCode === 200) {
-      await refreshAdmin();
       toast.success(response.message);
+      await refreshAdmin();
       resetForm();
     }
   }
@@ -101,87 +112,88 @@ export default function EditRole() {
   }
 
   return (
-    <div>
-      <Card className="w-full lg:w-[80%] xl:w-[60%]">
-        <CardHeader>
-          <CardTitle>Editar Rol</CardTitle>
-          <CardDescription>Realizá cambios en un rol para los usuarios del sistema</CardDescription>
-        </CardHeader>
-        <CardContent className="flex-1">
-          <form className="grid grid-cols-1 gap-6" id="create-role" onSubmit={form.handleSubmit(onSubmit)}>
-            <FieldGroup className="grid grid-cols-2 gap-6">
-              <Controller
-                name="name"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="name">Nombre</FieldLabel>
-                    <Input aria-invalid={fieldState.invalid} id="name" {...field} />
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                  </Field>
+    <Card className="flex w-full flex-col gap-10 lg:w-[80%] xl:w-[60%]">
+      <CardHeader>
+        <CardTitle>Editar Rol</CardTitle>
+        <CardDescription>Realizá cambios en un rol para los usuarios del sistema</CardDescription>
+      </CardHeader>
+      <CardContent className="flex-1">
+        <form className="grid grid-cols-1 gap-6" id="create-role" onSubmit={form.handleSubmit(onSubmit)}>
+          <FieldGroup className="grid grid-cols-2 gap-6">
+            <Controller
+              name="name"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="name">Nombre</FieldLabel>
+                  <Input aria-invalid={fieldState.invalid} id="name" {...field} />
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
+              )}
+            />
+            <Controller
+              name="value"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="value">Valor</FieldLabel>
+                  <Input aria-invalid={fieldState.invalid} id="value" {...field} />
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
+              )}
+            />
+          </FieldGroup>
+          <FieldGroup className="grid grid-cols-1 gap-6">
+            <Controller
+              name="description"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="description">Descripción</FieldLabel>
+                  <Input aria-invalid={fieldState.invalid} id="description" {...field} />
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
+              )}
+            />
+          </FieldGroup>
+          <div className="flex flex-col gap-3">
+            <Label className={form.formState.errors.permissions && "text-destructive"}>Permisos</Label>
+            <FieldGroup>
+              <div
+                className={cn(
+                  "flex flex-col gap-5 rounded-md border border-gray-200 p-6",
+                  form.formState.errors.permissions && "border-destructive",
                 )}
-              />
-              <Controller
-                name="value"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="value">Valor</FieldLabel>
-                    <Input aria-invalid={fieldState.invalid} id="value" {...field} />
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                  </Field>
-                )}
-              />
-            </FieldGroup>
-            <FieldGroup className="grid grid-cols-1 gap-6">
-              <Controller
-                name="description"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="description">Descripción</FieldLabel>
-                    <Input aria-invalid={fieldState.invalid} id="description" {...field} />
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                  </Field>
-                )}
-              />
-            </FieldGroup>
-            <div className="flex flex-col gap-3">
-              <Label className={form.formState.errors.permissions && "text-destructive"}>Permisos</Label>
-              <FieldGroup>
-                <div
-                  className={cn(
-                    "flex flex-col gap-5 rounded-md border border-gray-200 p-6",
-                    form.formState.errors.permissions && "border-destructive",
-                  )}
-                >
-                  {permissions ? (
-                    <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3">
-                      {permissions.map((permission: IPermissionGroup, permIndex: number) => (
-                        <li className="flex flex-col gap-3" key={permission.id}>
-                          <h2 className="text-xxs font-medium uppercase">{permission.name}</h2>
-                          <ul className="flex flex-col gap-3 pl-4">
-                            {permission.actions.map((action, actionIndex) => (
-                              <li className="flex items-center gap-2" key={action.id}>
-                                <Controller
-                                  name={`permissions.${permIndex}.actions.${actionIndex}.value`}
-                                  control={form.control}
-                                  render={({ field }) => {
-                                    const isViewPermission = action.key.endsWith("-view");
+              >
+                {permissions ? (
+                  <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3">
+                    {permissions.map((permission: IPermissionGroup, permIndex: number) => (
+                      <li className="flex flex-col gap-3" key={permission.id}>
+                        <h2 className="text-xxs font-medium uppercase">{permission.name}</h2>
+                        <ul className="flex flex-col gap-3 pl-4">
+                          {permission.actions.map((action, actionIndex) => (
+                            <li className="flex items-center gap-2" key={action.id}>
+                              <Controller
+                                name={`permissions.${permIndex}.actions.${actionIndex}.value`}
+                                control={form.control}
+                                render={({ field }) => {
+                                  const isViewPermission = action.key.endsWith("-view");
+                                  const isDeleted = !!action.deletedAt;
 
-                                    const hasOtherPermissionsChecked = isViewPermission
-                                      ? permission.actions.some(
-                                          (a, idx) =>
-                                            !a.key.endsWith("-view") &&
-                                            permissionsWatch?.[permIndex]?.actions?.[idx]?.value,
-                                        )
-                                      : false;
+                                  const hasOtherPermissionsChecked = isViewPermission
+                                    ? permission.actions.some(
+                                        (a, idx) =>
+                                          !a.key.endsWith("-view") &&
+                                          permissionsWatch?.[permIndex]?.actions?.[idx]?.value,
+                                      )
+                                    : false;
 
-                                    return (
+                                  return (
+                                    <>
                                       <Checkbox
                                         id={action.key}
                                         checked={field.value}
-                                        disabled={hasOtherPermissionsChecked}
+                                        disabled={hasOtherPermissionsChecked || isDeleted}
                                         onCheckedChange={(checked) => {
                                           field.onChange(checked);
 
@@ -204,38 +216,43 @@ export default function EditRole() {
                                           }
                                         }}
                                       />
-                                    );
-                                  }}
-                                />
-                                <Label htmlFor={action.key}>{action.name}</Label>
-                              </li>
-                            ))}
-                          </ul>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <span className="text-destructive text-center text-sm">Error cargando permisos</span>
-                  )}
-                </div>
-              </FieldGroup>
-              {form.formState.errors.permissions && (
-                <FieldError
-                  errors={[{ message: form.formState.errors.permissions.root?.message || "Error en permisos" }]}
-                />
-              )}
-            </div>
-          </form>
-        </CardContent>
-        <CardFooter className="justify-end gap-4 pt-4">
-          <Button variant="ghost" onClick={resetForm}>
-            Cancelar
-          </Button>
-          <Button disabled={!form.formState.isDirty} form="create-role" type="submit" variant="default">
-            Guardar
-          </Button>
-        </CardFooter>
-      </Card>
-    </div>
+                                      <Label
+                                        htmlFor={action.key}
+                                        className={cn(isDeleted && "text-muted-foreground line-through")}
+                                      >
+                                        {action.name}
+                                      </Label>
+                                    </>
+                                  );
+                                }}
+                              />
+                            </li>
+                          ))}
+                        </ul>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <span className="text-destructive text-center text-sm">Error cargando permisos</span>
+                )}
+              </div>
+            </FieldGroup>
+            {form.formState.errors.permissions && (
+              <FieldError
+                errors={[{ message: form.formState.errors.permissions.root?.message || "Error en permisos" }]}
+              />
+            )}
+          </div>
+        </form>
+      </CardContent>
+      <CardFooter className="justify-end gap-4 pt-4">
+        <Button variant="ghost" onClick={resetForm}>
+          Cancelar
+        </Button>
+        <Button disabled={!form.formState.isDirty} form="create-role" type="submit" variant="default">
+          Guardar
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }
