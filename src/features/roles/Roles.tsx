@@ -112,17 +112,19 @@ export default function Roles() {
       id: "actions",
       cell: ({ row }) => (
         <div className="flex justify-end gap-2">
+          <Button className="px-5!" variant="outline" asChild>
+            <Link to={`/roles/view/${row.original.id}`}>
+              <Eye className="h-4 w-4" />
+            </Link>
+          </Button>
           {row.original.deletedAt ? (
-            <HoldButton callback={() => restoreRole(row.original.id)} size="icon" type="restore" variant="outline">
-              <RotateCcw className="h-4 w-4" />
-            </HoldButton>
+            <Protected requiredPermission="roles-restore">
+              <HoldButton callback={() => restoreRole(row.original.id)} size="icon" type="restore" variant="outline">
+                <RotateCcw className="h-4 w-4" />
+              </HoldButton>
+            </Protected>
           ) : (
             <>
-              <Button className="px-5!" variant="outline" asChild>
-                <Link to={`/roles/view/${row.original.id}`}>
-                  <Eye className="h-4 w-4" />
-                </Link>
-              </Button>
               <Protected requiredPermission="roles-update">
                 <Button className="px-5!" variant="outline" asChild>
                   <Link to={`/roles/edit/${row.original.id}`}>
