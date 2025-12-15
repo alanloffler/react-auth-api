@@ -174,7 +174,12 @@ export function Admin() {
               </Protected>
               <Protected requiredPermission="admin-delete-hard">
                 {admin && row.original.ic !== admin.ic && (
-                  <HoldButton callback={() => hardRemoveAdmin(row.original.id)} type="hard-delete" variant="outline">
+                  <HoldButton
+                    callback={() => hardRemoveAdmin(row.original.id)}
+                    size="icon"
+                    type="hard-delete"
+                    variant="outline"
+                  >
                     <Trash2 className="h-4 w-4" />
                     <span>!</span>
                   </HoldButton>
