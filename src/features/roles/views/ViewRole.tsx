@@ -1,4 +1,4 @@
-import { ArrowLeft, Check, RotateCcw, Trash2, TriangleAlert } from "lucide-react";
+import { ArrowLeft, Check, FilePenLine, RotateCcw, Trash2 } from "lucide-react";
 
 import { Activity } from "react";
 import { Button } from "@components/ui/button";
@@ -18,14 +18,13 @@ import { ERoles } from "@auth/enums/role.enum";
 import { RolesService } from "@roles/services/roles.service";
 import { tryCatch } from "@core/utils/try-catch";
 import { useAuthStore } from "@auth/auth.store";
-
-const FOOTER_ACTIONS = ["roles-delete", "roles-delete-hard", "roles-restore", "roles-update"];
+import { usePermission } from "@core/hooks/usePermission";
 
 export default function ViewRole() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [role, setRole] = useState<IRole | undefined>(undefined);
-  const [showFooter, setShowFooter] = useState<boolean>(false);
   const admin = useAuthStore((state) => state.admin);
+  const hasPermissions = usePermission(["roles-delete", "roles-delete-hard", "roles-restore", "roles-update"], "some");
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -33,7 +32,9 @@ export default function ViewRole() {
     async function (id: string) {
       setIsLoading(true);
 
-      const [response, responseError] = await tryCatch(RolesService.findOne(id));
+      const isSuperAdmin = admin?.role.value === ERoles.SUPER;
+      const serviceByRole = isSuperAdmin ? RolesService.findOneSoftRemoved(id) : RolesService.findOne(id);
+      const [response, responseError] = await tryCatch(serviceByRole);
 
       setIsLoading(false);
 
@@ -44,14 +45,9 @@ export default function ViewRole() {
 
       if (response && response.statusCode === 200) {
         setRole(response.data);
-
-        setShowFooter(
-          admin?.role?.rolePermissions?.some((p) => p.permission && FOOTER_ACTIONS.includes(p.permission.actionKey)) ??
-            false,
-        );
       }
     },
-    [admin],
+    [admin?.role.value],
   );
 
   useEffect(() => {
@@ -101,6 +97,20 @@ export default function ViewRole() {
     if (response && response.statusCode === 200) {
       toast.success(response.message);
       navigate(-1);
+    }
+  }
+
+  async function restoreRole(id: string): Promise<void> {
+    const [response, error] = await tryCatch(RolesService.restore(id));
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    if (response && response.statusCode === 200) {
+      toast.success(response.message);
+      findOneRole(id);
     }
   }
 
@@ -185,45 +195,52 @@ export default function ViewRole() {
               </ul>
               <p className="text-muted-foreground px-0 text-left">{`Creado el ${role && new Date(role.createdAt.split("T")[0]).toLocaleDateString()}`}</p>
             </CardContent>
-            <Activity mode={showFooter ? "visible" : "hidden"}>
+            <Activity mode={hasPermissions ? "visible" : "hidden"}>
               <CardFooter className="justify-end gap-3 px-0">
-                {role?.deletedAt && role?.deletedAt !== null ? (
+                {role?.deletedAt !== null ? (
                   <Protected requiredPermission="roles-restore">
-                    <HoldButton callback={() => console.log("restaurar")} size="icon" type="restore" variant="outline">
+                    <HoldButton callback={() => id && restoreRole(id)} size="icon" type="restore" variant="outline">
                       <RotateCcw className="h-4 w-4" />
                     </HoldButton>
                   </Protected>
                 ) : (
                   <>
                     {role?.value !== ERoles.SUPER ? (
-                      <Protected requiredPermission="roles-update">
-                        <Button variant="outline" asChild>
-                          <Link to={`/roles/edit/${id}`}>Editar</Link>
-                        </Button>
-                      </Protected>
-                    ) : (
-                      admin?.role.value === ERoles.SUPER && (
+                      <>
                         <Protected requiredPermission="roles-update">
-                          <Button variant="outline" asChild>
-                            <Link to={`/roles/edit/${id}`}>Editar</Link>
+                          <Button className="px-5!" variant="outline" asChild>
+                            <Link to={`/roles/edit/${id}`}>
+                              <FilePenLine className="h-4 w-4" />
+                            </Link>
                           </Button>
                         </Protected>
-                      )
-                    )}
-                    {role?.value !== ERoles.SUPER && (
-                      <>
                         <Protected requiredPermission="roles-delete">
-                          <HoldButton callback={() => removeRole(id!)} size="icon" type="delete" variant="outline">
+                          <HoldButton callback={() => id && removeRole(id)} size="icon" type="delete" variant="outline">
                             <Trash2 className="h-4 w-4" />
                           </HoldButton>
                         </Protected>
                         <Protected requiredPermission="roles-delete-hard">
-                          <HoldButton callback={() => hardRemoveRole(id!)} size="icon" type="delete" variant="outline">
-                            <TriangleAlert className="h-4 w-4 stroke-red-500" />
+                          <HoldButton
+                            callback={() => id && hardRemoveRole(id)}
+                            size="icon"
+                            type="hard-delete"
+                            variant="outline"
+                          >
                             <Trash2 className="h-4 w-4" />
+                            <span>!</span>
                           </HoldButton>
                         </Protected>
                       </>
+                    ) : (
+                      admin?.role.value === ERoles.SUPER && (
+                        <Protected requiredPermission="roles-update">
+                          <Button className="px-5!" variant="outline" asChild>
+                            <Link to={`/roles/edit/${id}`}>
+                              <FilePenLine className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                        </Protected>
+                      )
                     )}
                   </>
                 )}
