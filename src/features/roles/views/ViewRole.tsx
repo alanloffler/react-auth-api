@@ -135,10 +135,13 @@ export default function ViewRole() {
                   <ul className="grid pl-5">
                     {role?.rolePermissions && role.rolePermissions.length > 0 ? (
                       Object.entries(groupByCategory(role?.rolePermissions)).map(([category, permissions]) => (
-                        <div key={category} className="mt-2">
+                        <div key={`category-${category}`} className="mt-2">
                           <ul className="space-y-1">
                             {permissions.map((rp, idx) => (
-                              <li key={idx} className="flex items-center gap-2 text-xs font-medium uppercase">
+                              <li
+                                key={`permission-${idx}`}
+                                className="flex items-center gap-2 text-xs font-medium uppercase"
+                              >
                                 <Check className="h-3 w-3" />
                                 {rp.permission.name}
                               </li>
