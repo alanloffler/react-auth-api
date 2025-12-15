@@ -7,6 +7,7 @@ import EditRole from "@roles/views/EditRole";
 import Permissions from "@permissions/Permissions";
 import Roles from "@roles/Roles";
 import ViewAdmin from "@admin/views/ViewAdmin";
+import ViewPermission from "@permissions/views/ViewPermission";
 import ViewRole from "@roles/views/ViewRole";
 import { Admin } from "@admin/Admin";
 import { AppInitializer } from "@auth/components/AppInitializer";
@@ -121,6 +122,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute requiredPermission={["permissions-view", "permissions-update"]}>
             <EditPermission />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "permissions/view/:id",
+        element: (
+          <ProtectedRoute requiredPermission="permissions-view">
+            <ViewPermission />
           </ProtectedRoute>
         ),
       },
