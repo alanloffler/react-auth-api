@@ -25,7 +25,7 @@ export function ProtectedRoute({ children, redirectTo = "/", requiredPermission 
       ? [requiredPermission]
       : [];
 
-  const hasAllPermissions = required.every((r) => adminPermissions.some((p) => p.permission.actionKey === r));
+  const hasAllPermissions = required.every((r) => adminPermissions.some((p) => p.permission?.actionKey === r));
 
   if (required.length > 0 && !hasAllPermissions) {
     return <Navigate to={redirectTo} replace />;
