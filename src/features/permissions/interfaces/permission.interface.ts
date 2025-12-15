@@ -1,8 +1,8 @@
 export interface IPermission {
   actionKey: string;
   category: string;
-  createdAt: Date;
-  deletedAt?: Date;
+  createdAt: string;
+  deletedAt?: string;
   description: string;
   id: string;
   name: string;
