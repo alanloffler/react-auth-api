@@ -22,7 +22,7 @@ export default function ViewAdmin() {
   const [admin, setAdmin] = useState<IAdmin | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const adminAuth = useAuthStore((state) => state.admin);
-  const hasPermissions = usePermission(["admin-update", "admin-delete", "admin-delete-hard"], "some");
+  const hasPermissions = usePermission(["admin-delete", "admin-delete-hard", "admin-restore", "admin-update"], "some");
   const navigate = useNavigate();
   const { id } = useParams();
 
