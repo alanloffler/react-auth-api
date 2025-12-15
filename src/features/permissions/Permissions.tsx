@@ -1,4 +1,4 @@
-import { Ban, Eye, FilePenLine, Plus, RotateCcw, Trash2, TriangleAlert } from "lucide-react";
+import { Ban, Eye, FilePenLine, Plus, RotateCcw, Trash2 } from "lucide-react";
 
 import { Button } from "@components/ui/button";
 import { DataTable } from "@/components/data-table/DataTable";
@@ -154,11 +154,11 @@ export default function Permissions() {
                 <HoldButton
                   callback={() => removeHardPermission(row.original.id)}
                   size="icon"
-                  type="delete"
+                  type="hard-delete"
                   variant="outline"
                 >
-                  <TriangleAlert className="h-4 w-4 stroke-red-500" />
                   <Trash2 className="h-4 w-4" />
+                  <span>!</span>
                 </HoldButton>
               </Protected>
             </>
