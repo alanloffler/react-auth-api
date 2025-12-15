@@ -8,12 +8,13 @@ import type { PaginationState, Table } from "@tanstack/react-table";
 import { cn } from "@/lib/utils";
 
 interface IProps {
+  pageSizes: number[];
   pagination: PaginationState;
   setPagination: Dispatch<SetStateAction<PaginationState>>;
   table: Table<any>;
 }
 
-export function Pagination({ setPagination, pagination, table }: IProps) {
+export function Pagination({ pageSizes, pagination, setPagination, table }: IProps) {
   return (
     <section className={`flex items-center justify-end gap-2 p-5 md:gap-5`}>
       <Select
@@ -25,7 +26,7 @@ export function Pagination({ setPagination, pagination, table }: IProps) {
         </SelectTrigger>
         <SelectContent className="w-[65px] min-w-px" onCloseAutoFocus={(e) => e.preventDefault()}>
           <SelectGroup className="[&_svg]:h-4 [&_svg]:w-4">
-            {[5, 10, 20, 50].map((pageSize) => (
+            {pageSizes.map((pageSize) => (
               <SelectItem key={pageSize} value={`${pageSize}`} className="justify-between text-xs">
                 {pageSize}
               </SelectItem>
