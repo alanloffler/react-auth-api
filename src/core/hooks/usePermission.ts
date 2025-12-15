@@ -11,7 +11,9 @@ export function usePermission(actionKey: string | string[], type?: "every" | "so
   return useMemo(() => {
     if (!admin?.role?.rolePermissions) return false;
 
-    const userPermissions = admin.role.rolePermissions.map((rp) => rp.permission.actionKey);
+    const userPermissions = admin.role.rolePermissions
+      .filter((rp) => rp.permission !== null)
+      .map((rp) => rp.permission?.actionKey);
 
     if (Array.isArray(actionKey)) {
       if (type === "every") {
