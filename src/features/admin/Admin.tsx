@@ -72,18 +72,17 @@ export function Admin() {
   }
 
   async function hardRemoveAdmin(id: string): Promise<void> {
-    console.log(id);
-    // const [response, error] = await tryCatch(AdminService.softRemove(id));
-    //
-    // if (error) {
-    //   toast.error(error.message);
-    //   return;
-    // }
-    //
-    // if (response && response.statusCode === 200) {
-    //   toast.success(response.message);
-    //   fetchAdmins();
-    // }
+    const [response, error] = await tryCatch(AdminService.remove(id));
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    if (response && response.statusCode === 200) {
+      toast.success(response.message);
+      fetchAdmins();
+    }
   }
 
   const columns: ColumnDef<IAdmin>[] = [
