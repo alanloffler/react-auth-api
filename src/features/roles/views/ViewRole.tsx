@@ -5,6 +5,7 @@ import { Button } from "@components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@components/ui/card";
 import { HoldButton } from "@components/ui/HoldButton";
 import { Link } from "react-router";
+import { PageHeader } from "@components/pages/PageHeader";
 import { Protected } from "@core/auth/components/Protected";
 
 import { toast } from "sonner";
@@ -45,7 +46,8 @@ export default function ViewRole() {
         setRole(response.data);
 
         setShowFooter(
-          admin?.role?.rolePermissions?.some((p) => FOOTER_ACTIONS.includes(p.permission.actionKey)) ?? false,
+          admin?.role?.rolePermissions?.some((p) => p.permission && FOOTER_ACTIONS.includes(p.permission.actionKey)) ??
+            false,
         );
       }
     },
@@ -62,11 +64,13 @@ export default function ViewRole() {
     const grouped: Record<string, typeof rolePermissions> = {};
 
     rolePermissions.forEach((rp) => {
-      const category = rp.permission.category;
-      if (!grouped[category]) {
-        grouped[category] = [];
+      const category = rp.permission?.category;
+      if (category) {
+        if (!grouped[category]) {
+          grouped[category] = [];
+        }
+        grouped[category].push(rp);
       }
-      grouped[category].push(rp);
     });
 
     return grouped;
@@ -101,130 +105,133 @@ export default function ViewRole() {
   }
 
   return (
-    <Card className="relative w-full max-w-180 p-10 text-center">
-      {isLoading ? (
-        <div className="min-w-80">Cargando...</div>
-      ) : (
-        <>
-          <Button className="absolute top-5 right-5" variant="ghost" size="icon-lg" asChild>
-            <Link to="/roles">
-              <ArrowLeft className="size-5 cursor-pointer" />
-            </Link>
-          </Button>
-          <CardHeader>
-            <CardTitle className="text-xl">{role?.name}</CardTitle>
-            <CardDescription className="text-base">{role?.value}</CardDescription>
-          </CardHeader>
-          <CardContent className="flex-1 space-y-6 px-0">
-            <ul className="space-y-2 text-start">
-              <li className="flex gap-5">
-                <span className="font-semibold">Nombre</span>
-                <span>{role?.name}</span>
-              </li>
-              <li className="flex gap-5">
-                <span className="font-semibold">Valor</span>
-                <span>{role?.value}</span>
-              </li>
-              <li className="flex flex-col items-start">
-                <span className="font-semibold">Descripción</span>
-                <span>{role?.description}</span>
-              </li>
-              <div className="grid grid-cols-2">
-                <div>
-                  <span className="font-semibold">Permisos:</span>
-                  <ul className="grid pl-5">
-                    {role?.rolePermissions && role.rolePermissions.length > 0 ? (
-                      Object.entries(groupByCategory(role?.rolePermissions)).map(([category, permissions]) => (
-                        <div key={`category-${category}`} className="mt-2">
-                          <ul className="space-y-1">
-                            {permissions.map((rp, idx) => (
-                              <li
-                                key={`permission-${idx}`}
-                                className="flex items-center gap-2 text-xs font-medium uppercase"
-                              >
-                                <Check className="h-3 w-3" />
-                                {rp.permission.name}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))
-                    ) : (
-                      <span>Sin permisos</span>
-                    )}
-                  </ul>
-                </div>
-                <div className="flex flex-col items-start">
-                  <span className="font-semibold">Usando este rol:</span>
-                  {role?.admins?.length && role.admins.length > 0 ? (
+    <section className="flex flex-col gap-10">
+      <PageHeader title="Detalles de rol" />
+      <Card className="relative w-full max-w-180 p-10 text-center">
+        {isLoading ? (
+          <div className="min-w-80">Cargando...</div>
+        ) : (
+          <>
+            <Button className="absolute top-5 right-5" variant="ghost" size="icon-lg" asChild>
+              <Link to="/roles">
+                <ArrowLeft className="size-5 cursor-pointer" />
+              </Link>
+            </Button>
+            <CardHeader>
+              <CardTitle className="text-xl">{role?.name}</CardTitle>
+              <CardDescription className="text-base">{role?.value}</CardDescription>
+            </CardHeader>
+            <CardContent className="flex-1 space-y-6 px-0">
+              <ul className="space-y-2 text-start">
+                <li className="flex gap-5">
+                  <span className="font-semibold">Nombre</span>
+                  <span>{role?.name}</span>
+                </li>
+                <li className="flex gap-5">
+                  <span className="font-semibold">Valor</span>
+                  <span>{role?.value}</span>
+                </li>
+                <li className="flex flex-col items-start">
+                  <span className="font-semibold">Descripción</span>
+                  <span>{role?.description}</span>
+                </li>
+                <div className="grid grid-cols-2">
+                  <div>
+                    <span className="font-semibold">Permisos:</span>
                     <ul className="grid pl-5">
-                      {role?.admins.map((item) => (
-                        <li className="m-0 grid w-full grid-cols-5 items-center gap-5">
-                          <span className="col-span-3 p-0 font-medium">@{item.userName}</span>
-                          <span className="col-span-2 p-0 text-sm">
-                            <Button className="h-fit p-0" variant="link" asChild>
-                              <Link to={`/admin/view/${item.id}`}>
-                                {item.firstName} {item.lastName}
-                              </Link>
-                            </Button>
-                          </span>
-                        </li>
-                      ))}
+                      {role?.rolePermissions && role.rolePermissions.length > 0 ? (
+                        Object.entries(groupByCategory(role?.rolePermissions)).map(([category, permissions]) => (
+                          <div key={`category-${category}`} className="mt-2">
+                            <ul className="space-y-1">
+                              {permissions.map((rp, idx) => (
+                                <li
+                                  key={`permission-${idx}`}
+                                  className="flex items-center gap-2 text-xs font-medium uppercase"
+                                >
+                                  <Check className="h-3 w-3" />
+                                  {rp.permission?.name}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))
+                      ) : (
+                        <span>Sin permisos</span>
+                      )}
                     </ul>
-                  ) : (
-                    <span>Sin usuarios</span>
-                  )}
+                  </div>
+                  <div className="flex flex-col items-start">
+                    <span className="font-semibold">Usando este rol:</span>
+                    {role?.admins?.length && role.admins.length > 0 ? (
+                      <ul className="grid pl-5">
+                        {role?.admins.map((item) => (
+                          <li className="m-0 grid w-full grid-cols-5 items-center gap-5">
+                            <span className="col-span-3 p-0 font-medium">@{item.userName}</span>
+                            <span className="col-span-2 p-0 text-sm">
+                              <Button className="h-fit p-0" variant="link" asChild>
+                                <Link to={`/admin/view/${item.id}`}>
+                                  {item.firstName} {item.lastName}
+                                </Link>
+                              </Button>
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <span>Sin usuarios</span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </ul>
-            <p className="text-muted-foreground px-0 text-left">{`Creado el ${role && new Date(role.createdAt.split("T")[0]).toLocaleDateString()}`}</p>
-          </CardContent>
-          <Activity mode={showFooter ? "visible" : "hidden"}>
-            <CardFooter className="justify-end gap-3 px-0">
-              {role?.deletedAt && role?.deletedAt !== null ? (
-                <Protected requiredPermission="roles-restore">
-                  <HoldButton callback={() => console.log("restaurar")} size="icon" type="restore" variant="outline">
-                    <RotateCcw className="h-4 w-4" />
-                  </HoldButton>
-                </Protected>
-              ) : (
-                <>
-                  {role?.value !== ERoles.SUPER ? (
-                    <Protected requiredPermission="roles-update">
-                      <Button variant="outline" asChild>
-                        <Link to={`/roles/edit/${id}`}>Editar</Link>
-                      </Button>
-                    </Protected>
-                  ) : (
-                    admin?.role.value === ERoles.SUPER && (
+              </ul>
+              <p className="text-muted-foreground px-0 text-left">{`Creado el ${role && new Date(role.createdAt.split("T")[0]).toLocaleDateString()}`}</p>
+            </CardContent>
+            <Activity mode={showFooter ? "visible" : "hidden"}>
+              <CardFooter className="justify-end gap-3 px-0">
+                {role?.deletedAt && role?.deletedAt !== null ? (
+                  <Protected requiredPermission="roles-restore">
+                    <HoldButton callback={() => console.log("restaurar")} size="icon" type="restore" variant="outline">
+                      <RotateCcw className="h-4 w-4" />
+                    </HoldButton>
+                  </Protected>
+                ) : (
+                  <>
+                    {role?.value !== ERoles.SUPER ? (
                       <Protected requiredPermission="roles-update">
                         <Button variant="outline" asChild>
                           <Link to={`/roles/edit/${id}`}>Editar</Link>
                         </Button>
                       </Protected>
-                    )
-                  )}
-                  {role?.value !== ERoles.SUPER && (
-                    <>
-                      <Protected requiredPermission="roles-delete">
-                        <HoldButton callback={() => removeRole(id!)} size="icon" type="delete" variant="outline">
-                          <Trash2 className="h-4 w-4" />
-                        </HoldButton>
-                      </Protected>
-                      <Protected requiredPermission="roles-delete-hard">
-                        <HoldButton callback={() => hardRemoveRole(id!)} size="icon" type="delete" variant="outline">
-                          <TriangleAlert className="h-4 w-4 stroke-red-500" />
-                          <Trash2 className="h-4 w-4" />
-                        </HoldButton>
-                      </Protected>
-                    </>
-                  )}
-                </>
-              )}
-            </CardFooter>
-          </Activity>
-        </>
-      )}
-    </Card>
+                    ) : (
+                      admin?.role.value === ERoles.SUPER && (
+                        <Protected requiredPermission="roles-update">
+                          <Button variant="outline" asChild>
+                            <Link to={`/roles/edit/${id}`}>Editar</Link>
+                          </Button>
+                        </Protected>
+                      )
+                    )}
+                    {role?.value !== ERoles.SUPER && (
+                      <>
+                        <Protected requiredPermission="roles-delete">
+                          <HoldButton callback={() => removeRole(id!)} size="icon" type="delete" variant="outline">
+                            <Trash2 className="h-4 w-4" />
+                          </HoldButton>
+                        </Protected>
+                        <Protected requiredPermission="roles-delete-hard">
+                          <HoldButton callback={() => hardRemoveRole(id!)} size="icon" type="delete" variant="outline">
+                            <TriangleAlert className="h-4 w-4 stroke-red-500" />
+                            <Trash2 className="h-4 w-4" />
+                          </HoldButton>
+                        </Protected>
+                      </>
+                    )}
+                  </>
+                )}
+              </CardFooter>
+            </Activity>
+          </>
+        )}
+      </Card>
+    </section>
   );
 }
