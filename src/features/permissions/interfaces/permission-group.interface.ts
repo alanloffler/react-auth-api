@@ -6,6 +6,7 @@ export interface IPermissionGroup {
 }
 
 interface IPermissionAction {
+  deletedAt?: string;
   id: string;
   key: string;
   name: string;
