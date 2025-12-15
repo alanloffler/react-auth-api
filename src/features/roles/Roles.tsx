@@ -1,11 +1,12 @@
 import { Ban, Eye, FilePenLine, Plus, RotateCcw, Trash2, TriangleAlert } from "lucide-react";
 
 import { Button } from "@components/ui/button";
-import { DataTable } from "@components/DataTable";
+import { DataTable } from "@components/data-table/DataTable";
 import { HoldButton } from "@components/ui/HoldButton";
 import { Link } from "react-router";
 import { PageHeader } from "@components/pages/PageHeader";
 import { Protected } from "@auth/components/Protected";
+import { SortableHeader } from "@components/data-table/SortableHeader";
 
 import type { ColumnDef } from "@tanstack/react-table";
 import { toast } from "sonner";
@@ -95,7 +96,7 @@ export default function Roles() {
     },
     {
       accessorKey: "name",
-      header: "Nombre",
+      header: ({ column }) => <SortableHeader column={column}>Nombre</SortableHeader>,
       cell: ({ row }) => (
         <div className="flex items-center gap-3">
           <span>{row.original.name}</span>
@@ -105,7 +106,7 @@ export default function Roles() {
     },
     {
       accessorKey: "value",
-      header: "Valor",
+      header: ({ column }) => <SortableHeader column={column}>Valor</SortableHeader>,
     },
     {
       id: "actions",
