@@ -1,11 +1,12 @@
 import { Ban, Eye, FilePenLine, Plus, RotateCcw, Trash2 } from "lucide-react";
 
 import { Button } from "@components/ui/button";
-import { DataTable } from "@components/DataTable";
+import { DataTable } from "@components/data-table/DataTable";
 import { HoldButton } from "@components/ui/HoldButton";
 import { Link } from "react-router";
 import { PageHeader } from "@components/pages/PageHeader";
 import { Protected } from "@auth/components/Protected";
+import { SortableHeader } from "@components/data-table/SortableHeader";
 
 import type { ColumnDef } from "@tanstack/react-table";
 import { toast } from "sonner";
@@ -88,6 +89,7 @@ export function Admin() {
   const columns: ColumnDef<IAdmin>[] = [
     {
       accessorKey: "id",
+      enableSorting: false,
       header: () => <div className="text-center">ID</div>,
       cell: ({ row }) => (
         <div className="flex w-fit place-self-center rounded-sm bg-neutral-100 px-2 py-1 text-xs text-neutral-600">
@@ -97,7 +99,11 @@ export function Admin() {
     },
     {
       accessorKey: "ic",
-      header: () => <div className="text-center">DNI</div>,
+      header: ({ column }) => (
+        <SortableHeader alignment="center" column={column}>
+          DNI
+        </SortableHeader>
+      ),
       cell: ({ row }) => (
         <div className="flex w-fit place-self-center rounded-sm bg-neutral-200 px-2 py-1 text-xs text-neutral-700">
           {row.original.ic}
@@ -106,7 +112,7 @@ export function Admin() {
     },
     {
       accessorKey: "userName",
-      header: "Usuario",
+      header: ({ column }) => <SortableHeader column={column}>Usuario</SortableHeader>,
       cell: ({ row }) => (
         <div className="flex items-center gap-3">
           <span>{`@${row.original.userName}`}</span>
@@ -116,16 +122,20 @@ export function Admin() {
     },
     {
       accessorKey: "firstName",
-      header: "Nombre",
       enableHiding: true,
+      header: ({ column }) => <SortableHeader column={column}>Nombre</SortableHeader>,
     },
     {
       accessorKey: "lastName",
-      header: "Apellido",
+      header: ({ column }) => <SortableHeader column={column}>Apellido</SortableHeader>,
     },
     {
       accessorKey: "role.name",
-      header: () => <div className="text-center">Role</div>,
+      header: ({ column }) => (
+        <SortableHeader alignment="center" column={column}>
+          Role
+        </SortableHeader>
+      ),
       cell: ({ row }) => (
         <div className="text-xxs bg-brand text-brand-foreground flex w-fit place-self-center rounded-sm px-2 py-1 font-medium uppercase">
           {row.original.role.name}
@@ -190,7 +200,13 @@ export function Admin() {
           </Button>
         </Protected>
       </PageHeader>
-      <DataTable columns={columns} data={admins} />
+      <DataTable
+        columns={columns}
+        data={admins}
+        defaultPageSize={10}
+        defaultSorting={[{ id: "userName", desc: false }]}
+        pageSizes={[5, 10, 20, 50]}
+      />
     </div>
   );
 }
