@@ -6,7 +6,9 @@ import {
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
+  getSortedRowModel,
   type PaginationState,
+  type SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -15,28 +17,41 @@ import { cn } from "@lib/utils";
 
 interface DataTableProps<TData, TValue> {
   className?: string;
+  columnVisibility?: any;
   columns: ColumnDef<TData, TValue>[];
   data: TData[] | undefined;
-  columnVisibility?: any;
+  defaultPageSize?: number;
+  defaultSorting?: SortingState;
+  pageSizes?: number[];
 }
 
 export function DataTable<TData, TValue>({
   className,
-  columns,
   columnVisibility,
+  columns,
   data,
+  defaultPageSize = 5,
+  defaultSorting = [],
+  pageSizes = [5, 10, 20, 50],
 }: DataTableProps<TData, TValue>) {
-  const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 5 });
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: defaultPageSize,
+  });
+  const [sorting, setSorting] = useState<SortingState>(defaultSorting);
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: data || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     onPaginationChange: setPagination,
+    onSortingChange: setSorting,
     state: {
       columnVisibility: columnVisibility,
       pagination: pagination,
+      sorting: sorting,
     },
   });
 
@@ -74,7 +89,7 @@ export function DataTable<TData, TValue>({
           )}
         </TableBody>
       </Table>
-      <Pagination table={table} setPagination={setPagination} pagination={pagination} />
+      <Pagination table={table} setPagination={setPagination} pagination={pagination} pageSizes={pageSizes} />
     </div>
   );
 }
