@@ -1,4 +1,4 @@
-import { ArrowLeft, RotateCcw, Trash2 } from "lucide-react";
+import { ArrowLeft, FilePenLine, RotateCcw, Trash2 } from "lucide-react";
 
 import { Button } from "@components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@components/ui/card";
@@ -22,7 +22,7 @@ export default function ViewAdmin() {
   const [admin, setAdmin] = useState<IAdmin | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const adminAuth = useAuthStore((state) => state.admin);
-  const hasPermissions = usePermission(["admin-update", "admin-delete"], "some");
+  const hasPermissions = usePermission(["admin-update", "admin-delete", "admin-delete-hard"], "some");
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -47,6 +47,49 @@ export default function ViewAdmin() {
     },
     [adminAuth?.role.value],
   );
+
+  async function removeAdmin(id: string): Promise<void> {
+    const [response, error] = await tryCatch(AdminService.softRemove(id));
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    if (response && response.statusCode === 200) {
+      toast.success(response.message);
+      findOneAdmin(id);
+    }
+  }
+
+  async function hardRemoveAdmin(id: string): Promise<void> {
+    const [response, error] = await tryCatch(AdminService.remove(id));
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    if (response && response.statusCode === 200) {
+      toast.success(response.message);
+      navigate(-1);
+    }
+  }
+
+  async function restoreAdmin(id: string) {
+    const [response, error] = await tryCatch(AdminService.restore(id));
+
+    if (error) {
+      toast.error(error.message);
+
+      return;
+    }
+
+    if (response && response.statusCode === 200) {
+      toast.success(response.message);
+      findOneAdmin(id);
+    }
+  }
 
   useEffect(() => {
     findOneAdmin(id!);
@@ -89,21 +132,32 @@ export default function ViewAdmin() {
           <Activity mode={hasPermissions ? "visible" : "hidden"}>
             <CardFooter className="justify-end gap-3 px-0">
               {admin?.deletedAt && admin?.deletedAt !== null ? (
-                <HoldButton callback={() => console.log("restaurar")} type="restore" variant="outline">
+                <HoldButton callback={() => id && restoreAdmin(id)} size="icon" type="restore" variant="outline">
                   <RotateCcw className="h-4 w-4" />
-                  Restaurar
                 </HoldButton>
               ) : (
                 <>
                   <Protected requiredPermission="admin-update">
-                    <Button variant="outline" asChild>
-                      <Link to={`/admin/edit/${id}`}>Editar</Link>
+                    <Button className="px-5!" variant="outline" asChild>
+                      <Link to={`/admin/edit/${id}`}>
+                        <FilePenLine className="h-4 w-4" />
+                      </Link>
                     </Button>
                   </Protected>
                   <Protected requiredPermission="admin-delete">
-                    <HoldButton callback={() => console.log("eliminar")} type="delete" variant="outline">
+                    <HoldButton callback={() => id && removeAdmin(id)} size="icon" type="delete" variant="outline">
                       <Trash2 className="h-4 w-4" />
-                      Eliminar
+                    </HoldButton>
+                  </Protected>
+                  <Protected requiredPermission="admin-delete-hard">
+                    <HoldButton
+                      callback={() => id && hardRemoveAdmin(id)}
+                      size="icon"
+                      type="hard-delete"
+                      variant="outline"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      <span>!</span>
                     </HoldButton>
                   </Protected>
                 </>
