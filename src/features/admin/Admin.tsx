@@ -152,14 +152,14 @@ export function Admin() {
       id: "actions",
       cell: ({ row }) => (
         <div className="flex justify-end gap-2">
-          <Button className="px-5!" variant="outline" asChild>
+          <Button className="px-5! hover:text-sky-500" variant="outline" asChild>
             <Link to={`/admin/view/${row.original.id}`}>
               <Eye className="h-4 w-4" />
             </Link>
           </Button>
           {!row.original.deletedAt && (
             <Protected requiredPermission="admin-update">
-              <Button className="px-5!" variant="outline" asChild>
+              <Button className="px-5! hover:text-green-500" variant="outline" asChild>
                 <Link to={`/admin/edit/${row.original.id}`}>
                   <FilePenLine className="h-4 w-4" />
                 </Link>
