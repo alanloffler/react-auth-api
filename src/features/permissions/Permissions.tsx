@@ -68,7 +68,7 @@ export default function Permissions() {
     }
   }
 
-  async function removeHardPermission(id: string): Promise<void> {
+  async function hardRemovePermission(id: string): Promise<void> {
     const [response, error] = await tryCatch(PermissionsService.remove(id));
 
     if (error) {
@@ -152,7 +152,7 @@ export default function Permissions() {
               </Protected>
               <Protected requiredPermission="permissions-delete-hard">
                 <HoldButton
-                  callback={() => removeHardPermission(row.original.id)}
+                  callback={() => hardRemovePermission(row.original.id)}
                   size="icon"
                   type="hard-delete"
                   variant="outline"
