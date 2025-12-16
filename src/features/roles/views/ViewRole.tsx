@@ -176,7 +176,7 @@ export default function ViewRole() {
                     {role?.admins?.length && role.admins.length > 0 ? (
                       <ul className="grid pl-5">
                         {role?.admins.map((item) => (
-                          <li className="m-0 grid w-full grid-cols-5 items-center gap-5">
+                          <li className="m-0 grid w-full grid-cols-5 items-center gap-5" key={`admins-${item.id}`}>
                             <span className="col-span-3 p-0 font-medium">@{item.userName}</span>
                             <span className="col-span-2 p-0 text-sm">
                               <Button className="h-fit p-0" variant="link" asChild>
@@ -214,7 +214,7 @@ export default function ViewRole() {
                     {role?.value !== ERoles.SUPER ? (
                       <>
                         <Protected requiredPermission="roles-update">
-                          <Button className="px-5!" variant="outline" asChild>
+                          <Button className="px-5! hover:text-green-500" variant="outline" asChild>
                             <Link to={`/roles/edit/${id}`}>
                               <FilePenLine className="h-4 w-4" />
                             </Link>
@@ -240,7 +240,7 @@ export default function ViewRole() {
                     ) : (
                       admin?.role.value === ERoles.SUPER && (
                         <Protected requiredPermission="roles-update">
-                          <Button className="px-5!" variant="outline" asChild>
+                          <Button className="px-5! hover:text-green-500" variant="outline" asChild>
                             <Link to={`/roles/edit/${id}`}>
                               <FilePenLine className="h-4 w-4" />
                             </Link>
