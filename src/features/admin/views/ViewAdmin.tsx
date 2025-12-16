@@ -102,7 +102,7 @@ export default function ViewAdmin() {
       <PageHeader title="Detalles del administrador" />
       <Card className="relative w-fit p-10 text-center">
         {isLoading ? (
-          <div className="min-w-80">Cargando...</div>
+          <div className="min-w-100">Cargando...</div>
         ) : (
           <>
             <Button className="absolute top-5 right-5" variant="ghost" size="icon-lg" onClick={() => navigate(-1)}>
@@ -112,7 +112,7 @@ export default function ViewAdmin() {
               <CardTitle className="text-xl">{`${admin?.firstName} ${admin?.lastName}`}</CardTitle>
               <CardDescription className="text-base">{admin?.role.name}</CardDescription>
             </CardHeader>
-            <CardContent className="min-w-80 flex-1 space-y-6 px-0">
+            <CardContent className="min-w-100 flex-1 space-y-6 px-0">
               <ul className="space-y-2">
                 <li className="flex justify-between">
                   <span className="font-semibold">Usuario</span>
@@ -147,7 +147,7 @@ export default function ViewAdmin() {
                 ) : (
                   <>
                     <Protected requiredPermission="admin-update">
-                      <Button className="px-5!" variant="outline" asChild>
+                      <Button className="px-5! hover:text-green-500" variant="outline" asChild>
                         <Link to={`/admin/edit/${id}`}>
                           <FilePenLine className="h-4 w-4" />
                         </Link>
