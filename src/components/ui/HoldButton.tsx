@@ -58,7 +58,9 @@ export function HoldButton({
         variant === "outline" &&
           "bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-9 border px-4 py-2 shadow-xs has-[>svg]:px-3",
         size === "icon" && "px-5!",
-        type === "hard-delete" && "gap-0 text-rose-500",
+        type === "delete" && "hover:text-rose-500",
+        type === "hard-delete" && "gap-0 text-rose-500 hover:text-rose-500",
+        type === "restore" && "hover:text-amber-500",
       )}
       disabled={disabled}
       onPointerDown={handlePointerDown}
