@@ -1,0 +1,36 @@
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@lib/utils";
+
+const badgeVariants = cva("inline-flex items-center font-medium uppercase", {
+  variants: {
+    size: {
+      normal: "px-3 py-1.5 text-xs rounded-sm",
+      small: "px-2 py-1 text-[10px] rounded-sm",
+      large: "px-4 py-2 text-base rounded-md",
+    },
+    variant: {
+      cyan: "bg-cyan-100 text-cyan-600",
+      ic: "bg-neutral-200 text-neutral-700 text-xs lowercase font-normal",
+      id: "bg-neutral-100 text-neutral-600 text-xs lowercase font-normal",
+      gray: "bg-neutral-100 text-neutral-600",
+      red: "bg-red-100 text-red-600",
+      role: "bg-indigo-100 text-indigo-600",
+    },
+  },
+  defaultVariants: {
+    size: "normal",
+    variant: "gray",
+  },
+});
+
+export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement>, VariantProps<typeof badgeVariants> {
+  children: React.ReactNode;
+}
+
+export function Badge({ children, size, variant, className, ...props }: BadgeProps) {
+  return (
+    <span className={cn(badgeVariants({ size, variant }), className)} {...props}>
+      {children}
+    </span>
+  );
+}
