@@ -112,7 +112,7 @@ export default function Roles() {
       id: "actions",
       cell: ({ row }) => (
         <div className="flex justify-end gap-2">
-          <Button className="px-5!" variant="outline" asChild>
+          <Button className="px-5! hover:text-sky-500" variant="outline" asChild>
             <Link to={`/roles/view/${row.original.id}`}>
               <Eye className="h-4 w-4" />
             </Link>
@@ -126,7 +126,7 @@ export default function Roles() {
           ) : (
             <>
               <Protected requiredPermission="roles-update">
-                <Button className="px-5!" variant="outline" asChild>
+                <Button className="px-5! hover:text-green-500" variant="outline" asChild>
                   <Link to={`/roles/edit/${row.original.id}`}>
                     <FilePenLine className="h-4 w-4" />
                   </Link>
