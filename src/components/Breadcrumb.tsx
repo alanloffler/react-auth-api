@@ -21,6 +21,10 @@ const routes = [
     name: "Administradores",
   },
   {
+    path: "/admin/create",
+    name: "Crear",
+  },
+  {
     path: "/admin/view/:id",
     name: "Ver",
   },
@@ -33,6 +37,10 @@ const routes = [
     name: "Roles",
   },
   {
+    path: "/roles/create",
+    name: "Crear",
+  },
+  {
     path: "/roles/view/:id",
     name: "Ver",
   },
@@ -43,6 +51,18 @@ const routes = [
   {
     path: "/permissions",
     name: "Permisos",
+  },
+  {
+    path: "/permissions/create",
+    name: "Crear",
+  },
+  {
+    path: "/permissions/view/:id",
+    name: "Ver",
+  },
+  {
+    path: "/permissions/edit/:id",
+    name: "Editar",
   },
 ];
 
