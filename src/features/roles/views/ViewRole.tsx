@@ -1,6 +1,7 @@
 import { ArrowLeft, Check, FilePenLine, RotateCcw, Trash2 } from "lucide-react";
 
 import { Activity } from "react";
+import { Badge } from "@components/Badge";
 import { Button } from "@components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@components/ui/card";
 import { HoldButton } from "@components/ui/HoldButton";
@@ -116,7 +117,7 @@ export default function ViewRole() {
 
   return (
     <section className="flex flex-col gap-10">
-      <PageHeader title="Detalles de rol" />
+      <PageHeader title="Detalles del rol" />
       <Card className="relative w-full max-w-180 p-10 text-center">
         {isLoading ? (
           <div className="min-w-80">Cargando...</div>
@@ -198,11 +199,16 @@ export default function ViewRole() {
             <Activity mode={hasPermissions ? "visible" : "hidden"}>
               <CardFooter className="justify-end gap-3 px-0">
                 {role?.deletedAt !== null ? (
-                  <Protected requiredPermission="roles-restore">
-                    <HoldButton callback={() => id && restoreRole(id)} size="icon" type="restore" variant="outline">
-                      <RotateCcw className="h-4 w-4" />
-                    </HoldButton>
-                  </Protected>
+                  <div className="flex w-full items-center justify-between">
+                    <Badge size="small" variant="red">
+                      Eliminado
+                    </Badge>
+                    <Protected requiredPermission="roles-restore">
+                      <HoldButton callback={() => id && restoreRole(id)} size="icon" type="restore" variant="outline">
+                        <RotateCcw className="h-4 w-4" />
+                      </HoldButton>
+                    </Protected>
+                  </div>
                 ) : (
                   <>
                     {role?.value !== ERoles.SUPER ? (
