@@ -156,7 +156,7 @@ export default function ViewPermission() {
                 ) : (
                   <>
                     <Protected requiredPermission="permissions-update">
-                      <Button className="px-5!" variant="outline" asChild>
+                      <Button className="px-5! hover:text-green-500" variant="outline" asChild>
                         <Link to={`/permissions/edit/${id}`}>
                           <FilePenLine className="h-4 w-4" />
                         </Link>
