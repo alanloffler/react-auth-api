@@ -7,11 +7,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 import type z from "zod";
 import { toast } from "sonner";
-import { useForm } from "react-hook-form";
+import { useEffect, useMemo } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { PERMISSION_ACTIONS, PERMISSION_CATEGORIES } from "@core/constants/permissions";
+import { PERMISSIONS } from "@core/constants/permissions";
 import { PermissionsService } from "@permissions/services/permissions.service";
 import { permissionSchema } from "@permissions/schemas/permission.schema";
 import { tryCatch } from "@core/utils/try-catch";
@@ -28,6 +29,25 @@ export default function CreatePermission() {
       name: "",
     },
   });
+
+  const selectedCategory = useWatch({
+    control: form.control,
+    name: "category",
+  });
+
+  const availableActions = useMemo(() => {
+    if (!selectedCategory) return [];
+
+    const category = PERMISSIONS.find((cat) => cat.value === selectedCategory);
+
+    return category?.actions || [];
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    if (selectedCategory) {
+      form.setValue("actionKey", "");
+    }
+  }, [selectedCategory, form]);
 
   async function onSubmit(data: z.infer<typeof permissionSchema>) {
     const [response, error] = await tryCatch(PermissionsService.create(data));
@@ -77,17 +97,12 @@ export default function CreatePermission() {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="category">Categoría</FieldLabel>
-                    <Select
-                      disabled={!PERMISSION_CATEGORIES}
-                      key={field.value}
-                      value={field.value}
-                      onValueChange={field.onChange}
-                    >
+                    <Select key={field.value} value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger id="roleId" aria-invalid={fieldState.invalid}>
                         <SelectValue placeholder="Seleccionar" />
                       </SelectTrigger>
                       <SelectContent>
-                        {PERMISSION_CATEGORIES.map((cat, index) => (
+                        {PERMISSIONS.map((cat, index) => (
                           <SelectItem key={index} value={cat.value}>
                             {cat.name}
                           </SelectItem>
@@ -105,7 +120,7 @@ export default function CreatePermission() {
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="actionKey">Acción</FieldLabel>
                     <Select
-                      disabled={!PERMISSION_ACTIONS}
+                      disabled={!selectedCategory || availableActions.length === 0}
                       key={field.value}
                       value={field.value}
                       onValueChange={field.onChange}
@@ -114,7 +129,7 @@ export default function CreatePermission() {
                         <SelectValue placeholder="Seleccionar" />
                       </SelectTrigger>
                       <SelectContent>
-                        {PERMISSION_ACTIONS.map((action, index) => (
+                        {availableActions.map((action, index) => (
                           <SelectItem key={index} value={action.value}>
                             {action.name}
                           </SelectItem>
