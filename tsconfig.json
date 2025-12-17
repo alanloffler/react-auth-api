@@ -20,7 +20,8 @@
       "@lib/*": ["./src/lib/*"],
       "@login/*": ["./src/features/login/*"],
       "@permissions/*": ["./src/features/permissions/*"],
-      "@roles/*": ["./src/features/roles/*"]
+      "@roles/*": ["./src/features/roles/*"],
+      "@settings/*": ["./src/features/settings/*"]
     }
   }
 }
