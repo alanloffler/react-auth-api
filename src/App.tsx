@@ -6,6 +6,7 @@ import EditPermission from "@permissions/views/EditPermission";
 import EditRole from "@roles/views/EditRole";
 import Permissions from "@permissions/Permissions";
 import Roles from "@roles/Roles";
+import Settings from "@settings/Settings";
 import ViewAdmin from "@admin/views/ViewAdmin";
 import ViewPermission from "@permissions/views/ViewPermission";
 import ViewRole from "@roles/views/ViewRole";
@@ -132,6 +133,10 @@ const router = createBrowserRouter([
             <ViewPermission />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: "settings",
+        element: <Settings />,
       },
     ],
   },
