@@ -7,12 +7,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 import type z from "zod";
 import { toast } from "sonner";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useMemo, useRef } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { PERMISSION_ACTIONS, PERMISSION_CATEGORIES } from "@core/constants/permissions";
+import { PERMISSIONS } from "@core/constants/permissions";
 import { PermissionsService } from "@permissions/services/permissions.service";
 import { permissionSchema } from "@permissions/schemas/permission.schema";
 import { tryCatch } from "@core/utils/try-catch";
@@ -20,6 +20,7 @@ import { tryCatch } from "@core/utils/try-catch";
 export default function EditPermission() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const previousCategory = useRef<string | undefined>(undefined);
 
   const form = useForm<z.infer<typeof permissionSchema>>({
     resolver: zodResolver(permissionSchema),
@@ -30,6 +31,30 @@ export default function EditPermission() {
       name: "",
     },
   });
+
+  const selectedCategory = useWatch({
+    control: form.control,
+    name: "category",
+  });
+
+  const availableActions = useMemo(() => {
+    if (!selectedCategory) return [];
+
+    const category = PERMISSIONS.find((cat) => cat.value === selectedCategory);
+
+    return category?.actions || [];
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    if (previousCategory.current === undefined) {
+      return;
+    }
+
+    if (previousCategory.current !== selectedCategory && selectedCategory) {
+      form.setValue("actionKey", "");
+      previousCategory.current = selectedCategory;
+    }
+  }, [selectedCategory, form]);
 
   useEffect(() => {
     async function fetchPermission() {
@@ -43,12 +68,14 @@ export default function EditPermission() {
 
         if (response && response.statusCode === 200) {
           if (response.data) {
-            const strippedActionKey = response.data.actionKey.split("-")[1];
+            form.reset({
+              actionKey: response.data.actionKey,
+              category: response.data.category,
+              description: response.data.description,
+              name: response.data.name,
+            });
 
-            form.setValue("actionKey", strippedActionKey);
-            form.setValue("category", response.data.category);
-            form.setValue("description", response.data.description);
-            form.setValue("name", response.data.name);
+            previousCategory.current = response.data.category;
           }
         }
       }
@@ -107,17 +134,12 @@ export default function EditPermission() {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="category">Categoría</FieldLabel>
-                    <Select
-                      disabled={!PERMISSION_CATEGORIES}
-                      key={field.value}
-                      value={field.value}
-                      onValueChange={field.onChange}
-                    >
+                    <Select key={field.value} value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger id="roleId" aria-invalid={fieldState.invalid}>
                         <SelectValue placeholder="Seleccionar" />
                       </SelectTrigger>
                       <SelectContent>
-                        {PERMISSION_CATEGORIES.map((cat, index) => (
+                        {PERMISSIONS.map((cat, index) => (
                           <SelectItem key={index} value={cat.value}>
                             {cat.name}
                           </SelectItem>
@@ -135,7 +157,7 @@ export default function EditPermission() {
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="actionKey">Acción</FieldLabel>
                     <Select
-                      disabled={!PERMISSION_ACTIONS}
+                      disabled={!selectedCategory || availableActions.length === 0}
                       key={field.value}
                       value={field.value}
                       onValueChange={field.onChange}
@@ -144,7 +166,7 @@ export default function EditPermission() {
                         <SelectValue placeholder="Seleccionar" />
                       </SelectTrigger>
                       <SelectContent>
-                        {PERMISSION_ACTIONS.map((action, index) => (
+                        {availableActions.map((action, index) => (
                           <SelectItem key={index} value={action.value}>
                             {action.name}
                           </SelectItem>
