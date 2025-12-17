@@ -1,3 +1,5 @@
+import { Eye, EyeOff } from "lucide-react";
+
 import { Button } from "@components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@components/ui/card";
 import { Controller } from "react-hook-form";
@@ -7,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 import z from "zod";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { type MouseEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,15 +17,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { IRole } from "@roles/interfaces/role.interface";
 import { AdminService } from "@admin/services/admin.service";
 import { RolesService } from "@roles/services/roles.service";
-import { updateAdminSchema } from "@admin/schemas/update-admin.schema";
 import { tryCatch } from "@core/utils/try-catch";
+import { updateAdminSchema } from "@admin/schemas/update-admin.schema";
+import { usePermission } from "@core/hooks/usePermission";
 
 interface IProps {
   adminId: string;
 }
 
 export function EditForm({ adminId }: IProps) {
+  const [passwordField, setPasswordField] = useState<boolean>(true);
   const [roles, setRoles] = useState<IRole[] | undefined>(undefined);
+  const canUpdatePassword = usePermission("admin-update-password");
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof updateAdminSchema>>({
@@ -41,7 +46,7 @@ export function EditForm({ adminId }: IProps) {
   });
 
   useEffect(() => {
-    async function findOneWithCredentials() {
+    async function findOneWithCredentials(): Promise<void> {
       const [admin, adminError] = await tryCatch(AdminService.findOneWithCredentials(adminId));
 
       if (adminError) {
@@ -68,7 +73,12 @@ export function EditForm({ adminId }: IProps) {
     findOneWithCredentials();
   }, [adminId, form]);
 
-  async function onSubmit(data: z.infer<typeof updateAdminSchema>) {
+  function togglePasswordField(event: MouseEvent<HTMLButtonElement>): void {
+    event.preventDefault();
+    setPasswordField(!passwordField);
+  }
+
+  async function onSubmit(data: z.infer<typeof updateAdminSchema>): Promise<void> {
     const updateData = data.password
       ? data
       : Object.fromEntries(Object.entries(data).filter(([key]) => key !== "password"));
@@ -162,8 +172,24 @@ export function EditForm({ adminId }: IProps) {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor="password">Nueva Contraseña (opcional)</FieldLabel>
-                  <Input aria-invalid={fieldState.invalid} id="password" type="password" {...field} />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  <div className="flex items-center gap-2">
+                    <Input
+                      aria-invalid={fieldState.invalid}
+                      className={!canUpdatePassword ? "placeholder:text-red-500" : ""}
+                      disabled={!canUpdatePassword}
+                      id="password"
+                      placeholder={!canUpdatePassword ? "Permiso requerido" : ""}
+                      type={passwordField ? "password" : "text"}
+                      {...field}
+                    />
+                    <button
+                      className="p-1 transition-colors duration-150 hover:text-sky-500"
+                      onClick={(e) => togglePasswordField(e)}
+                    >
+                      {passwordField ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
+                    </button>
+                  </div>
+                  {fieldState.invalid && true && <FieldError errors={[{ message: "fieldState.error" }]} />}
                 </Field>
               )}
             />
