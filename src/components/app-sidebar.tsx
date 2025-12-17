@@ -1,5 +1,16 @@
-import { FileKey, GalleryVerticalEnd, KeyRound, Map, Settings, Shield, User2, UserPlus2 } from "lucide-react";
+import {
+  GalleryVerticalEnd,
+  KeyRound,
+  LayoutDashboard,
+  Package,
+  Settings,
+  Shield,
+  ShieldPlus,
+  User2,
+  UserPlus2,
+} from "lucide-react";
 
+import { KeyRoundPlus } from "@components/icons/KeyRoundPlus";
 import { NavMain } from "@components/nav-main";
 import { NavProjects } from "@components/nav-projects";
 import { NavUser } from "@components/nav-user";
@@ -38,12 +49,14 @@ const data = {
       icon: Settings,
       items: [
         {
-          title: "Item 1",
-          url: "/#",
+          title: "Aplicación",
+          url: "/settings",
+          icon: Package,
         },
         {
-          title: "Item 2",
+          title: "Tablero",
           url: "/#",
+          icon: LayoutDashboard,
         },
       ],
       permission: "*",
@@ -57,13 +70,13 @@ const data = {
     },
     {
       name: "Crear rol",
-      url: "#",
-      icon: FileKey,
+      url: "/roles/create",
+      icon: ShieldPlus,
     },
     {
-      name: "Travel",
-      url: "#",
-      icon: Map,
+      name: "Crear permiso",
+      url: "/permissions/create",
+      icon: KeyRoundPlus,
     },
   ],
 };
