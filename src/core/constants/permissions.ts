@@ -1,15 +1,39 @@
-export const PERMISSION_CATEGORIES = [
-  { name: "Admin", value: "admin" },
-  { name: "Permisos", value: "permissions" },
-  { name: "Roles", value: "roles" },
-];
-
-export const PERMISSION_ACTIONS = [
-  { name: "Crear", value: "create" },
-  { name: "Editar", value: "update" },
-  { name: "Eliminar", value: "delete" },
-  { name: "Eliminar permanente", value: "delete-hard" },
-  { name: "Restaurar", value: "restore" },
-  { name: "Ver", value: "view" },
-  { name: "Test", value: "test" },
+export const PERMISSIONS = [
+  {
+    name: "Admin",
+    value: "admin",
+    actions: [
+      { name: "Crear", value: "admin-create" },
+      { name: "Editar contraseña", value: "admin-update-password" },
+      { name: "Editar", value: "admin-update" },
+      { name: "Eliminar", value: "admin-delete" },
+      { name: "Eliminar permanente", value: "admin-delete-hard" },
+      { name: "Restaurar", value: "admin-restore" },
+      { name: "Ver", value: "admin-view" },
+    ],
+  },
+  {
+    name: "Permisos",
+    value: "permissions",
+    actions: [
+      { name: "Crear", value: "permissions-create" },
+      { name: "Editar", value: "permissions-update" },
+      { name: "Eliminar", value: "permissions-delete" },
+      { name: "Eliminar permanente", value: "permissions-delete-hard" },
+      { name: "Restaurar", value: "permissions-restore" },
+      { name: "Ver", value: "permissions-view" },
+    ],
+  },
+  {
+    name: "Roles",
+    value: "roles",
+    actions: [
+      { name: "Crear", value: "roles-create" },
+      { name: "Editar", value: "roles-update" },
+      { name: "Eliminar", value: "roles-delete" },
+      { name: "Eliminar permanente", value: "roles-delete-hard" },
+      { name: "Restaurar", value: "roles-restore" },
+      { name: "Ver", value: "roles-view" },
+    ],
+  },
 ];
