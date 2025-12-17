@@ -25,6 +25,7 @@ export function NavMain({
     icon?: LucideIcon;
     isActive?: boolean;
     items?: {
+      icon?: LucideIcon;
       title: string;
       url: string;
     }[];
@@ -32,6 +33,8 @@ export function NavMain({
   }[];
 }) {
   const { state } = useSidebar();
+  // TODO: manage by settings
+  const showTooltips = false;
 
   return (
     <SidebarGroup>
@@ -44,7 +47,10 @@ export function NavMain({
                 <Protected requiredPermission={item.permission}>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <SidebarMenuButton tooltip={item.title} className="group-data-[collapsible=icon]:justify-center">
+                      <SidebarMenuButton
+                        tooltip={showTooltips ? item.title : undefined}
+                        className="group-data-[collapsible=icon]:justify-center"
+                      >
                         {item.icon && <item.icon />}
                         <span className="group-data-[collapsible=icon]:sr-only">{item.title}</span>
                         <ChevronRight className="ml-auto transition-transform duration-200 group-data-[collapsible=icon]:sr-only" />
@@ -52,8 +58,11 @@ export function NavMain({
                     </DropdownMenuTrigger>
                     <DropdownMenuContent side="right" align="start" className="min-w-48">
                       {item.items.map((subItem) => (
-                        <DropdownMenuItem key={subItem.title} asChild>
-                          <Link to={subItem.url}>{subItem.title}</Link>
+                        <DropdownMenuItem className="text-sm" key={subItem.title} asChild>
+                          <Link to={subItem.url}>
+                            {subItem.icon && <subItem.icon />}
+                            {subItem.title}
+                          </Link>
                         </DropdownMenuItem>
                       ))}
                     </DropdownMenuContent>
@@ -65,7 +74,10 @@ export function NavMain({
                 <SidebarMenuItem>
                   <Protected requiredPermission={item.permission}>
                     <CollapsibleTrigger asChild>
-                      <SidebarMenuButton tooltip={item.title} className="group-data-[collapsible=icon]:justify-center">
+                      <SidebarMenuButton
+                        tooltip={showTooltips ? item.title : undefined}
+                        className="group-data-[collapsible=icon]:justify-center"
+                      >
                         {item.icon && <item.icon />}
                         <span className="group-data-[collapsible=icon]:sr-only">{item.title}</span>
                         <ChevronRight className="ml-auto transition-transform duration-200 group-data-[collapsible=icon]:sr-only group-data-[state=open]/collapsible:rotate-90" />
@@ -78,6 +90,7 @@ export function NavMain({
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton asChild>
                             <Link to={subItem.url}>
+                              {subItem.icon && <subItem.icon />}
                               <span>{subItem.title}</span>
                             </Link>
                           </SidebarMenuSubButton>
@@ -91,7 +104,7 @@ export function NavMain({
           ) : (
             <SidebarMenuItem key={item.title}>
               <Protected requiredPermission={item.permission}>
-                <SidebarMenuButton tooltip={item.title} asChild>
+                <SidebarMenuButton tooltip={showTooltips ? item.title : undefined} asChild>
                   <Link to={item.url} className="group-data-[collapsible=icon]:justify-center">
                     {item.icon && <item.icon />}
                     <span className="group-data-[collapsible=icon]:sr-only">{item.title}</span>
