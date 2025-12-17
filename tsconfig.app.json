@@ -27,12 +27,13 @@
       "@admin/*": ["./src/features/admin/*"],
       "@auth/*": ["./src/core/auth/*"],
       "@components/*": ["./src/components/*"],
-      "@dashboard/*": ["./src/features/dashboard/*"],
       "@core/*": ["./src/core/*"],
+      "@dashboard/*": ["./src/features/dashboard/*"],
       "@lib/*": ["./src/lib/*"],
       "@login/*": ["./src/features/login/*"],
       "@permissions/*": ["./src/features/permissions/*"],
-      "@roles/*": ["./src/features/roles/*"]
+      "@roles/*": ["./src/features/roles/*"],
+      "@settings/*": ["./src/features/settings/*"]
     }
   },
   "include": ["src"]
