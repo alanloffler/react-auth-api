@@ -19,6 +19,7 @@ export default defineConfig({
       "@login": path.resolve(__dirname, "./src/features/login"),
       "@permissions": path.resolve(__dirname, "./src/features/permissions"),
       "@roles": path.resolve(__dirname, "./src/features/roles"),
+      "@settings": path.resolve(__dirname, "./src/features/settings"),
     },
   },
   test: {
