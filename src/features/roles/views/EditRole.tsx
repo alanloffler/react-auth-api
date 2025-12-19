@@ -169,7 +169,9 @@ export default function EditRole() {
                 )}
               >
                 {isLoadingPermissions ? (
-                  <span className="text-foreground! text-center text-sm">Descargando permisos...</span>
+                  <span className="text-foreground! flex justify-center text-sm">
+                    <Loader color="black" size={18} text="Descargando permisos" />
+                  </span>
                 ) : permissions ? (
                   <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3">
                     {permissions.map((permission: IPermissionGroup, permIndex: number) => (
