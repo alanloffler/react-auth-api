@@ -1,10 +1,12 @@
-import { ArrowLeft, FilePenLine, RotateCcw, Trash2 } from "lucide-react";
+import { FilePenLine, RotateCcw, Trash2 } from "lucide-react";
 
+import { BackButton } from "@components/BackButton";
 import { Button } from "@components/ui/button";
 import { Badge } from "@components/Badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@components/ui/card";
 import { HoldButton } from "@components/ui/HoldButton";
 import { Link } from "react-router";
+import { Loader } from "@components/Loader";
 import { PageHeader } from "@components/pages/PageHeader";
 import { Protected } from "@auth/components/Protected";
 
@@ -19,24 +21,22 @@ import { ERoles } from "@auth/enums/role.enum";
 import { tryCatch } from "@core/utils/try-catch";
 import { useAuthStore } from "@auth/auth.store";
 import { usePermission } from "@core/hooks/usePermission";
+import { useTryCatch } from "@core/hooks/useTryCatch";
 
 export default function ViewAdmin() {
   const [admin, setAdmin] = useState<IAdmin | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const adminAuth = useAuthStore((state) => state.admin);
   const hasPermissions = usePermission(["admin-delete", "admin-delete-hard", "admin-restore", "admin-update"], "some");
   const navigate = useNavigate();
   const { id } = useParams();
+  const { isLoading: isLoadingAdmin, tryCatch: tryCatchAdmin } = useTryCatch();
 
   const findOneAdmin = useCallback(
     async function (id: string) {
-      setIsLoading(true);
       const isSuperAdmin = adminAuth?.role.value === ERoles.SUPER;
       const serviceByRole = isSuperAdmin ? AdminService.findOneSoftRemoved(id) : AdminService.findOne(id);
 
-      const [response, responseError] = await tryCatch(serviceByRole);
-
-      setIsLoading(false);
+      const [response, responseError] = await tryCatchAdmin(serviceByRole);
 
       if (responseError) {
         toast.error(responseError.message);
@@ -47,7 +47,7 @@ export default function ViewAdmin() {
         setAdmin(response.data);
       }
     },
-    [adminAuth?.role.value],
+    [adminAuth?.role.value, tryCatchAdmin],
   );
 
   async function removeAdmin(id: string): Promise<void> {
@@ -83,7 +83,6 @@ export default function ViewAdmin() {
 
     if (error) {
       toast.error(error.message);
-
       return;
     }
 
@@ -101,13 +100,13 @@ export default function ViewAdmin() {
     <section className="flex flex-col gap-10">
       <PageHeader title="Detalles del administrador" />
       <Card className="relative w-fit p-10 text-center">
-        {isLoading ? (
-          <div className="min-w-100">Cargando...</div>
+        {isLoadingAdmin ? (
+          <div className="flex min-w-100 justify-center">
+            <Loader color="black" size={20} text="Cargando administrador" />
+          </div>
         ) : (
           <>
-            <Button className="absolute top-5 right-5" variant="ghost" size="icon-lg" onClick={() => navigate(-1)}>
-              <ArrowLeft className="size-5 cursor-pointer" />
-            </Button>
+            <BackButton />
             <CardHeader>
               <CardTitle className="text-xl">{`${admin?.firstName} ${admin?.lastName}`}</CardTitle>
               <CardDescription className="text-base">{admin?.role.name}</CardDescription>
