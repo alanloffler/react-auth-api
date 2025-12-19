@@ -177,5 +177,5 @@ body {
 }
 
 .animate-spin {
-  animation: spin 0.5s linear infinite;
+  animation: spin 0.35s linear infinite;
 }
