@@ -1,3 +1,4 @@
+import { BackButton } from "@components/BackButton";
 import { Button } from "@components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@components/ui/card";
 import { Controller } from "react-hook-form";
@@ -110,10 +111,11 @@ export default function EditPermission() {
 
   return (
     <div>
-      <Card className="w-full lg:w-[80%] xl:w-[60%]">
+      <Card className="relative w-full lg:w-[80%] xl:w-[60%]">
+        <BackButton />
         <CardHeader>
           <CardTitle>Editar Permiso</CardTitle>
-          <CardDescription>Editá el permiso para usarlo en roles de usuarios del sistema</CardDescription>
+          <CardDescription>Actualizá los datos del permiso</CardDescription>
         </CardHeader>
         <CardContent className="flex-1">
           <form className="grid grid-cols-1 gap-6" id="create-permission" onSubmit={form.handleSubmit(onSubmit)}>
