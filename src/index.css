@@ -175,3 +175,7 @@ body {
     @apply cursor-not-allowed;
   }
 }
+
+.animate-spin {
+  animation: spin 0.5s linear infinite;
+}
