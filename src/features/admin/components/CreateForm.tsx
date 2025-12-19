@@ -1,8 +1,10 @@
+import { BackButton } from "@components/BackButton";
 import { Button } from "@components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@components/ui/card";
 import { Controller } from "react-hook-form";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@components/ui/field";
 import { Input } from "@components/ui/input";
+import { Loader } from "@components/Loader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select";
 
 import z from "zod";
@@ -15,25 +17,26 @@ import type { IRole } from "@/features/roles/interfaces/role.interface";
 import { AdminService } from "@admin/services/admin.service";
 import { RolesService } from "@/features/roles/services/roles.service";
 import { createAdminSchema } from "@admin/schemas/create-admin.schema";
-import { tryCatch } from "@/core/utils/try-catch";
 import { useNavigate } from "react-router";
+import { useTryCatch } from "@/core/hooks/useTryCatch";
 
 export function CreateForm() {
   const [icError, setIcError] = useState<string | null>(null);
   const [roles, setRoles] = useState<IRole[] | undefined>(undefined);
   const navigate = useNavigate();
+  const { isLoading: isLoadingRoles, tryCatch: tryCatchRoles } = useTryCatch();
 
   const form = useForm<z.infer<typeof createAdminSchema>>({
     resolver: zodResolver(createAdminSchema),
     defaultValues: {
-      ic: "",
-      userName: "",
-      password: "",
-      firstName: "",
-      lastName: "",
       email: "",
+      firstName: "",
+      ic: "",
+      lastName: "",
+      password: "",
       phoneNumber: "",
       roleId: "",
+      userName: "",
     },
   });
 
@@ -49,15 +52,13 @@ export function CreateForm() {
       const errorMsg = "DNI ya registrado";
       setIcError(errorMsg);
       form.setError("ic", { message: errorMsg });
-
       return;
     }
 
-    const [create, createError] = await tryCatch(AdminService.create(data));
+    const [create, createError] = await tryCatchRoles(AdminService.create(data));
 
     if (createError) {
       toast.error(createError.message);
-
       return;
     }
 
@@ -69,12 +70,11 @@ export function CreateForm() {
 
   useEffect(() => {
     async function getRoles() {
-      const [roles, rolesError] = await tryCatch(RolesService.findAll());
+      const [roles, rolesError] = await tryCatchRoles(RolesService.findAll());
 
       if (rolesError) {
         toast.error(rolesError.message);
         form.control.setError("roleId", { message: "Error obteniendo roles" });
-
         return;
       }
 
@@ -84,7 +84,7 @@ export function CreateForm() {
     }
 
     getRoles();
-  }, [form.control]);
+  }, [form.control, tryCatchRoles]);
 
   function resetForm(): void {
     form.reset();
@@ -92,7 +92,8 @@ export function CreateForm() {
   }
 
   return (
-    <Card>
+    <Card className="relative">
+      <BackButton />
       <CardHeader>
         <CardTitle>Nuevo Administrador</CardTitle>
         <CardDescription>Aquí puedes editar los datos del administrador</CardDescription>
@@ -242,13 +243,16 @@ export function CreateForm() {
           </FieldGroup>
         </form>
       </CardContent>
-      <CardFooter className="justify-end gap-4 pt-4">
-        <Button variant="ghost" onClick={resetForm}>
-          Cancelar
-        </Button>
-        <Button disabled={!form.formState.isDirty} form="create-admin" type="submit" variant="default">
-          Guardar
-        </Button>
+      <CardFooter className="flex items-center justify-between pt-4">
+        <div>{isLoadingRoles && <Loader className="text-sm" color="black" size={18} text="Cargando roles" />}</div>
+        <div className="flex gap-4">
+          <Button variant="ghost" onClick={resetForm}>
+            Cancelar
+          </Button>
+          <Button disabled={!form.formState.isDirty} form="create-admin" type="submit" variant="default">
+            Guardar
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   );
