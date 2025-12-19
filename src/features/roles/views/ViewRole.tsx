@@ -1,6 +1,7 @@
-import { ArrowLeft, Check, FilePenLine, RotateCcw, Trash2 } from "lucide-react";
+import { Check, FilePenLine, RotateCcw, Trash2 } from "lucide-react";
 
 import { Activity } from "react";
+import { BackButton } from "@components/BackButton";
 import { Badge } from "@components/Badge";
 import { Button } from "@components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@components/ui/card";
@@ -29,7 +30,7 @@ export default function ViewRole() {
   const hasPermissions = usePermission(["roles-delete", "roles-delete-hard", "roles-restore", "roles-update"], "some");
   const navigate = useNavigate();
   const { id } = useParams();
-  const { isLoading, tryCatch: tryCatchRole } = useTryCatch();
+  const { isLoading: isLoadingRole, tryCatch: tryCatchRole } = useTryCatch();
 
   const findOneRole = useCallback(
     async function (id: string) {
@@ -123,17 +124,13 @@ export default function ViewRole() {
     <section className="flex flex-col gap-10">
       <PageHeader title="Detalles del rol" />
       <Card className="relative w-full max-w-180 p-10 text-center">
-        {isLoading ? (
+        {isLoadingRole ? (
           <div className="flex min-w-80 justify-center">
-            <Loader color="black" size={20} text="Cargando" />
+            <Loader color="black" size={20} text="Cargando rol" />
           </div>
         ) : (
           <>
-            <Button className="absolute top-5 right-5" variant="ghost" size="icon-lg" asChild>
-              <Link to="/roles">
-                <ArrowLeft className="size-5 cursor-pointer" />
-              </Link>
-            </Button>
+            <BackButton />
             <CardHeader>
               <CardTitle className="text-xl">{role?.name}</CardTitle>
               <CardDescription className="text-base">{role?.value}</CardDescription>
