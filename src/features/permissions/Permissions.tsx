@@ -170,7 +170,7 @@ export default function Permissions() {
 
   return (
     <div className="flex flex-col gap-10">
-      <PageHeader title="Permisos" subtitle="Gestioná los permisos de acceso para los roles del sistema.">
+      <PageHeader title="Permisos" subtitle="Gestioná los permisos para los roles del sistema">
         <Protected requiredPermission="permissions-create">
           <Button variant="default" size="lg" asChild>
             <Link to="/permissions/create">
