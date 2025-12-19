@@ -21,8 +21,8 @@ import { useTryCatch } from "@core/hooks/useTryCatch";
 export default function EditPermission() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { isLoading, tryCatch: tryCatchPermission } = useTryCatch();
-  const { isLoading: isSaving, tryCatch: tryCatchSubmit } = useTryCatch();
+  const { isLoading: isLoadingPermission, tryCatch: tryCatchPermission } = useTryCatch();
+  const { isLoading: isSavingPermission, tryCatch: tryCatchSubmit } = useTryCatch();
   const previousCategory = useRef<string | undefined>(undefined);
 
   const form = useForm<z.infer<typeof permissionSchema>>({
@@ -196,14 +196,16 @@ export default function EditPermission() {
             </FieldGroup>
           </form>
         </CardContent>
-        <CardFooter className="flex justify-between pt-4">
-          <div>{isLoading && <Loader className="text-sm" color="black" size={18} text="Descargando permiso" />}</div>
+        <CardFooter className="flex items-center justify-between pt-4">
+          <div>
+            {isLoadingPermission && <Loader className="text-sm" color="black" size={18} text="Descargando permiso" />}
+          </div>
           <div className="flex gap-4">
             <Button variant="ghost" onClick={resetForm}>
               Cancelar
             </Button>
             <Button disabled={!form.formState.isDirty} form="create-permission" type="submit" variant="default">
-              {isSaving ? <Loader text="Guardando" /> : "Guardar"}
+              {isSavingPermission ? <Loader text="Guardando" /> : "Guardar"}
             </Button>
           </div>
         </CardFooter>
