@@ -166,7 +166,7 @@ export default function Roles() {
 
   return (
     <div className="flex flex-col gap-10">
-      <PageHeader title="Roles" subtitle="Gestioná los roles para los usuarios del sistema.">
+      <PageHeader title="Roles" subtitle="Gestioná los roles de los administradores del sistema">
         <Protected requiredPermission="roles-create" variant="disabled">
           <Button variant="default" size="lg" asChild>
             <Link to="/roles/create">
