@@ -96,7 +96,7 @@ export function CreateForm() {
       <BackButton />
       <CardHeader>
         <CardTitle>Nuevo Administrador</CardTitle>
-        <CardDescription>Aquí puedes editar los datos del administrador</CardDescription>
+        <CardDescription>Creá un administrador para el sistema</CardDescription>
       </CardHeader>
       <CardContent className="flex-1">
         <form className="grid grid-cols-1 gap-6" id="create-admin" onSubmit={form.handleSubmit(onSubmit)}>
