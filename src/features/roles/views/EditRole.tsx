@@ -1,3 +1,4 @@
+import { BackButton } from "@components/BackButton";
 import { Button } from "@components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@components/ui/card";
 import { Checkbox } from "@components/ui/checkbox";
@@ -25,10 +26,12 @@ import { useTryCatch } from "@core/hooks/useTryCatch";
 
 export default function EditRole() {
   const [permissions, setPermissions] = useState<any | undefined>(undefined);
+  const [permissionsError, setPermissionsError] = useState<boolean>(false);
   const navigate = useNavigate();
   const refreshAdmin = useAuthStore((state) => state.refreshAdmin);
   const { id } = useParams();
   const { isLoading: isLoadingPermissions, tryCatch: tryCatchPermissions } = useTryCatch();
+  const { isLoading: isLoadingRole, tryCatch: tryCatchRole } = useTryCatch();
   const { isLoading: isSaving, tryCatch: tryCatchSubmit } = useTryCatch();
 
   const form = useForm<z.infer<typeof roleSchema>>({
@@ -36,8 +39,8 @@ export default function EditRole() {
     defaultValues: {
       description: "",
       name: "",
-      value: "",
       permissions: [],
+      value: "",
     },
   });
 
@@ -48,11 +51,10 @@ export default function EditRole() {
 
   useEffect(() => {
     async function loadData() {
-      const [permissionsResponse, permissionsError] = await tryCatchPermissions(PermissionsService.findAllGrouped());
-      const [roleResponse, roleError] = await tryCatchPermissions(RolesService.findOne(id!));
+      const [roleResponse, roleError] = await tryCatchRole(RolesService.findOne(id!));
 
-      if (permissionsError || roleError) {
-        toast.error(permissionsError?.message || roleError?.message || "Error cargando datos");
+      if (roleError) {
+        toast.error(roleError?.message || "Error cargando datos");
         return;
       }
 
@@ -60,31 +62,39 @@ export default function EditRole() {
         form.setValue("name", roleResponse.data.name);
         form.setValue("description", roleResponse.data.description);
         form.setValue("value", roleResponse.data.value);
-      }
 
-      if (permissionsResponse?.statusCode === 200 && permissionsResponse.data) {
-        const rolePermissionKeys = new Set(
-          roleResponse?.data?.rolePermissions?.map((rp) => rp.permission?.actionKey) || [],
-        );
+        const [permissionsResponse, permissionsError] = await tryCatchPermissions(PermissionsService.findAllGrouped());
 
-        const processedPermissions = permissionsResponse.data.map((permGroup) => ({
-          ...permGroup,
-          actions: permGroup.actions.map((action) => {
-            return {
-              ...action,
-              value: rolePermissionKeys.has(action.key),
-              deletedAt: action.deletedAt,
-            };
-          }),
-        }));
+        if (permissionsError) {
+          setPermissionsError(true);
+          toast.error(permissionsError?.message || "Error cargando datos");
+          return;
+        }
 
-        setPermissions(processedPermissions);
-        form.setValue("permissions", processedPermissions);
+        if (permissionsResponse?.statusCode === 200 && permissionsResponse.data) {
+          const rolePermissionKeys = new Set(
+            roleResponse?.data?.rolePermissions?.map((rp) => rp.permission?.actionKey) || [],
+          );
+
+          const processedPermissions = permissionsResponse.data.map((permGroup) => ({
+            ...permGroup,
+            actions: permGroup.actions.map((action) => {
+              return {
+                ...action,
+                value: rolePermissionKeys.has(action.key),
+                deletedAt: action.deletedAt,
+              };
+            }),
+          }));
+
+          setPermissions(processedPermissions);
+          form.setValue("permissions", processedPermissions);
+        }
       }
     }
 
     loadData();
-  }, [id, form, tryCatchPermissions]);
+  }, [id, form, tryCatchPermissions, tryCatchRole]);
 
   async function onSubmit(data: z.infer<typeof roleSchema>) {
     const cleanedData = {
@@ -115,7 +125,8 @@ export default function EditRole() {
   }
 
   return (
-    <Card className="flex w-full flex-col gap-10 lg:w-[80%] xl:w-[60%]">
+    <Card className="relative flex w-full flex-col gap-10 lg:w-[80%] xl:w-[60%]">
+      <BackButton />
       <CardHeader>
         <CardTitle>Editar Rol</CardTitle>
         <CardDescription>Realizá cambios en un rol para los usuarios del sistema</CardDescription>
@@ -240,7 +251,9 @@ export default function EditRole() {
                     ))}
                   </ul>
                 ) : (
-                  <span className="text-destructive text-center text-sm">Error cargando permisos</span>
+                  permissionsError && (
+                    <span className="text-destructive text-center text-sm">Error cargando permisos</span>
+                  )
                 )}
               </div>
             </FieldGroup>
@@ -252,13 +265,16 @@ export default function EditRole() {
           </div>
         </form>
       </CardContent>
-      <CardFooter className="justify-end gap-4 pt-4">
-        <Button variant="ghost" onClick={resetForm}>
-          Cancelar
-        </Button>
-        <Button disabled={!form.formState.isDirty} form="create-role" type="submit" variant="default">
-          {isSaving ? <Loader text="Guardando" /> : "Guardar"}
-        </Button>
+      <CardFooter className="flex justify-between pt-4">
+        <div>{isLoadingRole && <Loader className="text-sm" color="black" size={18} text="Cargando rol" />}</div>
+        <div className="flex gap-4">
+          <Button variant="ghost" onClick={resetForm}>
+            Cancelar
+          </Button>
+          <Button disabled={!form.formState.isDirty} form="create-role" type="submit" variant="default">
+            {isSaving ? <Loader text="Guardando" /> : "Guardar"}
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   );
