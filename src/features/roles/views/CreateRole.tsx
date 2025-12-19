@@ -87,7 +87,7 @@ export default function CreateRole() {
         <BackButton />
         <CardHeader>
           <CardTitle>Nuevo Rol</CardTitle>
-          <CardDescription>Creá un rol para los usuarios del sistema</CardDescription>
+          <CardDescription>Creá un rol para los administradores del sistema</CardDescription>
         </CardHeader>
         <CardContent className="flex-1">
           <form className="grid grid-cols-1 gap-6" id="create-role" onSubmit={form.handleSubmit(onSubmit)}>
