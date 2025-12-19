@@ -15,10 +15,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { PERMISSIONS } from "@core/constants/permissions";
 import { PermissionsService } from "@permissions/services/permissions.service";
 import { permissionSchema } from "@permissions/schemas/permission.schema";
-import { tryCatch } from "@core/utils/try-catch";
+import { useTryCatch } from "@core/hooks/useTryCatch";
+import { Loader } from "@/components/Loader";
 
 export default function CreatePermission() {
   const navigate = useNavigate();
+  const { isLoading: isSaving, tryCatch: tryCatchSubmit } = useTryCatch();
 
   const form = useForm<z.infer<typeof permissionSchema>>({
     resolver: zodResolver(permissionSchema),
@@ -50,7 +52,7 @@ export default function CreatePermission() {
   }, [selectedCategory, form]);
 
   async function onSubmit(data: z.infer<typeof permissionSchema>) {
-    const [response, error] = await tryCatch(PermissionsService.create(data));
+    const [response, error] = await tryCatchSubmit(PermissionsService.create(data));
 
     if (error) {
       toast.error(error.message);
@@ -161,7 +163,7 @@ export default function CreatePermission() {
             Cancelar
           </Button>
           <Button disabled={!form.formState.isDirty} form="create-permission" type="submit" variant="default">
-            Guardar
+            {isSaving ? <Loader text="Guardando" /> : "Guardar"}
           </Button>
         </CardFooter>
       </Card>
