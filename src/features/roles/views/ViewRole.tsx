@@ -115,6 +115,12 @@ export default function ViewRole() {
     }
   }
 
+  function translate(content: string) {
+    if (content === "admin") return "Administradores";
+    if (content === "permissions") return "Permisos";
+    return content.charAt(0).toUpperCase() + content.slice(1);
+  }
+
   return (
     <section className="flex flex-col gap-10">
       <PageHeader title="Detalles del rol" />
@@ -147,19 +153,24 @@ export default function ViewRole() {
                   <span>{role?.description}</span>
                 </li>
                 <div className="grid grid-cols-2">
-                  <div>
+                  <div className="flex flex-col gap-2">
                     <span className="font-semibold">Permisos:</span>
-                    <ul className="grid pl-5">
+                    <ul className="grid gap-2 pl-5">
                       {role?.rolePermissions && role.rolePermissions.length > 0 ? (
                         Object.entries(groupByCategory(role?.rolePermissions)).map(([category, permissions]) => (
-                          <div key={`category-${category}`} className="mt-2">
-                            <ul className="space-y-1">
+                          <div className="flex flex-col gap-1" key={`category-block-${category}`}>
+                            <div className="text-xs font-semibold text-neutral-600 uppercase">
+                              {translate(category)}
+                            </div>
+                            <ul className="flex flex-col gap-1">
                               {permissions.map((rp, idx) => (
                                 <li
                                   key={`permission-${idx}`}
-                                  className="flex items-center gap-2 text-xs font-medium uppercase"
+                                  className="flex items-center gap-2 text-sm font-medium text-neutral-600"
                                 >
-                                  <Check className="h-3 w-3" />
+                                  <span className="bg-primary/20 rounded-full p-1">
+                                    <Check className="text-primary h-2.5 w-2.5" />
+                                  </span>
                                   {rp.permission?.name}
                                 </li>
                               ))}
@@ -174,11 +185,14 @@ export default function ViewRole() {
                   <div className="flex flex-col items-start">
                     <span className="font-semibold">Usando este rol:</span>
                     {role?.admins?.length && role.admins.length > 0 ? (
-                      <ul className="grid pl-5">
-                        {role?.admins.map((item) => (
-                          <li className="m-0 grid w-full grid-cols-5 items-center gap-5" key={`admins-${item.id}`}>
-                            <span className="col-span-3 p-0 font-medium">@{item.userName}</span>
-                            <span className="col-span-2 p-0 text-sm">
+                      <ul className="flex flex-col gap-2 pl-5">
+                        {role?.admins.map((item, idx) => (
+                          <li className="flex items-center gap-3" key={`admins-${item.id}`}>
+                            <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-neutral-200/70 text-xs">
+                              {idx + 1}
+                            </span>
+                            <span className="font-medium">@{item.userName}</span>
+                            <span className="text-sm">
                               <Button className="h-fit p-0" variant="link" asChild>
                                 <Link to={`/admin/view/${item.id}`}>
                                   {item.firstName} {item.lastName}
