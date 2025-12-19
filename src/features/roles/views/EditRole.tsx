@@ -5,6 +5,7 @@ import { Controller } from "react-hook-form";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@components/ui/field";
 import { Input } from "@components/ui/input";
 import { Label } from "@components/ui/label";
+import { Loader } from "@components/Loader";
 
 import type z from "zod";
 import { toast } from "sonner";
@@ -19,14 +20,16 @@ import { PermissionsService } from "@permissions/services/permissions.service";
 import { RolesService } from "@roles/services/roles.service";
 import { cn } from "@lib/utils";
 import { roleSchema } from "@roles/schemas/role.schema";
-import { tryCatch } from "@core/utils/try-catch";
 import { useAuthStore } from "@core/auth/auth.store";
+import { useTryCatch } from "@core/hooks/useTryCatch";
 
 export default function EditRole() {
   const [permissions, setPermissions] = useState<any | undefined>(undefined);
   const navigate = useNavigate();
   const refreshAdmin = useAuthStore((state) => state.refreshAdmin);
   const { id } = useParams();
+  const { isLoading: isLoadingPermissions, tryCatch: tryCatchPermissions } = useTryCatch();
+  const { isLoading: isSaving, tryCatch: tryCatchSubmit } = useTryCatch();
 
   const form = useForm<z.infer<typeof roleSchema>>({
     resolver: zodResolver(roleSchema),
@@ -45,8 +48,8 @@ export default function EditRole() {
 
   useEffect(() => {
     async function loadData() {
-      const [permissionsResponse, permissionsError] = await tryCatch(PermissionsService.findAllGrouped());
-      const [roleResponse, roleError] = await tryCatch(RolesService.findOne(id!));
+      const [permissionsResponse, permissionsError] = await tryCatchPermissions(PermissionsService.findAllGrouped());
+      const [roleResponse, roleError] = await tryCatchPermissions(RolesService.findOne(id!));
 
       if (permissionsError || roleError) {
         toast.error(permissionsError?.message || roleError?.message || "Error cargando datos");
@@ -81,7 +84,7 @@ export default function EditRole() {
     }
 
     loadData();
-  }, [id, form]);
+  }, [id, form, tryCatchPermissions]);
 
   async function onSubmit(data: z.infer<typeof roleSchema>) {
     const cleanedData = {
@@ -92,7 +95,7 @@ export default function EditRole() {
       })),
     };
 
-    const [response, error] = await tryCatch(RolesService.update(id!, cleanedData));
+    const [response, error] = await tryCatchSubmit(RolesService.update(id!, cleanedData));
 
     if (error) {
       toast.error(error.message);
@@ -165,7 +168,9 @@ export default function EditRole() {
                   form.formState.errors.permissions && "border-destructive",
                 )}
               >
-                {permissions ? (
+                {isLoadingPermissions ? (
+                  <span className="text-foreground! text-center text-sm">Descargando permisos...</span>
+                ) : permissions ? (
                   <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3">
                     {permissions.map((permission: IPermissionGroup, permIndex: number) => (
                       <li className="flex flex-col gap-3" key={permission.id}>
@@ -250,7 +255,7 @@ export default function EditRole() {
           Cancelar
         </Button>
         <Button disabled={!form.formState.isDirty} form="create-role" type="submit" variant="default">
-          Guardar
+          {isSaving ? <Loader text="Guardando" /> : "Guardar"}
         </Button>
       </CardFooter>
     </Card>
