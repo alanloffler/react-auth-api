@@ -1,8 +1,10 @@
+import { BackButton } from "@components/BackButton";
 import { Button } from "@components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@components/ui/card";
 import { Controller } from "react-hook-form";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@components/ui/field";
 import { Input } from "@components/ui/input";
+import { Loader } from "@components/Loader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select";
 
 import type z from "zod";
@@ -16,7 +18,6 @@ import { PERMISSIONS } from "@core/constants/permissions";
 import { PermissionsService } from "@permissions/services/permissions.service";
 import { permissionSchema } from "@permissions/schemas/permission.schema";
 import { useTryCatch } from "@core/hooks/useTryCatch";
-import { Loader } from "@/components/Loader";
 
 export default function CreatePermission() {
   const navigate = useNavigate();
@@ -72,10 +73,11 @@ export default function CreatePermission() {
 
   return (
     <div>
-      <Card className="w-full lg:w-[80%] xl:w-[60%]">
+      <Card className="relative w-full lg:w-[80%] xl:w-[60%]">
+        <BackButton />
         <CardHeader>
           <CardTitle>Nuevo Permiso</CardTitle>
-          <CardDescription>Creá un permiso para usarlo en roles de usuarios del sistema</CardDescription>
+          <CardDescription>Creá un permiso para usarlo en roles del sistema</CardDescription>
         </CardHeader>
         <CardContent className="flex-1">
           <form className="grid grid-cols-1 gap-6" id="create-permission" onSubmit={form.handleSubmit(onSubmit)}>
