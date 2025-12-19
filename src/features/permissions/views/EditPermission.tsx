@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Controller } from "react-hook-form";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@components/ui/field";
 import { Input } from "@components/ui/input";
+import { Loader } from "@components/Loader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select";
 
 import type z from "zod";
@@ -15,11 +16,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { PERMISSIONS } from "@core/constants/permissions";
 import { PermissionsService } from "@permissions/services/permissions.service";
 import { permissionSchema } from "@permissions/schemas/permission.schema";
-import { tryCatch } from "@core/utils/try-catch";
+import { useTryCatch } from "@core/hooks/useTryCatch";
 
 export default function EditPermission() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { isLoading, tryCatch: tryCatchPermission } = useTryCatch();
+  const { isLoading: isSaving, tryCatch: tryCatchSubmit } = useTryCatch();
   const previousCategory = useRef<string | undefined>(undefined);
 
   const form = useForm<z.infer<typeof permissionSchema>>({
@@ -59,7 +62,7 @@ export default function EditPermission() {
   useEffect(() => {
     async function fetchPermission() {
       if (id) {
-        const [response, error] = await tryCatch(PermissionsService.findOne(id));
+        const [response, error] = await tryCatchPermission(PermissionsService.findOne(id));
 
         if (error) {
           toast.error(error.message);
@@ -82,11 +85,11 @@ export default function EditPermission() {
     }
 
     fetchPermission();
-  }, [id, form]);
+  }, [id, form, tryCatchPermission]);
 
   async function onSubmit(data: z.infer<typeof permissionSchema>) {
     if (id) {
-      const [response, error] = await tryCatch(PermissionsService.update(id, data));
+      const [response, error] = await tryCatchSubmit(PermissionsService.update(id, data));
 
       if (error) {
         toast.error(error.message);
@@ -193,13 +196,16 @@ export default function EditPermission() {
             </FieldGroup>
           </form>
         </CardContent>
-        <CardFooter className="justify-end gap-4 pt-4">
-          <Button variant="ghost" onClick={resetForm}>
-            Cancelar
-          </Button>
-          <Button disabled={!form.formState.isDirty} form="create-permission" type="submit" variant="default">
-            Guardar
-          </Button>
+        <CardFooter className="flex justify-between pt-4">
+          <div>{isLoading && <Loader className="text-sm" color="black" size={18} text="Descargando permiso" />}</div>
+          <div className="flex gap-4">
+            <Button variant="ghost" onClick={resetForm}>
+              Cancelar
+            </Button>
+            <Button disabled={!form.formState.isDirty} form="create-permission" type="submit" variant="default">
+              {isSaving ? <Loader text="Guardando" /> : "Guardar"}
+            </Button>
+          </div>
         </CardFooter>
       </Card>
     </div>
