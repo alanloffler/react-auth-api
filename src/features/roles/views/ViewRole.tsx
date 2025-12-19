@@ -20,24 +20,22 @@ import { RolesService } from "@roles/services/roles.service";
 import { tryCatch } from "@core/utils/try-catch";
 import { useAuthStore } from "@auth/auth.store";
 import { usePermission } from "@core/hooks/usePermission";
+import { useTryCatch } from "@core/hooks/useTryCatch";
+import { Loader } from "@/components/Loader";
 
 export default function ViewRole() {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [role, setRole] = useState<IRole | undefined>(undefined);
   const admin = useAuthStore((state) => state.admin);
   const hasPermissions = usePermission(["roles-delete", "roles-delete-hard", "roles-restore", "roles-update"], "some");
   const navigate = useNavigate();
   const { id } = useParams();
+  const { isLoading, tryCatch: tryCatchRole } = useTryCatch();
 
   const findOneRole = useCallback(
     async function (id: string) {
-      setIsLoading(true);
-
       const isSuperAdmin = admin?.role.value === ERoles.SUPER;
       const serviceByRole = isSuperAdmin ? RolesService.findOneSoftRemoved(id) : RolesService.findOne(id);
-      const [response, responseError] = await tryCatch(serviceByRole);
-
-      setIsLoading(false);
+      const [response, responseError] = await tryCatchRole(serviceByRole);
 
       if (responseError) {
         toast.error(responseError.message);
@@ -48,7 +46,7 @@ export default function ViewRole() {
         setRole(response.data);
       }
     },
-    [admin?.role.value],
+    [admin?.role.value, tryCatchRole],
   );
 
   useEffect(() => {
@@ -126,7 +124,9 @@ export default function ViewRole() {
       <PageHeader title="Detalles del rol" />
       <Card className="relative w-full max-w-180 p-10 text-center">
         {isLoading ? (
-          <div className="min-w-80">Cargando...</div>
+          <div className="flex min-w-80 justify-center">
+            <Loader color="black" size={20} text="Cargando" />
+          </div>
         ) : (
           <>
             <Button className="absolute top-5 right-5" variant="ghost" size="icon-lg" asChild>
