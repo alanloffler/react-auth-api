@@ -126,7 +126,7 @@ export function EditForm({ adminId }: IProps) {
       <BackButton />
       <CardHeader>
         <CardTitle>Editar Administrador</CardTitle>
-        <CardDescription>Aquí puedes editar los datos del administrador</CardDescription>
+        <CardDescription>Actualizá los datos del administrador</CardDescription>
       </CardHeader>
       <CardContent className="flex-1">
         <form className="grid grid-cols-1 gap-6" id="edit-form" onSubmit={form.handleSubmit(onSubmit)}>
