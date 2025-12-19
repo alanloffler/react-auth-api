@@ -6,6 +6,7 @@ import { Button } from "@components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@components/ui/card";
 import { HoldButton } from "@components/ui/HoldButton";
 import { Link } from "react-router";
+import { Loader } from "@components/Loader";
 import { PageHeader } from "@components/pages/PageHeader";
 import { Protected } from "@core/auth/components/Protected";
 
@@ -21,7 +22,6 @@ import { tryCatch } from "@core/utils/try-catch";
 import { useAuthStore } from "@auth/auth.store";
 import { usePermission } from "@core/hooks/usePermission";
 import { useTryCatch } from "@core/hooks/useTryCatch";
-import { Loader } from "@/components/Loader";
 
 export default function ViewRole() {
   const [role, setRole] = useState<IRole | undefined>(undefined);
