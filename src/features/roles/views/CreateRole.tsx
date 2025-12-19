@@ -1,3 +1,4 @@
+import { BackButton } from "@components/BackButton";
 import { Button } from "@components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@components/ui/card";
 import { Checkbox } from "@components/ui/checkbox";
@@ -5,6 +6,7 @@ import { Controller } from "react-hook-form";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@components/ui/field";
 import { Input } from "@components/ui/input";
 import { Label } from "@components/ui/label";
+import { Loader } from "@components/Loader";
 
 import type z from "zod";
 import { toast } from "sonner";
@@ -19,11 +21,13 @@ import { PermissionsService } from "@permissions/services/permissions.service";
 import { RolesService } from "@roles/services/roles.service";
 import { cn } from "@lib/utils";
 import { roleSchema } from "@roles/schemas/role.schema";
-import { tryCatch } from "@core/utils/try-catch";
+import { useTryCatch } from "@core/hooks/useTryCatch";
 
 export default function CreateRole() {
   const [permissions, setPermissions] = useState<IPermissionGroup[] | undefined>(undefined);
   const navigate = useNavigate();
+  const { isLoading: isLoadingPermissions, tryCatch: tryCatchPermissions } = useTryCatch();
+  const { isLoading: isSaving, tryCatch: tryCatchSubmit } = useTryCatch();
 
   const form = useForm<z.infer<typeof roleSchema>>({
     resolver: zodResolver(roleSchema),
@@ -42,7 +46,7 @@ export default function CreateRole() {
 
   useEffect(() => {
     async function fetchPermissions() {
-      const [response, error] = await tryCatch(PermissionsService.findAllGrouped());
+      const [response, error] = await tryCatchPermissions(PermissionsService.findAllGrouped());
 
       if (error) {
         toast.error(error.message);
@@ -56,10 +60,10 @@ export default function CreateRole() {
     }
 
     fetchPermissions();
-  }, [form]);
+  }, [form, tryCatchPermissions]);
 
   async function onSubmit(data: z.infer<typeof roleSchema>) {
-    const [response, error] = await tryCatch(RolesService.create(data));
+    const [response, error] = await tryCatchSubmit(RolesService.create(data));
 
     if (error) {
       toast.error(error.message);
@@ -79,7 +83,8 @@ export default function CreateRole() {
 
   return (
     <div>
-      <Card className="w-full lg:w-[80%] xl:w-[60%]">
+      <Card className="relative w-full lg:w-[80%] xl:w-[60%]">
+        <BackButton />
         <CardHeader>
           <CardTitle>Nuevo Rol</CardTitle>
           <CardDescription>Creá un rol para los usuarios del sistema</CardDescription>
@@ -132,7 +137,11 @@ export default function CreateRole() {
                     form.formState.errors.permissions && "border-destructive",
                   )}
                 >
-                  {permissions ? (
+                  {isLoadingPermissions ? (
+                    <span className="text-foreground! flex justify-center text-sm">
+                      <Loader color="black" size={18} text="Descargando permisos" />
+                    </span>
+                  ) : permissions ? (
                     <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3">
                       {permissions.map((permission: IPermissionGroup, permIndex: number) => (
                         <li className="flex flex-col gap-3" key={permission.id}>
@@ -209,7 +218,7 @@ export default function CreateRole() {
             Cancelar
           </Button>
           <Button disabled={!form.formState.isDirty} form="create-role" type="submit" variant="default">
-            Guardar
+            {isSaving ? <Loader text="Guardando" /> : "Guardar"}
           </Button>
         </CardFooter>
       </Card>
