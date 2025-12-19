@@ -1,15 +1,17 @@
 import { Eye, EyeOff } from "lucide-react";
 
+import { BackButton } from "@components/BackButton";
 import { Button } from "@components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@components/ui/card";
 import { Controller } from "react-hook-form";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@components/ui/field";
 import { Input } from "@components/ui/input";
+import { Loader } from "@components/Loader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select";
 
 import z from "zod";
 import { toast } from "sonner";
-import { type MouseEvent, useEffect, useState } from "react";
+import { type MouseEvent, useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,9 +19,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { IRole } from "@roles/interfaces/role.interface";
 import { AdminService } from "@admin/services/admin.service";
 import { RolesService } from "@roles/services/roles.service";
-import { tryCatch } from "@core/utils/try-catch";
 import { updateAdminSchema } from "@admin/schemas/update-admin.schema";
 import { usePermission } from "@core/hooks/usePermission";
+import { useTryCatch } from "@core/hooks/useTryCatch";
 
 interface IProps {
   adminId: string;
@@ -30,28 +32,44 @@ export function EditForm({ adminId }: IProps) {
   const [roles, setRoles] = useState<IRole[] | undefined>(undefined);
   const canUpdatePassword = usePermission("admin-update-password");
   const navigate = useNavigate();
+  const { isLoading: isLoadingAdmin, tryCatch: tryCatchAdmin } = useTryCatch();
+  const { isLoading: isLoadingRoles, tryCatch: tryCatchRoles } = useTryCatch();
+  const { isLoading: isSaving, tryCatch: tryCatchSubmit } = useTryCatch();
 
   const form = useForm<z.infer<typeof updateAdminSchema>>({
     resolver: zodResolver(updateAdminSchema),
     defaultValues: {
-      ic: "",
-      userName: "",
-      password: "",
-      firstName: "",
-      lastName: "",
       email: "",
+      firstName: "",
+      ic: "",
+      lastName: "",
+      password: "",
       phoneNumber: "",
       roleId: "",
+      userName: "",
     },
   });
 
+  const getRoles = useCallback(async () => {
+    const [roles, rolesError] = await tryCatchRoles(RolesService.findAll());
+
+    if (rolesError) {
+      toast.error(rolesError.message);
+      form.control.setError("roleId", { message: "Error obteniendo roles" });
+      return;
+    }
+
+    if (roles && roles.statusCode === 200) {
+      setRoles(roles.data);
+    }
+  }, [form.control, tryCatchRoles]);
+
   useEffect(() => {
     async function findOneWithCredentials(): Promise<void> {
-      const [admin, adminError] = await tryCatch(AdminService.findOneWithCredentials(adminId));
+      const [admin, adminError] = await tryCatchAdmin(AdminService.findOneWithCredentials(adminId));
 
       if (adminError) {
         toast.error(adminError.message);
-
         return;
       }
 
@@ -67,11 +85,13 @@ export function EditForm({ adminId }: IProps) {
             phoneNumber: admin.data.phoneNumber,
             roleId: admin.data.roleId,
           });
+
+        getRoles();
       }
     }
 
     findOneWithCredentials();
-  }, [adminId, form]);
+  }, [adminId, form, getRoles, tryCatchAdmin]);
 
   function togglePasswordField(event: MouseEvent<HTMLButtonElement>): void {
     event.preventDefault();
@@ -83,11 +103,10 @@ export function EditForm({ adminId }: IProps) {
       ? data
       : Object.fromEntries(Object.entries(data).filter(([key]) => key !== "password"));
 
-    const [update, updateError] = await tryCatch(AdminService.update(adminId, updateData));
+    const [update, updateError] = await tryCatchSubmit(AdminService.update(adminId, updateData));
 
     if (updateError) {
       toast.error(updateError.message);
-
       return;
     }
 
@@ -102,27 +121,9 @@ export function EditForm({ adminId }: IProps) {
     navigate(-1);
   }
 
-  useEffect(() => {
-    async function getRoles() {
-      const [roles, rolesError] = await tryCatch(RolesService.findAll());
-
-      if (rolesError) {
-        toast.error(rolesError.message);
-        form.control.setError("roleId", { message: "Error obteniendo roles" });
-
-        return;
-      }
-
-      if (roles && roles.statusCode === 200) {
-        setRoles(roles.data);
-      }
-    }
-
-    getRoles();
-  }, [form.control]);
-
   return (
-    <Card>
+    <Card className="relative">
+      <BackButton />
       <CardHeader>
         <CardTitle>Editar Administrador</CardTitle>
         <CardDescription>Aquí puedes editar los datos del administrador</CardDescription>
@@ -278,13 +279,19 @@ export function EditForm({ adminId }: IProps) {
           </FieldGroup>
         </form>
       </CardContent>
-      <CardFooter className="justify-end gap-4 pt-4">
-        <Button variant="ghost" onClick={handleCancel}>
-          Cancelar
-        </Button>
-        <Button disabled={!form.formState.isDirty} form="edit-form" type="submit" variant="default">
-          Guardar
-        </Button>
+      <CardFooter className="flex items-center justify-between pt-4">
+        <div>
+          {isLoadingAdmin && <Loader className="text-sm" color="black" size={18} text="Cargando administrador" />}
+          {isLoadingRoles && <Loader className="text-sm" color="black" size={18} text="Cargando roles" />}
+        </div>
+        <div className="flex gap-4">
+          <Button variant="ghost" onClick={handleCancel}>
+            Cancelar
+          </Button>
+          <Button disabled={!form.formState.isDirty} form="edit-form" type="submit" variant="default">
+            {isSaving ? <Loader text="Guardando" /> : "Guardar"}
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   );
