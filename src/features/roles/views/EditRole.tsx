@@ -129,7 +129,7 @@ export default function EditRole() {
       <BackButton />
       <CardHeader>
         <CardTitle>Editar Rol</CardTitle>
-        <CardDescription>Realizá cambios en un rol para los usuarios del sistema</CardDescription>
+        <CardDescription>Actualizá los datos del rol</CardDescription>
       </CardHeader>
       <CardContent className="flex-1">
         <form className="grid grid-cols-1 gap-6" id="create-role" onSubmit={form.handleSubmit(onSubmit)}>
