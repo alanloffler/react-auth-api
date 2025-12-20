@@ -5,6 +5,7 @@ import { BackButton } from "@components/BackButton";
 import { Badge } from "@components/Badge";
 import { Button } from "@components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@components/ui/card";
+import { CreatedAt } from "@components/CreatedAt";
 import { HoldButton } from "@components/ui/HoldButton";
 import { Link } from "react-router";
 import { Loader } from "@components/Loader";
@@ -121,9 +122,9 @@ export default function ViewRole() {
   }
 
   return (
-    <section className="flex flex-col gap-10">
+    <section className="flex flex-col gap-6">
       <PageHeader title="Detalles del rol" />
-      <Card className="relative w-full max-w-180 p-10 text-center">
+      <Card className="relative w-full p-10 text-center lg:w-[80%] xl:w-[60%]">
         {isLoadingRole ? (
           <div className="flex min-w-80 justify-center">
             <Loader color="black" size={20} text="Cargando rol" />
@@ -149,17 +150,17 @@ export default function ViewRole() {
                   <span className="font-semibold">Descripción</span>
                   <span>{role?.description}</span>
                 </li>
-                <div className="grid grid-cols-2">
+                <div className="flex flex-col gap-8">
                   <div className="flex flex-col gap-2">
                     <span className="font-semibold">Permisos:</span>
-                    <ul className="grid gap-2 pl-5">
+                    <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3">
                       {role?.rolePermissions && role.rolePermissions.length > 0 ? (
                         Object.entries(groupByCategory(role?.rolePermissions)).map(([category, permissions]) => (
-                          <div className="flex flex-col gap-1" key={`category-block-${category}`}>
-                            <div className="text-xs font-semibold text-neutral-600 uppercase">
+                          <div className="flex flex-col gap-3" key={`category-block-${category}`}>
+                            <div className="flex text-xs font-semibold text-neutral-600 uppercase">
                               {translate(category)}
                             </div>
-                            <ul className="flex flex-col gap-1">
+                            <ul className="flex flex-col gap-2 pl-4">
                               {permissions.map((rp, idx) => (
                                 <li
                                   key={`permission-${idx}`}
@@ -182,20 +183,18 @@ export default function ViewRole() {
                   <div className="flex flex-col items-start">
                     <span className="font-semibold">Usando este rol:</span>
                     {role?.admins?.length && role.admins.length > 0 ? (
-                      <ul className="flex flex-col gap-2 pl-5">
+                      <ul className="flex flex-col gap-2 pt-2 pl-4">
                         {role?.admins.map((item, idx) => (
                           <li className="flex items-center gap-3" key={`admins-${item.id}`}>
-                            <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-neutral-200/70 text-xs">
+                            <Badge className="min-w-[29px] text-xs" size="small" variant="ic">
                               {idx + 1}
-                            </span>
-                            <span className="font-medium">@{item.userName}</span>
-                            <span className="text-sm">
-                              <Button className="h-fit p-0" variant="link" asChild>
-                                <Link to={`/admin/view/${item.id}`}>
-                                  {item.firstName} {item.lastName}
-                                </Link>
-                              </Button>
-                            </span>
+                            </Badge>
+                            <span>@{item.userName}</span>
+                            <Button className="text-foreground h-fit p-0 text-base font-normal" variant="link" asChild>
+                              <Link to={`/admin/view/${item.id}`}>
+                                {item.firstName} {item.lastName}
+                              </Link>
+                            </Button>
                           </li>
                         ))}
                       </ul>
@@ -205,7 +204,9 @@ export default function ViewRole() {
                   </div>
                 </div>
               </ul>
-              <p className="text-muted-foreground px-0 text-left">{`Creado el ${role && new Date(role.createdAt.split("T")[0]).toLocaleDateString()}`}</p>
+              <CreatedAt>
+                {`Creado el ${role && new Date(role.createdAt.split("T")[0]).toLocaleDateString()}`}
+              </CreatedAt>
             </CardContent>
             <Activity mode={hasPermissions ? "visible" : "hidden"}>
               <CardFooter className="justify-end gap-3 px-0">
