@@ -8,6 +8,7 @@ import { type LucideIcon } from "lucide-react";
 //   DropdownMenuSeparator,
 //   DropdownMenuTrigger,
 // } from "@/components/ui/dropdown-menu";
+import { Link } from "react-router";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -20,6 +21,8 @@ import {
 
 import type { ComponentType, SVGProps } from "react";
 
+import { useActiveRoute } from "@core/hooks/useActiveRoute";
+
 export function NavProjects({
   projects,
 }: {
@@ -30,6 +33,7 @@ export function NavProjects({
   }[];
 }) {
   // const { isMobile } = useSidebar();
+  const { isActive } = useActiveRoute();
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -37,11 +41,11 @@ export function NavProjects({
       <SidebarMenu>
         {projects.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
-              <a href={item.url}>
+            <SidebarMenuButton asChild isActive={isActive(item.url)}>
+              <Link to={item.url}>
                 <item.icon />
                 <span>{item.name}</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
             {/* <DropdownMenu> */}
             {/*   <DropdownMenuTrigger asChild> */}
