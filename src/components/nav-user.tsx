@@ -8,6 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@components/ui/dropdown-menu";
+import { Link } from "react-router";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@components/ui/sidebar";
 
 import { AuthService } from "@auth/auth.service";
@@ -62,13 +63,15 @@ export function NavUser() {
             sideOffset={4}
           >
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Cuenta
-              </DropdownMenuItem>
+              <Link to="/account">
+                <DropdownMenuItem>
+                  <BadgeCheck />
+                  Mi cuenta
+                </DropdownMenuItem>
+              </Link>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="hover:cursor-pointer" onClick={signOut}>
+            <DropdownMenuItem onClick={signOut}>
               <LogOut />
               Salir
             </DropdownMenuItem>
