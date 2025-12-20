@@ -16,6 +16,9 @@ import {
   useSidebar,
 } from "@components/ui/sidebar";
 
+import { cn } from "@lib/utils";
+import { useActiveRoute } from "@core/hooks/useActiveRoute";
+
 export function NavMain({
   items,
 }: {
@@ -32,9 +35,10 @@ export function NavMain({
     permission: string;
   }[];
 }) {
-  const { state } = useSidebar();
   // TODO: manage by settings
   const showTooltips = false;
+  const { isActive, isParentActive } = useActiveRoute();
+  const { state } = useSidebar();
 
   return (
     <SidebarGroup>
@@ -49,7 +53,10 @@ export function NavMain({
                     <DropdownMenuTrigger asChild>
                       <SidebarMenuButton
                         tooltip={showTooltips ? item.title : undefined}
-                        className="group-data-[collapsible=icon]:justify-center"
+                        className={cn(
+                          "group-data-[collapsible=icon]:justify-center",
+                          isParentActive(item.items) && "bg-sidebar-accent text-sidebar-accent-foreground",
+                        )}
                       >
                         {item.icon && <item.icon />}
                         <span className="group-data-[collapsible=icon]:sr-only">{item.title}</span>
@@ -58,7 +65,14 @@ export function NavMain({
                     </DropdownMenuTrigger>
                     <DropdownMenuContent side="right" align="start" className="min-w-48">
                       {item.items.map((subItem) => (
-                        <DropdownMenuItem className="text-sm" key={subItem.title} asChild>
+                        <DropdownMenuItem
+                          asChild
+                          className={cn(
+                            "text-sm",
+                            isActive(subItem.url) && "bg-sidebar-accent text-sidebar-accent-foreground",
+                          )}
+                          key={subItem.title}
+                        >
                           <Link to={subItem.url}>
                             {subItem.icon && <subItem.icon />}
                             {subItem.title}
@@ -70,14 +84,21 @@ export function NavMain({
                 </Protected>
               </SidebarMenuItem>
             ) : (
-              <Collapsible key={item.title} asChild defaultOpen={item.isActive} className="group/collapsible">
+              <Collapsible
+                asChild
+                className="group/collapsible"
+                defaultOpen={isParentActive(item.items) || item.isActive}
+                key={item.title}
+              >
                 <SidebarMenuItem>
                   <Protected requiredPermission={item.permission}>
                     <CollapsibleTrigger asChild>
                       <SidebarMenuButton
+                        className={cn("group-data-[collapsible=icon]:justify-center")}
                         tooltip={showTooltips ? item.title : undefined}
-                        className="group-data-[collapsible=icon]:justify-center"
                       >
+                        {/* This show active main collapsible item in open mode (use in cn) */}
+                        {/* isParentActive(item.items) && "bg-sidebar-accent text-sidebar-accent-foreground", */}
                         {item.icon && <item.icon />}
                         <span className="group-data-[collapsible=icon]:sr-only">{item.title}</span>
                         <ChevronRight className="ml-auto transition-transform duration-200 group-data-[collapsible=icon]:sr-only group-data-[state=open]/collapsible:rotate-90" />
@@ -88,7 +109,7 @@ export function NavMain({
                     <SidebarMenuSub>
                       {item.items.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
-                          <SidebarMenuSubButton asChild>
+                          <SidebarMenuSubButton asChild isActive={isActive(subItem.url)}>
                             <Link to={subItem.url}>
                               {subItem.icon && <subItem.icon />}
                               <span>{subItem.title}</span>
@@ -104,7 +125,11 @@ export function NavMain({
           ) : (
             <SidebarMenuItem key={item.title}>
               <Protected requiredPermission={item.permission}>
-                <SidebarMenuButton tooltip={showTooltips ? item.title : undefined} asChild>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isActive(item.url)}
+                  tooltip={showTooltips ? item.title : undefined}
+                >
                   <Link to={item.url} className="group-data-[collapsible=icon]:justify-center">
                     {item.icon && <item.icon />}
                     <span className="group-data-[collapsible=icon]:sr-only">{item.title}</span>
