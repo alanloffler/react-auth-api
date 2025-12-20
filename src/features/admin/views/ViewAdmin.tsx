@@ -4,6 +4,7 @@ import { BackButton } from "@components/BackButton";
 import { Button } from "@components/ui/button";
 import { Badge } from "@components/Badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@components/ui/card";
+import { CreatedAt } from "@components/CreatedAt";
 import { HoldButton } from "@components/ui/HoldButton";
 import { Link } from "react-router";
 import { Loader } from "@components/Loader";
@@ -97,7 +98,7 @@ export default function ViewAdmin() {
   }, [id, findOneAdmin]);
 
   return (
-    <section className="flex flex-col gap-10">
+    <section className="flex flex-col gap-6">
       <PageHeader title="Detalles del administrador" />
       <Card className="relative w-fit p-10 text-center">
         {isLoadingAdmin ? (
@@ -130,7 +131,7 @@ export default function ViewAdmin() {
                   <span>{admin?.phoneNumber}</span>
                 </li>
               </ul>
-              <p className="text-muted-foreground px-0">{`Usuario desde el ${admin && new Date(admin.createdAt.split("T")[0]).toLocaleDateString()}`}</p>
+              <CreatedAt>{`Administrador desde el ${admin && new Date(admin.createdAt.split("T")[0]).toLocaleDateString()}`}</CreatedAt>
             </CardContent>
             <Activity mode={hasPermissions ? "visible" : "hidden"}>
               <CardFooter className="justify-end gap-3 px-0">
