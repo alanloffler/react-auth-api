@@ -112,7 +112,7 @@ export function NavMain({
                           <SidebarMenuSubButton asChild isActive={isActive(subItem.url)}>
                             <Link to={subItem.url}>
                               {subItem.icon && <subItem.icon />}
-                              <span>{subItem.title}</span>
+                              <span className={isActive(subItem.url) ? "font-medium" : ""}>{subItem.title}</span>
                             </Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
