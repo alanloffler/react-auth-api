@@ -73,6 +73,10 @@ const routes = [
     name: "Configuraciones del Tablero",
   },
   {
+    path: "/account",
+    name: "Mi cuenta",
+  },
+  {
     path: "/404",
     name: "404",
   },
