@@ -21,10 +21,10 @@ import { useTryCatch } from "@core/hooks/useTryCatch";
 
 export default function EditPermission() {
   const navigate = useNavigate();
+  const previousCategory = useRef<string | undefined>(undefined);
   const { id } = useParams();
   const { isLoading: isLoadingPermission, tryCatch: tryCatchPermission } = useTryCatch();
   const { isLoading: isSavingPermission, tryCatch: tryCatchSubmit } = useTryCatch();
-  const previousCategory = useRef<string | undefined>(undefined);
 
   const form = useForm<z.infer<typeof permissionSchema>>({
     resolver: zodResolver(permissionSchema),
