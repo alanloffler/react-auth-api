@@ -2,6 +2,7 @@ import {
   GalleryVerticalEnd,
   KeyRound,
   LayoutDashboard,
+  OctagonAlert,
   Package,
   Settings,
   Shield,
@@ -50,12 +51,12 @@ const data = {
       items: [
         {
           title: "Aplicación",
-          url: "/settings",
+          url: "/app-settings",
           icon: Package,
         },
         {
           title: "Tablero",
-          url: "/#",
+          url: "/dashboard-settings",
           icon: LayoutDashboard,
         },
       ],
@@ -77,6 +78,11 @@ const data = {
       name: "Crear permiso",
       url: "/permissions/create",
       icon: KeyRoundPlus,
+    },
+    {
+      name: "404",
+      url: "/404",
+      icon: OctagonAlert,
     },
   ],
 };
