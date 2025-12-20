@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/pages/PageHeader";
 import { Protected } from "@/core/auth/components/Protected";
 import { KeyRoundPlus } from "@/components/icons/KeyRoundPlus";
 
-export function Dashboard() {
+export default function Dashboard() {
   return (
     <div>
       <PageHeader title="Panel de control" subtitle="Administra tu aplicación" />
