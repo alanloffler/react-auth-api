@@ -29,7 +29,6 @@ const data = {
       title: "Administradores",
       url: "/admin",
       icon: User2,
-      isActive: true,
       permission: "admin-view",
     },
     {
