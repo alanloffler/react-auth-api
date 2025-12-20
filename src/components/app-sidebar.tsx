@@ -18,6 +18,8 @@ import { NavUser } from "@components/nav-user";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@components/ui/sidebar";
 import { TeamSwitcher } from "@components/team-switcher";
 
+import { useAuthStore } from "@auth/auth.store";
+
 const data = {
   teams: {
     name: "React Auth API",
@@ -67,32 +69,45 @@ const data = {
       name: "Crear administrador",
       url: "/admin/create",
       icon: UserPlus2,
+      permission: "admin-create",
     },
     {
       name: "Crear rol",
       url: "/roles/create",
       icon: ShieldPlus,
+      permission: "roles-create",
     },
     {
       name: "Crear permiso",
       url: "/permissions/create",
       icon: KeyRoundPlus,
+      permission: "permissions-create",
     },
     {
       name: "404",
       url: "/404",
       icon: OctagonAlert,
+      permission: "*",
     },
   ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const adminPermissions = useAuthStore(
+    (state) =>
+      state.admin?.role?.rolePermissions
+        ?.filter((rp) => rp.permission !== null)
+        ?.map((rp) => rp.permission?.actionKey)
+        ?.sort()
+        .join(",") || "",
+  );
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent key={adminPermissions}>
         <NavMain items={data.navMain} />
         <NavProjects projects={data.projects} />
       </SidebarContent>
