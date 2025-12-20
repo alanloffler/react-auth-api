@@ -23,18 +23,17 @@ export const useAuthStore = create(
       setLoadingAdmin: (loading) => set({ loadingAdmin: loading }),
       refreshAdmin: async () => {
         const currentAdmin = get().admin;
-        if (!currentAdmin?.id) return;
+        if (!currentAdmin) return;
 
         try {
           set({ loadingAdmin: true });
-          const response = await AdminService.findOne(currentAdmin.id);
+          const response = await AdminService.getMe();
 
           if (response?.statusCode === 200 && response.data) {
-            set({ admin: response.data });
+            set({ admin: response.data, loadingAdmin: false });
           }
         } catch (error) {
           console.error("Error refrescando admin:", error);
-        } finally {
           set({ loadingAdmin: false });
         }
       },
