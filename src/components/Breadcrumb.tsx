@@ -64,6 +64,18 @@ const routes = [
     path: "/permissions/edit/:id",
     name: "Editar",
   },
+  {
+    path: "/app-settings",
+    name: "Configuraciones de la aplicación",
+  },
+  {
+    path: "/dashboard-settings",
+    name: "Configuraciones del Tablero",
+  },
+  {
+    path: "/404",
+    name: "404",
+  },
 ];
 
 interface IBreadcrumb {
