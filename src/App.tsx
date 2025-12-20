@@ -1,25 +1,32 @@
-import CreateAdmin from "@admin/views/CreateAdmin";
-import CreatePermission from "@permissions/views/CreatePermission";
-import CreateRole from "@roles/views/CreateRole";
-import EditAdmin from "@admin/views/EditAdmin";
-import EditPermission from "@permissions/views/EditPermission";
-import EditRole from "@roles/views/EditRole";
-import Permissions from "@permissions/Permissions";
-import Roles from "@roles/Roles";
-import Settings from "@settings/Settings";
-import ViewAdmin from "@admin/views/ViewAdmin";
-import ViewPermission from "@permissions/views/ViewPermission";
-import ViewRole from "@roles/views/ViewRole";
-import { Admin } from "@admin/Admin";
+import { createBrowserRouter, RouterProvider } from "react-router";
+import { lazy, Suspense } from "react";
+
 import { AppInitializer } from "@auth/components/AppInitializer";
-import { Dashboard } from "@dashboard/Dashboard";
 import { GuestRoute } from "@auth/components/GuestRoute";
 import { Login } from "@login/Login";
+import { PageLoader } from "@components/PageLoader";
 import { ProtectedLayout } from "@auth/components/ProtectedLayout";
 import { ProtectedRoute } from "@auth/components/ProtectedRoute";
 import { Toaster } from "@components/ui/sonner";
 
-import { createBrowserRouter, RouterProvider } from "react-router";
+const Dashboard = lazy(() => import("./features/dashboard/Dashboard"));
+
+const Admin = lazy(() => import("./features/admin/Admin"));
+const CreateAdmin = lazy(() => import("./features/admin/views/CreateAdmin"));
+const EditAdmin = lazy(() => import("./features/admin/views/EditAdmin"));
+const ViewAdmin = lazy(() => import("./features/admin/views/ViewAdmin"));
+
+const Roles = lazy(() => import("./features/roles/Roles"));
+const CreateRole = lazy(() => import("./features/roles/views/CreateRole"));
+const EditRole = lazy(() => import("./features/roles/views/EditRole"));
+const ViewRole = lazy(() => import("./features/roles/views/ViewRole"));
+
+const Permissions = lazy(() => import("./features/permissions/Permissions"));
+const CreatePermission = lazy(() => import("./features/permissions/views/CreatePermission"));
+const EditPermission = lazy(() => import("./features/permissions/views/EditPermission"));
+const ViewPermission = lazy(() => import("./features/permissions/views/ViewPermission"));
+
+const Settings = lazy(() => import("./features/settings/Settings"));
 
 const router = createBrowserRouter([
   {
@@ -36,107 +43,223 @@ const router = createBrowserRouter([
     children: [
       {
         path: "dashboard",
-        element: <Dashboard />,
+        element: (
+          <Suspense
+            fallback={
+              <div className="relative h-full w-full">
+                <PageLoader className="-mt-8" />
+              </div>
+            }
+          >
+            <Dashboard />
+          </Suspense>
+        ),
       },
       {
         path: "admin",
         element: (
-          <ProtectedRoute requiredPermission="admin-view">
-            <Admin />
-          </ProtectedRoute>
+          <Suspense
+            fallback={
+              <div className="relative h-full w-full">
+                <PageLoader className="-mt-8" />
+              </div>
+            }
+          >
+            <ProtectedRoute requiredPermission="admin-view">
+              <Admin />
+            </ProtectedRoute>
+          </Suspense>
         ),
       },
       {
         path: "admin/create",
         element: (
-          <ProtectedRoute requiredPermission={["admin-view", "admin-create"]}>
-            <CreateAdmin />
-          </ProtectedRoute>
+          <Suspense
+            fallback={
+              <div className="relative h-full w-full">
+                <PageLoader className="-mt-8" />
+              </div>
+            }
+          >
+            <ProtectedRoute requiredPermission={["admin-view", "admin-create"]}>
+              <CreateAdmin />
+            </ProtectedRoute>
+          </Suspense>
         ),
       },
       {
         path: "admin/edit/:id",
         element: (
-          <ProtectedRoute requiredPermission={["admin-view", "admin-update"]}>
-            <EditAdmin />
-          </ProtectedRoute>
+          <Suspense
+            fallback={
+              <div className="relative h-full w-full">
+                <PageLoader className="-mt-8" />
+              </div>
+            }
+          >
+            <ProtectedRoute requiredPermission={["admin-view", "admin-update"]}>
+              <EditAdmin />
+            </ProtectedRoute>
+          </Suspense>
         ),
       },
       {
         path: "admin/view/:id",
         element: (
-          <ProtectedRoute requiredPermission="admin-view">
-            <ViewAdmin />
-          </ProtectedRoute>
+          <Suspense
+            fallback={
+              <div className="relative h-full w-full">
+                <PageLoader className="-mt-8" />
+              </div>
+            }
+          >
+            <ProtectedRoute requiredPermission="admin-view">
+              <ViewAdmin />
+            </ProtectedRoute>
+          </Suspense>
         ),
       },
       {
         path: "roles",
         element: (
-          <ProtectedRoute requiredPermission="roles-view">
-            <Roles />
-          </ProtectedRoute>
+          <Suspense
+            fallback={
+              <div className="relative h-full w-full">
+                <PageLoader className="-mt-8" />
+              </div>
+            }
+          >
+            <ProtectedRoute requiredPermission="roles-view">
+              <Roles />
+            </ProtectedRoute>
+          </Suspense>
         ),
       },
       {
         path: "roles/create",
         element: (
-          <ProtectedRoute requiredPermission={["roles-view", "roles-create"]}>
-            <CreateRole />
-          </ProtectedRoute>
+          <Suspense
+            fallback={
+              <div className="relative h-full w-full">
+                <PageLoader className="-mt-8" />
+              </div>
+            }
+          >
+            <ProtectedRoute requiredPermission={["roles-view", "roles-create"]}>
+              <CreateRole />
+            </ProtectedRoute>
+          </Suspense>
         ),
       },
       {
         path: "roles/edit/:id",
         element: (
-          <ProtectedRoute requiredPermission={["roles-view", "roles-update"]}>
-            <EditRole />
-          </ProtectedRoute>
+          <Suspense
+            fallback={
+              <div className="relative h-full w-full">
+                <PageLoader className="-mt-8" />
+              </div>
+            }
+          >
+            <ProtectedRoute requiredPermission={["roles-view", "roles-update"]}>
+              <EditRole />
+            </ProtectedRoute>
+          </Suspense>
         ),
       },
       {
         path: "roles/view/:id",
         element: (
-          <ProtectedRoute requiredPermission="roles-view">
-            <ViewRole />
-          </ProtectedRoute>
+          <Suspense
+            fallback={
+              <div className="relative h-full w-full">
+                <PageLoader className="-mt-8" />
+              </div>
+            }
+          >
+            <ProtectedRoute requiredPermission="roles-view">
+              <ViewRole />
+            </ProtectedRoute>
+          </Suspense>
         ),
       },
       {
         path: "permissions",
         element: (
-          <ProtectedRoute requiredPermission="permissions-view">
-            <Permissions />
-          </ProtectedRoute>
+          <Suspense
+            fallback={
+              <div className="relative h-full w-full">
+                <PageLoader className="-mt-8" />
+              </div>
+            }
+          >
+            <ProtectedRoute requiredPermission="permissions-view">
+              <Permissions />
+            </ProtectedRoute>
+          </Suspense>
         ),
       },
       {
         path: "permissions/create",
         element: (
-          <ProtectedRoute requiredPermission={["permissions-view", "permissions-create"]}>
-            <CreatePermission />
-          </ProtectedRoute>
+          <Suspense
+            fallback={
+              <div className="relative h-full w-full">
+                <PageLoader className="-mt-8" />
+              </div>
+            }
+          >
+            <ProtectedRoute requiredPermission={["permissions-view", "permissions-create"]}>
+              <CreatePermission />
+            </ProtectedRoute>
+          </Suspense>
         ),
       },
       {
         path: "permissions/edit/:id",
         element: (
-          <ProtectedRoute requiredPermission={["permissions-view", "permissions-update"]}>
-            <EditPermission />
-          </ProtectedRoute>
+          <Suspense
+            fallback={
+              <div className="relative h-full w-full">
+                <PageLoader className="-mt-8" />
+              </div>
+            }
+          >
+            <ProtectedRoute requiredPermission={["permissions-view", "permissions-update"]}>
+              <EditPermission />
+            </ProtectedRoute>
+          </Suspense>
         ),
       },
       {
         path: "permissions/view/:id",
         element: (
-          <ProtectedRoute requiredPermission="permissions-view">
-            <ViewPermission />
-          </ProtectedRoute>
+          <Suspense
+            fallback={
+              <div className="relative h-full w-full">
+                <PageLoader className="-mt-8" />
+              </div>
+            }
+          >
+            <ProtectedRoute requiredPermission="permissions-view">
+              <ViewPermission />
+            </ProtectedRoute>
+          </Suspense>
         ),
       },
       {
         path: "settings",
-        element: <Settings />,
+        element: (
+          <Suspense
+            fallback={
+              <div className="relative h-full w-full">
+                <PageLoader className="-mt-8" />
+              </div>
+            }
+          >
+            <Settings />
+          </Suspense>
+        ),
       },
     ],
   },
