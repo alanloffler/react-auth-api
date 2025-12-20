@@ -19,7 +19,7 @@ import { ERoles } from "@auth/enums/role.enum";
 import { tryCatch } from "@core/utils/try-catch";
 import { useAuthStore } from "@auth/auth.store";
 
-export function Admin() {
+export default function Admin() {
   const [admins, setAdmins] = useState<IAdmin[] | undefined>(undefined);
   const admin = useAuthStore((state) => state.admin);
 
