@@ -29,6 +29,8 @@ const ViewPermission = lazy(() => import("./features/permissions/views/ViewPermi
 const AppSettings = lazy(() => import("./features/settings/AppSettings"));
 const DashboardSettings = lazy(() => import("./features/settings/DashboardSettings"));
 
+const Account = lazy(() => import("./features/account/Account"));
+
 const NotFound = lazy(() => import("./components/NotFound"));
 
 const router = createBrowserRouter([
@@ -275,6 +277,20 @@ const router = createBrowserRouter([
             }
           >
             <DashboardSettings />
+          </Suspense>
+        ),
+      },
+      {
+        path: "account",
+        element: (
+          <Suspense
+            fallback={
+              <div className="relative h-full w-full">
+                <PageLoader className="-mt-8" />
+              </div>
+            }
+          >
+            <Account />
           </Suspense>
         ),
       },
