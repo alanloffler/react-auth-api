@@ -200,7 +200,7 @@ export default function Admin() {
   ];
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-8">
       <PageHeader title="Administradores" subtitle="Gestioná los administradores del sistema">
         <Protected requiredPermission="admin-create">
           <Button variant="default" size="lg" asChild>
