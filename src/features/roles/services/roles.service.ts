@@ -39,8 +39,6 @@ class RolesModuleService {
   }
 
   public async update(id: string, role: Partial<IRole>): Promise<IApiResponse<IRole>> {
-    console.log("update role");
-    console.log(role);
     const response = await apiClient.patch(`/roles/${id}`, role);
     return response.data;
   }
