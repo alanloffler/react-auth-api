@@ -9,6 +9,7 @@ import { type LucideIcon } from "lucide-react";
 //   DropdownMenuTrigger,
 // } from "@/components/ui/dropdown-menu";
 import { Link } from "react-router";
+import { Protected } from "@auth/components/Protected";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -27,9 +28,10 @@ export function NavProjects({
   projects,
 }: {
   projects: {
-    name: string;
-    url: string;
     icon: LucideIcon | ComponentType<SVGProps<SVGSVGElement>>;
+    name: string;
+    permission: string;
+    url: string;
   }[];
 }) {
   // const { isMobile } = useSidebar();
@@ -41,12 +43,14 @@ export function NavProjects({
       <SidebarMenu>
         {projects.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild isActive={isActive(item.url)}>
-              <Link to={item.url}>
-                <item.icon />
-                <span>{item.name}</span>
-              </Link>
-            </SidebarMenuButton>
+            <Protected requiredPermission={item.permission}>
+              <SidebarMenuButton asChild isActive={isActive(item.url)}>
+                <Link to={item.url}>
+                  <item.icon />
+                  <span>{item.name}</span>
+                </Link>
+              </SidebarMenuButton>
+            </Protected>
             {/* <DropdownMenu> */}
             {/*   <DropdownMenuTrigger asChild> */}
             {/*     <SidebarMenuAction showOnHover> */}
