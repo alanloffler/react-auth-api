@@ -26,7 +26,10 @@ const CreatePermission = lazy(() => import("./features/permissions/views/CreateP
 const EditPermission = lazy(() => import("./features/permissions/views/EditPermission"));
 const ViewPermission = lazy(() => import("./features/permissions/views/ViewPermission"));
 
-const Settings = lazy(() => import("./features/settings/Settings"));
+const AppSettings = lazy(() => import("./features/settings/AppSettings"));
+const DashboardSettings = lazy(() => import("./features/settings/DashboardSettings"));
+
+const NotFound = lazy(() => import("./components/NotFound"));
 
 const router = createBrowserRouter([
   {
@@ -248,7 +251,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "settings",
+        path: "app-settings",
         element: (
           <Suspense
             fallback={
@@ -257,7 +260,35 @@ const router = createBrowserRouter([
               </div>
             }
           >
-            <Settings />
+            <AppSettings />
+          </Suspense>
+        ),
+      },
+      {
+        path: "dashboard-settings",
+        element: (
+          <Suspense
+            fallback={
+              <div className="relative h-full w-full">
+                <PageLoader className="-mt-8" />
+              </div>
+            }
+          >
+            <DashboardSettings />
+          </Suspense>
+        ),
+      },
+      {
+        path: "*",
+        element: (
+          <Suspense
+            fallback={
+              <div className="relative h-full w-full">
+                <PageLoader className="-mt-8" />
+              </div>
+            }
+          >
+            <NotFound />
           </Suspense>
         ),
       },
