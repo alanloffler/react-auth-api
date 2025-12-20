@@ -4,6 +4,7 @@ import { Activity } from "react";
 import { Badge } from "@components/Badge";
 import { Button } from "@components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@components/ui/card";
+import { CreatedAt } from "@components/CreatedAt";
 import { HoldButton } from "@components/ui/HoldButton";
 import { Link } from "react-router";
 import { Loader } from "@components/Loader";
@@ -101,7 +102,7 @@ export default function ViewPermission() {
   }
 
   return (
-    <section className="flex flex-col gap-10">
+    <section className="flex flex-col gap-6">
       <PageHeader title="Detalles del permiso" />
       <Card className="relative w-full max-w-180 p-10 text-center">
         {isLoadingPermission ? (
@@ -138,7 +139,7 @@ export default function ViewPermission() {
                   <span>{permission?.description}</span>
                 </li>
               </ul>
-              <p className="text-muted-foreground px-0 text-left">{`Creado el ${permission && new Date(permission.createdAt.split("T")[0]).toLocaleDateString()}`}</p>
+              <CreatedAt>{`Creado el ${permission && new Date(permission.createdAt.split("T")[0]).toLocaleDateString()}`}</CreatedAt>
             </CardContent>
             <Activity mode={hasPermissions ? "visible" : "hidden"}>
               <CardFooter className="justify-end gap-3 px-0">
