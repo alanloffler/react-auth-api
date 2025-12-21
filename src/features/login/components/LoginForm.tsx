@@ -3,6 +3,7 @@ import { Card, CardContent } from "@components/ui/card";
 import { Controller } from "react-hook-form";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@components/ui/field";
 import { Input } from "@components/ui/input";
+import { Loader } from "@components/Loader";
 
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
@@ -13,11 +14,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthService } from "@auth/services/auth.service";
 import { cn } from "@lib/utils";
 import { loginSchema } from "@login/schemas/login.schema";
-import { tryCatch } from "@core/utils/try-catch";
 import { useAuthStore } from "@auth/auth.store";
+import { useTryCatch } from "@core/hooks/useTryCatch";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
   const navigate = useNavigate();
+  const { isLoading: isFetching, tryCatch: tryCatchAdmin } = useTryCatch();
+  const { isLoading: isLogin, tryCatch: tryCatchSubmit } = useTryCatch();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -29,14 +32,14 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 
   async function onSubmit(data: z.infer<typeof loginSchema>) {
     const { email, password } = data;
-    const [response, error] = await tryCatch(AuthService.signIn({ email, password }));
+    const [loginResponse, loginError] = await tryCatchSubmit(AuthService.signIn({ email, password }));
 
-    if (error) {
-      toast.error(error.message);
+    if (loginError) {
+      toast.error(loginError.message);
     }
 
-    if (response && response.statusCode === 200) {
-      const [adminResponse, adminError] = await tryCatch(AuthService.getAdmin());
+    if (loginResponse && loginResponse.statusCode === 200) {
+      const [adminResponse, adminError] = await tryCatchAdmin(AuthService.getAdmin());
 
       if (adminError) {
         toast.error(adminError.message);
@@ -90,7 +93,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
               />
               <Field>
                 <Button type="submit" className="h-11 w-full md:h-12">
-                  Ingresar
+                  {isLogin ? <Loader text="Ingresando" /> : isFetching ? <Loader text="Cargando" /> : "Ingresar"}
                 </Button>
               </Field>
               <a href="#" className="text-xs underline-offset-2 hover:underline md:text-xs">
