@@ -1,6 +1,7 @@
-import { AuthService } from "@auth/auth.service";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+
+import { AuthService } from "@auth/services/auth.service";
 import { useAuthStore } from "@core/auth/auth.store";
-import { useEffect, useState, type ReactNode } from "react";
 
 interface IProps {
   children: ReactNode;
@@ -8,13 +9,17 @@ interface IProps {
 
 export function AppInitializer({ children }: IProps) {
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
-  const admin = useAuthStore((state) => state.admin);
-  const setAdmin = useAuthStore((state) => state.setAdmin);
+  const hasInitialized = useRef<boolean>(false);
 
   useEffect(() => {
+    if (hasInitialized.current) return;
+    hasInitialized.current = true;
+
     let isMounted = true;
 
     async function initAuth() {
+      const { admin, setAdmin } = useAuthStore.getState();
+
       try {
         if (admin) {
           const response = await AuthService.getAdmin();
