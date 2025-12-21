@@ -25,6 +25,7 @@ export default function Account() {
   const [passwordField, setPasswordField] = useState<boolean>(true);
   const navigate = useNavigate();
   const ownAdmin = useAuthStore((state) => state.admin);
+  const refreshAdmin = useAuthStore((state) => state.refreshAdmin);
   const { isLoading: isLoadingAdmin, tryCatch: tryCatchAdmin } = useTryCatch();
   const { isLoading: isSaving, tryCatch: tryCatchSubmit } = useTryCatch();
 
@@ -87,7 +88,7 @@ export default function Account() {
 
     if (update?.statusCode === 200) {
       toast.success(update.message);
-      navigate("/admin");
+      await refreshAdmin();
     }
   }
 
