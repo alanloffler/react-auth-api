@@ -33,11 +33,6 @@ class AdminModuleService {
     return response.data;
   }
 
-  public async getMe(): Promise<IApiResponse<IAdmin>> {
-    const response = await apiClient.get("/admin/me");
-    return response.data;
-  }
-
   public async findOneSoftRemoved(id: string): Promise<IApiResponse<IAdmin>> {
     const response = await apiClient.get(`/admin/${id}/soft-removed`);
     return response.data;
