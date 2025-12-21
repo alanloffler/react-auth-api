@@ -11,8 +11,9 @@ import {
 import { Link } from "react-router";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@components/ui/sidebar";
 
-import { AuthService } from "@auth/auth.service";
 import { toast } from "sonner";
+
+import { AuthService } from "@auth/services/auth.service";
 import { tryCatch } from "@core/utils/try-catch";
 import { useAuthStore } from "@auth/auth.store";
 import { useNavigate } from "react-router";
