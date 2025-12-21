@@ -24,6 +24,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
+      "@account/*": ["./src/features/account/*"],
       "@admin/*": ["./src/features/admin/*"],
       "@auth/*": ["./src/core/auth/*"],
       "@components/*": ["./src/components/*"],

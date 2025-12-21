@@ -10,6 +10,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "@account": path.resolve(__dirname, "./src/features/account"),
       "@admin": path.resolve(__dirname, "./src/features/admin"),
       "@auth": path.resolve(__dirname, "./src/core/auth"),
       "@components": path.resolve(__dirname, "./src/components"),
