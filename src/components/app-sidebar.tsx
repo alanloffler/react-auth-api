@@ -13,7 +13,7 @@ import {
 
 import { KeyRoundPlus } from "@components/icons/KeyRoundPlus";
 import { NavMain } from "@components/nav-main";
-import { NavProjects } from "@components/nav-projects";
+import { NavActions } from "@components/nav-actions";
 import { NavUser } from "@components/nav-user";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@components/ui/sidebar";
 import { TeamSwitcher } from "@components/team-switcher";
@@ -64,7 +64,7 @@ const data = {
       permission: "*",
     },
   ],
-  projects: [
+  navActions: [
     {
       name: "Crear administrador",
       url: "/admin/create",
@@ -109,7 +109,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent key={adminPermissions}>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <NavActions items={data.navActions} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
