@@ -10,7 +10,7 @@ import { useNavigate } from "react-router";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { AuthService } from "@auth/auth.service";
+import { AuthService } from "@auth/services/auth.service";
 import { cn } from "@lib/utils";
 import { loginSchema } from "@login/schemas/login.schema";
 import { tryCatch } from "@core/utils/try-catch";
