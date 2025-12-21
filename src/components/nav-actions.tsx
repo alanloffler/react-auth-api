@@ -24,16 +24,18 @@ import type { ComponentType, SVGProps } from "react";
 
 import { useActiveRoute } from "@core/hooks/useActiveRoute";
 
-export function NavProjects({
-  projects,
-}: {
-  projects: {
-    icon: LucideIcon | ComponentType<SVGProps<SVGSVGElement>>;
-    name: string;
-    permission: string;
-    url: string;
-  }[];
-}) {
+interface IProps {
+  items: INavAction[];
+}
+
+interface INavAction {
+  icon: LucideIcon | ComponentType<SVGProps<SVGSVGElement>>;
+  name: string;
+  permission: string;
+  url: string;
+}
+
+export function NavActions({ items }: IProps) {
   // const { isMobile } = useSidebar();
   const { isActive } = useActiveRoute();
 
@@ -41,7 +43,7 @@ export function NavProjects({
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Acciones rápidas</SidebarGroupLabel>
       <SidebarMenu>
-        {projects.map((item) => (
+        {items.map((item) => (
           <SidebarMenuItem key={item.name}>
             <Protected requiredPermission={item.permission}>
               <SidebarMenuButton asChild isActive={isActive(item.url)}>
