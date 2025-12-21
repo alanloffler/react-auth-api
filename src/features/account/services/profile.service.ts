@@ -13,7 +13,7 @@ class AccountModuleService {
     return AccountModuleService.instance;
   }
 
-  public async getMe(): Promise<IApiResponse<IAdmin>> {
+  public async get(): Promise<IApiResponse<IAdmin>> {
     const response = await apiClient.get("/admin/profile");
     return response.data;
   }
