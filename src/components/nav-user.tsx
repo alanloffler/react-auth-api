@@ -40,12 +40,17 @@ export function NavUser() {
     }
   }
 
+  if (!admin) {
+    return null;
+  }
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
+              key={admin.updatedAt}
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
