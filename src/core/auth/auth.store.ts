@@ -1,7 +1,8 @@
-import type { IAdmin } from "@admin/interfaces/admin.interface";
-import { AdminService } from "@/features/admin/services/admin.service";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+
+import type { IAdmin } from "@admin/interfaces/admin.interface";
+import { AccountService } from "@account/services/profile.service";
 
 interface AuthState {
   admin?: IAdmin;
@@ -27,7 +28,7 @@ export const useAuthStore = create(
 
         try {
           set({ loadingAdmin: true });
-          const response = await AdminService.getMe();
+          const response = await AccountService.get();
 
           if (response?.statusCode === 200 && response.data) {
             set({ admin: response.data, loadingAdmin: false });
