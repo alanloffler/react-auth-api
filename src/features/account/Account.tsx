@@ -87,7 +87,7 @@ export default function Account() {
     }
 
     if (update?.statusCode === 200) {
-      toast.success(update.message);
+      toast.success("Perfil actualizado");
       await refreshAdmin();
     }
   }
