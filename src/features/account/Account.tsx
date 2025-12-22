@@ -1,6 +1,7 @@
 import { Eye, EyeOff } from "lucide-react";
 
 import { BackButton } from "@components/BackButton";
+import { Badge } from "@components/Badge";
 import { Button } from "@components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@components/ui/card";
 import { Controller } from "react-hook-form";
@@ -15,6 +16,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import type { IAdmin } from "@admin/interfaces/admin.interface";
 import { AccountService } from "@account/services/profile.service";
 import { AdminService } from "@admin/services/admin.service";
 import { profileSchema } from "@account/schemas/profile.schema";
@@ -22,7 +24,7 @@ import { useAuthStore } from "@auth/auth.store";
 import { useTryCatch } from "@core/hooks/useTryCatch";
 
 export default function Account() {
-  const [adminIC, setAdminIC] = useState<string>("");
+  const [adminToUpdate, setAdminToUpdate] = useState<IAdmin | undefined>(undefined);
   const [icError, setIcError] = useState<string | null>(null);
   const [passwordField, setPasswordField] = useState<boolean>(true);
   const navigate = useNavigate();
@@ -66,7 +68,7 @@ export default function Account() {
             phoneNumber: admin.data.phoneNumber,
             userName: admin.data.userName,
           });
-          setAdminIC(admin.data.ic);
+          setAdminToUpdate(admin.data);
         }
       }
     }
@@ -86,7 +88,7 @@ export default function Account() {
     }
 
     // Check again for race condition: before first check another admin use same ic
-    if (data.ic !== adminIC) {
+    if (data.ic !== adminToUpdate?.ic) {
       const icAvailableResponse = await AdminService.checkIcAvailability(data.ic);
 
       if (icAvailableResponse.data === false) {
@@ -151,7 +153,7 @@ export default function Account() {
                         setIcError(null);
                         form.clearErrors("ic");
 
-                        if (value.length > 7 && value !== adminIC) {
+                        if (value.length > 7 && value !== adminToUpdate?.ic) {
                           const response = await AdminService.checkIcAvailability(value);
                           if (response.data === false) {
                             const errorMsg = "DNI ya registrado";
@@ -263,6 +265,12 @@ export default function Account() {
               />
             </FieldGroup>
           </form>
+          <div className="mt-8 flex items-center gap-3">
+            <span className="text-sm">Tu rol es</span>
+            <Badge size="normal" variant="role">
+              {adminToUpdate?.role.name}
+            </Badge>
+          </div>
         </CardContent>
         <CardFooter className="flex items-center justify-between pt-4">
           <div>
