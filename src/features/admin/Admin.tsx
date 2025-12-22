@@ -119,7 +119,7 @@ export default function Admin() {
       header: ({ column }) => <SortableHeader column={column}>Usuario</SortableHeader>,
       cell: ({ row }) => (
         <div className="flex items-center gap-3">
-          <span>{`@${row.original.userName}`}</span>
+          <span>{row.original.userName}</span>
           {row.original.deletedAt && <Ban className="h-4 w-4 text-rose-500" />}
         </div>
       ),
