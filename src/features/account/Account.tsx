@@ -22,6 +22,7 @@ import { useAuthStore } from "@auth/auth.store";
 import { useTryCatch } from "@core/hooks/useTryCatch";
 
 export default function Account() {
+  const [icError, setIcError] = useState<string | null>(null);
   const [passwordField, setPasswordField] = useState<boolean>(true);
   const navigate = useNavigate();
   const ownAdmin = useAuthStore((state) => state.admin);
@@ -76,6 +77,21 @@ export default function Account() {
   }
 
   async function onSubmit(data: any): Promise<void> {
+    if (icError) {
+      form.setError("ic", { message: icError });
+      return;
+    }
+
+    // Check again for race condition: before first check another admin use same ic
+    const icAvailableResponse = await AdminService.checkIcAvailability(data.ic);
+
+    if (icAvailableResponse.data === false) {
+      const errorMsg = "DNI ya registrado";
+      setIcError(errorMsg);
+      form.setError("ic", { message: errorMsg });
+      return;
+    }
+
     const updateData = data.password
       ? data
       : Object.fromEntries(Object.entries(data).filter(([key]) => key !== "password"));
@@ -122,12 +138,26 @@ export default function Account() {
                       aria-invalid={fieldState.invalid}
                       id="ic"
                       {...field}
-                      onChange={(e) => {
+                      onChange={async (e) => {
                         const value = e.target.value.replace(/\D/g, "");
                         field.onChange(value);
+
+                        setIcError(null);
+                        form.clearErrors("ic");
+
+                        if (value.length >= 7 && value !== ownAdmin?.ic) {
+                          const response = await AdminService.checkIcAvailability(value);
+                          if (response.data === false) {
+                            const errorMsg = "DNI ya registrado";
+                            setIcError(errorMsg);
+                            form.setError("ic", { message: errorMsg });
+                          }
+                        }
                       }}
                     />
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                    {(fieldState.invalid || icError) && (
+                      <FieldError errors={icError ? [{ message: icError }] : [fieldState.error]} />
+                    )}
                   </Field>
                 )}
               />
