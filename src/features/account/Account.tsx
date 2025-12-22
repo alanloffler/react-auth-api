@@ -22,6 +22,7 @@ import { useAuthStore } from "@auth/auth.store";
 import { useTryCatch } from "@core/hooks/useTryCatch";
 
 export default function Account() {
+  const [adminIC, setAdminIC] = useState<string>("");
   const [icError, setIcError] = useState<string | null>(null);
   const [passwordField, setPasswordField] = useState<boolean>(true);
   const navigate = useNavigate();
@@ -55,7 +56,7 @@ export default function Account() {
       }
 
       if (admin && admin.statusCode === 200) {
-        if (admin.data)
+        if (admin.data) {
           form.reset({
             email: admin.data.email,
             firstName: admin.data.firstName,
@@ -65,6 +66,8 @@ export default function Account() {
             phoneNumber: admin.data.phoneNumber,
             userName: admin.data.userName,
           });
+          setAdminIC(admin.data.ic);
+        }
       }
     }
 
@@ -83,13 +86,15 @@ export default function Account() {
     }
 
     // Check again for race condition: before first check another admin use same ic
-    const icAvailableResponse = await AdminService.checkIcAvailability(data.ic);
+    if (data.ic !== adminIC) {
+      const icAvailableResponse = await AdminService.checkIcAvailability(data.ic);
 
-    if (icAvailableResponse.data === false) {
-      const errorMsg = "DNI ya registrado";
-      setIcError(errorMsg);
-      form.setError("ic", { message: errorMsg });
-      return;
+      if (icAvailableResponse.data === false) {
+        const errorMsg = "DNI ya registrado";
+        setIcError(errorMsg);
+        form.setError("ic", { message: errorMsg });
+        return;
+      }
     }
 
     const updateData = data.password
@@ -118,7 +123,7 @@ export default function Account() {
       <Card className="relative">
         <BackButton />
         <CardHeader>
-          <CardTitle>Editar tu cuenta</CardTitle>
+          <CardTitle>Mi cuenta</CardTitle>
           <CardDescription>Actualizá los datos de tu perfil</CardDescription>
         </CardHeader>
         <CardContent className="flex-1">
@@ -146,7 +151,7 @@ export default function Account() {
                         setIcError(null);
                         form.clearErrors("ic");
 
-                        if (value.length > 7 && value !== ownAdmin?.ic) {
+                        if (value.length > 7 && value !== adminIC) {
                           const response = await AdminService.checkIcAvailability(value);
                           if (response.data === false) {
                             const errorMsg = "DNI ya registrado";
