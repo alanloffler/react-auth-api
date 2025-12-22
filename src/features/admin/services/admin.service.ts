@@ -67,6 +67,11 @@ class AdminModuleService {
     const response = await apiClient.get(`/admin/ic-availability/${id}`);
     return response.data;
   }
+
+  public async checkUsernameAvailability(username: string): Promise<IApiResponse<boolean>> {
+    const response = await apiClient.get(`/admin/username-availability/${username}`);
+    return response.data;
+  }
 }
 
 export const AdminService = AdminModuleService.getInstance();
