@@ -70,7 +70,7 @@ const routes = [
   },
   {
     path: "/dashboard-settings",
-    name: "Configuraciones del Tablero",
+    name: "Configuraciones del tablero",
   },
   {
     path: "/account",
