@@ -59,7 +59,7 @@ export function NavUser() {
                 <span className="flex size-6 items-center justify-center rounded-full bg-gray-400 p-1 text-sm font-semibold text-white">
                   {admin?.role.name.charAt(0)}
                 </span>
-                <div className="flex flex-col">
+                <div className="grid">
                   <span className="truncate font-medium">{admin?.userName}</span>
                   <span className="truncate text-xs">{admin?.role.name}</span>
                 </div>
