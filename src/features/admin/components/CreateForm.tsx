@@ -24,6 +24,7 @@ export function CreateForm() {
   const [icError, setIcError] = useState<string | null>(null);
   const [roles, setRoles] = useState<IRole[] | undefined>(undefined);
   const navigate = useNavigate();
+  const { isLoading: isSaving, tryCatch: tryCatchAdmin } = useTryCatch();
   const { isLoading: isLoadingRoles, tryCatch: tryCatchRoles } = useTryCatch();
 
   const form = useForm<z.infer<typeof createAdminSchema>>({
@@ -36,7 +37,7 @@ export function CreateForm() {
       password: "",
       phoneNumber: "",
       roleId: "",
-      userName: "",
+      userName: "@",
     },
   });
 
@@ -56,7 +57,7 @@ export function CreateForm() {
       return;
     }
 
-    const [create, createError] = await tryCatchRoles(AdminService.create(data));
+    const [create, createError] = await tryCatchAdmin(AdminService.create(data));
 
     if (createError) {
       toast.error(createError.message);
@@ -144,7 +145,20 @@ export function CreateForm() {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor="userName">Usuario</FieldLabel>
-                  <Input aria-invalid={fieldState.invalid} id="userName" {...field} />
+                  <Input
+                    aria-invalid={fieldState.invalid}
+                    id="userName"
+                    {...field}
+                    onChange={(e) => {
+                      const rawValue = e.target.value.toLowerCase();
+                      const noAtSigns = rawValue.replace(/@/g, "");
+                      const sanitizedContent = noAtSigns.replace(/[^a-z0-9.\-_]/g, "");
+                      form.setValue("userName", `@${sanitizedContent}`, {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      });
+                    }}
+                  />
                   {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                 </Field>
               )}
@@ -252,7 +266,7 @@ export function CreateForm() {
             Cancelar
           </Button>
           <Button disabled={!form.formState.isDirty} form="create-admin" type="submit" variant="default">
-            Guardar
+            {isSaving ? <Loader text="Guardando" /> : "Guardar"}
           </Button>
         </div>
       </CardFooter>
