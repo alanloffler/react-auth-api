@@ -103,6 +103,23 @@ export function EditForm({ adminId }: IProps) {
   }
 
   async function onSubmit(data: z.infer<typeof updateAdminSchema>): Promise<void> {
+    if (icError) {
+      form.setError("ic", { message: icError });
+      return;
+    }
+
+    // Check again for race condition: before first check another admin use same ic
+    if (data.ic !== adminIC) {
+      const icAvailableResponse = await AdminService.checkIcAvailability(data.ic);
+
+      if (icAvailableResponse.data === false) {
+        const errorMsg = "DNI ya registrado";
+        setIcError(errorMsg);
+        form.setError("ic", { message: errorMsg });
+        return;
+      }
+    }
+
     const updateData = data.password
       ? data
       : Object.fromEntries(Object.entries(data).filter(([key]) => key !== "password"));
@@ -181,7 +198,20 @@ export function EditForm({ adminId }: IProps) {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor="userName">Usuario</FieldLabel>
-                  <Input aria-invalid={fieldState.invalid} id="userName" {...field} />
+                  <Input
+                    aria-invalid={fieldState.invalid}
+                    id="userName"
+                    {...field}
+                    onChange={(e) => {
+                      const rawValue = e.target.value.toLowerCase();
+                      const noAtSigns = rawValue.replace(/@/g, "");
+                      const sanitizedContent = noAtSigns.replace(/[^a-z0-9.\-_]/g, "");
+                      form.setValue("userName", `@${sanitizedContent}`, {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      });
+                    }}
+                  />
                   {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                 </Field>
               )}
