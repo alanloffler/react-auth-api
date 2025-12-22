@@ -137,6 +137,7 @@ export default function Account() {
                     <Input
                       aria-invalid={fieldState.invalid}
                       id="ic"
+                      maxLength={9}
                       {...field}
                       onChange={async (e) => {
                         const value = e.target.value.replace(/\D/g, "");
@@ -145,7 +146,7 @@ export default function Account() {
                         setIcError(null);
                         form.clearErrors("ic");
 
-                        if (value.length >= 7 && value !== ownAdmin?.ic) {
+                        if (value.length > 7 && value !== ownAdmin?.ic) {
                           const response = await AdminService.checkIcAvailability(value);
                           if (response.data === false) {
                             const errorMsg = "DNI ya registrado";
