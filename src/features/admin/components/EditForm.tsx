@@ -20,6 +20,7 @@ import type { IRole } from "@roles/interfaces/role.interface";
 import { AdminService } from "@admin/services/admin.service";
 import { RolesService } from "@roles/services/roles.service";
 import { updateAdminSchema } from "@admin/schemas/update-admin.schema";
+import { useAuthStore } from "@auth/auth.store";
 import { usePermission } from "@core/hooks/usePermission";
 import { useTryCatch } from "@core/hooks/useTryCatch";
 
@@ -32,8 +33,10 @@ export function EditForm({ adminId }: IProps) {
   const [icError, setIcError] = useState<string | null>(null);
   const [passwordField, setPasswordField] = useState<boolean>(true);
   const [roles, setRoles] = useState<IRole[] | undefined>(undefined);
+  const admin = useAuthStore((state) => state.admin);
   const canUpdatePassword = usePermission("admin-update-password");
   const navigate = useNavigate();
+  const refreshAdmin = useAuthStore((state) => state.refreshAdmin);
   const { isLoading: isLoadingAdmin, tryCatch: tryCatchAdmin } = useTryCatch();
   const { isLoading: isLoadingRoles, tryCatch: tryCatchRoles } = useTryCatch();
   const { isLoading: isSaving, tryCatch: tryCatchSubmit } = useTryCatch();
@@ -132,6 +135,9 @@ export function EditForm({ adminId }: IProps) {
     }
 
     if (update?.statusCode === 200) {
+      if (adminIC === admin?.ic) {
+        refreshAdmin();
+      }
       toast.success(update.message);
       navigate("/admin");
     }
