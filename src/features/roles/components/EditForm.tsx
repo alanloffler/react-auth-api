@@ -1,3 +1,5 @@
+import { LockKeyhole } from "lucide-react";
+
 import { BackButton } from "@components/BackButton";
 import { Button } from "@components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@components/ui/card";
@@ -17,16 +19,20 @@ import { useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import type { IPermissionGroup } from "@permissions/interfaces/permission-group.interface";
+import { ERoles } from "@auth/enums/role.enum";
 import { PermissionsService } from "@permissions/services/permissions.service";
 import { RolesService } from "@roles/services/roles.service";
 import { cn } from "@lib/utils";
 import { roleSchema } from "@roles/schemas/role.schema";
-import { useAuthStore } from "@core/auth/auth.store";
+import { useAuthStore } from "@auth/auth.store";
 import { useTryCatch } from "@core/hooks/useTryCatch";
+
+const CRITICAL_PERMISSIONS_FOR_SUPERADMIN = ["roles-view", "roles-update"];
 
 export function EditForm() {
   const [permissions, setPermissions] = useState<any | undefined>(undefined);
   const [permissionsError, setPermissionsError] = useState<boolean>(false);
+  const [roleValue, setRoleValue] = useState<string>("");
   const navigate = useNavigate();
   const refreshAdmin = useAuthStore((state) => state.refreshAdmin);
   const { id } = useParams();
@@ -62,6 +68,7 @@ export function EditForm() {
         form.setValue("name", roleResponse.data.name);
         form.setValue("description", roleResponse.data.description);
         form.setValue("value", roleResponse.data.value);
+        setRoleValue(roleResponse.data.value);
 
         const [permissionsResponse, permissionsError] = await tryCatchPermissions(PermissionsService.findAllGrouped());
 
@@ -76,16 +83,18 @@ export function EditForm() {
             roleResponse?.data?.rolePermissions?.map((rp) => rp.permission?.actionKey) || [],
           );
 
-          const processedPermissions = permissionsResponse.data.map((permGroup) => ({
-            ...permGroup,
-            actions: permGroup.actions.map((action) => {
-              return {
-                ...action,
-                value: rolePermissionKeys.has(action.key),
-                deletedAt: action.deletedAt,
-              };
-            }),
-          }));
+          const processedPermissions = permissionsResponse.data
+            .map((permGroup) => ({
+              ...permGroup,
+              actions: permGroup.actions.map((action) => {
+                return {
+                  ...action,
+                  value: rolePermissionKeys.has(action.key),
+                  deletedAt: action.deletedAt,
+                };
+              }),
+            }))
+            .sort((a, b) => a.name.localeCompare(b.name));
 
           setPermissions(processedPermissions);
           form.setValue("permissions", processedPermissions);
@@ -197,6 +206,9 @@ export function EditForm() {
                                 render={({ field }) => {
                                   const isViewPermission = action.key.endsWith("-view");
                                   const isDeleted = !!action.deletedAt;
+                                  const isSuperAdmin = roleValue === ERoles.SUPER;
+                                  const isCriticalPermission = CRITICAL_PERMISSIONS_FOR_SUPERADMIN.includes(action.key);
+                                  const isLockedForSuperAdmin = isSuperAdmin && isCriticalPermission;
 
                                   const hasOtherPermissionsChecked = isViewPermission
                                     ? permission.actions.some(
@@ -211,7 +223,7 @@ export function EditForm() {
                                       <Checkbox
                                         id={action.key}
                                         checked={field.value}
-                                        disabled={hasOtherPermissionsChecked || isDeleted}
+                                        disabled={hasOtherPermissionsChecked || isDeleted || isLockedForSuperAdmin}
                                         onCheckedChange={(checked) => {
                                           field.onChange(checked);
 
@@ -236,9 +248,16 @@ export function EditForm() {
                                       />
                                       <Label
                                         htmlFor={action.key}
-                                        className={cn(isDeleted && "text-muted-foreground line-through")}
+                                        className={cn(
+                                          isDeleted && "text-muted-foreground flex items-center line-through",
+                                        )}
                                       >
                                         {action.name}
+                                        {isLockedForSuperAdmin && (
+                                          <span className="text-muted-foreground ml-2 text-xs">
+                                            <LockKeyhole className="h-3.5 w-3.5" />
+                                          </span>
+                                        )}
                                       </Label>
                                     </>
                                   );
