@@ -13,12 +13,12 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import type { IRole } from "@/features/roles/interfaces/role.interface";
+import type { IRole } from "@roles/interfaces/role.interface";
 import { AdminService } from "@admin/services/admin.service";
-import { RolesService } from "@/features/roles/services/roles.service";
+import { RolesService } from "@roles/services/roles.service";
 import { createAdminSchema } from "@admin/schemas/create-admin.schema";
 import { useNavigate } from "react-router";
-import { useTryCatch } from "@/core/hooks/useTryCatch";
+import { useTryCatch } from "@core/hooks/useTryCatch";
 
 export function CreateForm() {
   const [icError, setIcError] = useState<string | null>(null);
@@ -46,6 +46,7 @@ export function CreateForm() {
       return;
     }
 
+    // Check again for race condition: before first check another admin use same ic
     const icAvailableResponse = await AdminService.checkIcAvailability(data.ic);
 
     if (icAvailableResponse.data === false) {
@@ -118,7 +119,7 @@ export function CreateForm() {
                       setIcError(null);
                       form.clearErrors("ic");
 
-                      if (value.length > 0) {
+                      if (value.length >= 7) {
                         const response = await AdminService.checkIcAvailability(value);
                         if (response.data === false) {
                           const errorMsg = "DNI ya registrado";
