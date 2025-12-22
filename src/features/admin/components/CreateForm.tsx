@@ -111,6 +111,7 @@ export function CreateForm() {
                   <Input
                     aria-invalid={fieldState.invalid || !!icError}
                     id="ic"
+                    maxLength={9}
                     {...field}
                     onChange={async (e) => {
                       const value = e.target.value.replace(/\D/g, "");
@@ -119,7 +120,7 @@ export function CreateForm() {
                       setIcError(null);
                       form.clearErrors("ic");
 
-                      if (value.length >= 7) {
+                      if (value.length > 7) {
                         const response = await AdminService.checkIcAvailability(value);
                         if (response.data === false) {
                           const errorMsg = "DNI ya registrado";
