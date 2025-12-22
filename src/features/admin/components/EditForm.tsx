@@ -28,6 +28,8 @@ interface IProps {
 }
 
 export function EditForm({ adminId }: IProps) {
+  const [adminIC, setAdminIC] = useState<string>("");
+  const [icError, setIcError] = useState<string | null>(null);
   const [passwordField, setPasswordField] = useState<boolean>(true);
   const [roles, setRoles] = useState<IRole[] | undefined>(undefined);
   const canUpdatePassword = usePermission("admin-update-password");
@@ -74,7 +76,7 @@ export function EditForm({ adminId }: IProps) {
       }
 
       if (admin && admin.statusCode === 200) {
-        if (admin.data)
+        if (admin.data) {
           form.reset({
             ic: admin.data.ic,
             userName: admin.data.userName,
@@ -86,7 +88,9 @@ export function EditForm({ adminId }: IProps) {
             roleId: admin.data.roleId,
           });
 
-        getRoles();
+          setAdminIC(admin.data.ic);
+          getRoles();
+        }
       }
     }
 
@@ -144,13 +148,28 @@ export function EditForm({ adminId }: IProps) {
                   <Input
                     aria-invalid={fieldState.invalid}
                     id="ic"
+                    maxLength={9}
                     {...field}
-                    onChange={(e) => {
+                    onChange={async (e) => {
                       const value = e.target.value.replace(/\D/g, "");
                       field.onChange(value);
+
+                      setIcError(null);
+                      form.clearErrors("ic");
+
+                      if (value.length > 7 && value !== adminIC) {
+                        const response = await AdminService.checkIcAvailability(value);
+                        if (response.data === false) {
+                          const errorMsg = "DNI ya registrado";
+                          setIcError(errorMsg);
+                          form.setError("ic", { message: errorMsg });
+                        }
+                      }
                     }}
                   />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  {(fieldState.invalid || icError) && (
+                    <FieldError errors={icError ? [{ message: icError }] : [fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
