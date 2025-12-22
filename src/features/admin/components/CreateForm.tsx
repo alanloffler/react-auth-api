@@ -23,6 +23,7 @@ import { useTryCatch } from "@core/hooks/useTryCatch";
 export function CreateForm() {
   const [icError, setIcError] = useState<string | null>(null);
   const [roles, setRoles] = useState<IRole[] | undefined>(undefined);
+  const [usernameError, setUsernameError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { isLoading: isSaving, tryCatch: tryCatchAdmin } = useTryCatch();
   const { isLoading: isLoadingRoles, tryCatch: tryCatchRoles } = useTryCatch();
@@ -47,6 +48,11 @@ export function CreateForm() {
       return;
     }
 
+    if (usernameError) {
+      form.setError("userName", { message: usernameError });
+      return;
+    }
+
     // Check again for race condition: before first check another admin use same ic
     const icAvailableResponse = await AdminService.checkIcAvailability(data.ic);
 
@@ -54,6 +60,16 @@ export function CreateForm() {
       const errorMsg = "DNI ya registrado";
       setIcError(errorMsg);
       form.setError("ic", { message: errorMsg });
+      return;
+    }
+
+    // Check again for race condition: before first check another admin use same username
+    const usernameAvailableResponse = await AdminService.checkUsernameAvailability(data.userName);
+
+    if (usernameAvailableResponse.data === false) {
+      const errorMsg = "Nombre de usuario ya registrado";
+      setUsernameError(errorMsg);
+      form.setError("userName", { message: errorMsg });
       return;
     }
 
@@ -149,7 +165,10 @@ export function CreateForm() {
                     aria-invalid={fieldState.invalid}
                     id="userName"
                     {...field}
-                    onChange={(e) => {
+                    onChange={async (e) => {
+                      setUsernameError(null);
+                      form.clearErrors("userName");
+
                       const rawValue = e.target.value.toLowerCase();
                       const noAtSigns = rawValue.replace(/@/g, "");
                       const sanitizedContent = noAtSigns.replace(/[^a-z0-9.\-_]/g, "");
@@ -157,9 +176,19 @@ export function CreateForm() {
                         shouldDirty: true,
                         shouldValidate: true,
                       });
+
+                      const response = await AdminService.checkUsernameAvailability(`@${sanitizedContent}`);
+                      if (response.data === false) {
+                        const message = "Nombre de usuario ya registrado";
+                        setUsernameError(message);
+                        form.setError("userName", { message: message });
+                      }
                     }}
                   />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  {/* {fieldState.invalid && <FieldError errors={[fieldState.error]} />} */}
+                  {(fieldState.invalid || usernameError) && (
+                    <FieldError errors={usernameError ? [{ message: usernameError }] : [fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
