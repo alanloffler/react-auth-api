@@ -55,9 +55,14 @@ export function NavUser() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
-                <span className="truncate font-medium">{admin?.userName}</span>
-                <span className="truncate text-xs">{admin?.role.name}</span>
+              <div className="flex flex-1 items-center gap-2 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
+                <span className="flex size-6 items-center justify-center rounded-full bg-gray-400 p-1 text-sm font-semibold text-white">
+                  {admin?.role.name.charAt(0)}
+                </span>
+                <div className="flex flex-col">
+                  <span className="truncate font-medium">{admin?.userName}</span>
+                  <span className="truncate text-xs">{admin?.role.name}</span>
+                </div>
               </div>
               <Ellipsis className="ml-auto size-4 group-data-[collapsible=icon]:mx-auto" />
             </SidebarMenuButton>
