@@ -120,13 +120,15 @@ export function EditForm() {
     }
 
     // Check again for race condition: before first check another admin use same ic
-    const emailAvailableResponse = await AdminService.checkEmailAvailability(data.email);
+    if (data.email !== adminToUpdate?.email) {
+      const emailAvailableResponse = await AdminService.checkEmailAvailability(data.email);
 
-    if (emailAvailableResponse.data === false) {
-      const errorMsg = "Email ya registrado";
-      setEmailError(errorMsg);
-      form.setError("email", { message: errorMsg });
-      return;
+      if (emailAvailableResponse.data === false) {
+        const errorMsg = "Email ya registrado";
+        setEmailError(errorMsg);
+        form.setError("email", { message: errorMsg });
+        return;
+      }
     }
 
     // Check again for race condition: before first check another admin use same ic
@@ -142,13 +144,15 @@ export function EditForm() {
     }
 
     // Check again for race condition: before first check another admin use same username
-    const usernameAvailableResponse = await AdminService.checkUsernameAvailability(data.userName);
+    if (data.userName !== adminToUpdate?.userName) {
+      const usernameAvailableResponse = await AdminService.checkUsernameAvailability(data.userName);
 
-    if (usernameAvailableResponse.data === false) {
-      const errorMsg = "Nombre de usuario ya registrado";
-      setUsernameError(errorMsg);
-      form.setError("userName", { message: errorMsg });
-      return;
+      if (usernameAvailableResponse.data === false) {
+        const errorMsg = "Nombre de usuario ya registrado";
+        setUsernameError(errorMsg);
+        form.setError("userName", { message: errorMsg });
+        return;
+      }
     }
 
     const updateData = data.password
