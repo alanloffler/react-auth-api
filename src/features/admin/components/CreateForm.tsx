@@ -21,6 +21,7 @@ import { useNavigate } from "react-router";
 import { useTryCatch } from "@core/hooks/useTryCatch";
 
 export function CreateForm() {
+  const [emailError, setEmailError] = useState<string | null>(null);
   const [icError, setIcError] = useState<string | null>(null);
   const [roles, setRoles] = useState<IRole[] | undefined>(undefined);
   const [usernameError, setUsernameError] = useState<string | null>(null);
@@ -43,6 +44,11 @@ export function CreateForm() {
   });
 
   async function onSubmit(data: z.infer<typeof createAdminSchema>) {
+    if (emailError) {
+      form.setError("email", { message: emailError });
+      return;
+    }
+
     if (icError) {
       form.setError("ic", { message: icError });
       return;
@@ -50,6 +56,16 @@ export function CreateForm() {
 
     if (usernameError) {
       form.setError("userName", { message: usernameError });
+      return;
+    }
+
+    // Check again for race condition: before first check another admin use same ic
+    const emailAvailableResponse = await AdminService.checkEmailAvailability(data.email);
+
+    if (emailAvailableResponse.data === false) {
+      const errorMsg = "Email ya registrado";
+      setEmailError(errorMsg);
+      form.setError("email", { message: errorMsg });
       return;
     }
 
@@ -185,7 +201,6 @@ export function CreateForm() {
                       }
                     }}
                   />
-                  {/* {fieldState.invalid && <FieldError errors={[fieldState.error]} />} */}
                   {(fieldState.invalid || usernameError) && (
                     <FieldError errors={usernameError ? [{ message: usernameError }] : [fieldState.error]} />
                   )}
@@ -235,8 +250,31 @@ export function CreateForm() {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid} className="col-span-3">
                   <FieldLabel htmlFor="email">E-mail</FieldLabel>
-                  <Input aria-invalid={fieldState.invalid} id="email" {...field} />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  <Input
+                    aria-invalid={fieldState.invalid}
+                    id="email"
+                    {...field}
+                    onChange={async (e) => {
+                      field.onChange(e);
+                      setEmailError(null);
+                      form.clearErrors("email");
+
+                      const emailValue = e.target.value;
+                      const emailValidation = z.email().safeParse(emailValue);
+
+                      if (emailValidation.success) {
+                        const response = await AdminService.checkEmailAvailability(emailValue);
+                        if (response.data === false) {
+                          const errorMsg = "Email ya registrado";
+                          setEmailError(errorMsg);
+                          form.setError("email", { message: errorMsg });
+                        }
+                      }
+                    }}
+                  />
+                  {(fieldState.invalid || emailError) && (
+                    <FieldError errors={emailError ? [{ message: emailError }] : [fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
