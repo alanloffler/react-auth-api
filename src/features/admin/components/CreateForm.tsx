@@ -17,6 +17,7 @@ import type { IRole } from "@roles/interfaces/role.interface";
 import { AdminService } from "@admin/services/admin.service";
 import { RolesService } from "@roles/services/roles.service";
 import { createAdminSchema } from "@admin/schemas/create-admin.schema";
+import { useDebounce } from "@core/hooks/useDebounce";
 import { useNavigate } from "react-router";
 import { useTryCatch } from "@core/hooks/useTryCatch";
 
@@ -24,10 +25,13 @@ export function CreateForm() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [icError, setIcError] = useState<string | null>(null);
   const [roles, setRoles] = useState<IRole[] | undefined>(undefined);
+  const [username, setUsername] = useState<string>("");
   const [usernameError, setUsernameError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { isLoading: isSaving, tryCatch: tryCatchAdmin } = useTryCatch();
   const { isLoading: isLoadingRoles, tryCatch: tryCatchRoles } = useTryCatch();
+
+  const debouncedUsername = useDebounce(username, 500);
 
   const form = useForm<z.infer<typeof createAdminSchema>>({
     resolver: zodResolver(createAdminSchema),
@@ -101,6 +105,21 @@ export function CreateForm() {
       navigate("/admin");
     }
   }
+
+  useEffect(() => {
+    async function checkUsername() {
+      if (!debouncedUsername || debouncedUsername.length <= 3) return;
+
+      const response = await AdminService.checkUsernameAvailability(debouncedUsername);
+      if (response.data === false) {
+        const message = "Nombre de usuario ya registrado";
+        setUsernameError(message);
+        form.setError("userName", { message });
+      }
+    }
+
+    checkUsername();
+  }, [debouncedUsername, form]);
 
   useEffect(() => {
     async function getRoles() {
@@ -181,24 +200,21 @@ export function CreateForm() {
                     aria-invalid={fieldState.invalid}
                     id="userName"
                     {...field}
-                    onChange={async (e) => {
+                    onChange={(e) => {
                       setUsernameError(null);
                       form.clearErrors("userName");
 
                       const rawValue = e.target.value.toLowerCase();
                       const noAtSigns = rawValue.replace(/@/g, "");
                       const sanitizedContent = noAtSigns.replace(/[^a-z0-9.\-_]/g, "");
-                      form.setValue("userName", `@${sanitizedContent}`, {
+                      const finalValue = `@${sanitizedContent}`;
+
+                      form.setValue("userName", finalValue, {
                         shouldDirty: true,
                         shouldValidate: true,
                       });
 
-                      const response = await AdminService.checkUsernameAvailability(`@${sanitizedContent}`);
-                      if (response.data === false) {
-                        const message = "Nombre de usuario ya registrado";
-                        setUsernameError(message);
-                        form.setError("userName", { message: message });
-                      }
+                      setUsername(finalValue);
                     }}
                   />
                   {(fieldState.invalid || usernameError) && (
