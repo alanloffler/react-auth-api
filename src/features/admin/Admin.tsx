@@ -18,10 +18,13 @@ import { AdminService } from "@admin/services/admin.service";
 import { ERoles } from "@auth/enums/role.enum";
 import { tryCatch } from "@core/utils/try-catch";
 import { useAuthStore } from "@auth/auth.store";
+import { useSidebar } from "@components/ui/sidebar";
 
 export default function Admin() {
   const [admins, setAdmins] = useState<IAdmin[] | undefined>(undefined);
+  const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean> | undefined>(undefined);
   const admin = useAuthStore((state) => state.admin);
+  const { open: sidebarIsOpen } = useSidebar();
 
   const fetchAdmins = useCallback(async () => {
     const isSuperAdmin = admin?.role.value === ERoles.SUPER;
@@ -86,9 +89,38 @@ export default function Admin() {
     }
   }
 
+  useEffect(() => {
+    function getColumnVisibility(width: number): Record<string, boolean> | undefined {
+      if (width < 768) {
+        return { id: false, ic: false, firstName: false, lastName: false, userName: false };
+      }
+
+      if (width < 1280) {
+        return {
+          id: !sidebarIsOpen,
+          firstName: false,
+          lastName: false,
+          userName: !sidebarIsOpen,
+        };
+      }
+
+      return undefined;
+    }
+
+    function handleResize() {
+      setColumnVisibility(getColumnVisibility(window.innerWidth));
+    }
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, [sidebarIsOpen]);
+
   const columns: ColumnDef<IAdmin>[] = [
     {
       accessorKey: "id",
+      enableHiding: true,
       enableSorting: false,
       header: () => <div className="text-center">ID</div>,
       cell: ({ row }) => (
@@ -101,6 +133,7 @@ export default function Admin() {
     },
     {
       accessorKey: "ic",
+      enableHiding: true,
       header: ({ column }) => (
         <SortableHeader alignment="center" column={column}>
           DNI
@@ -116,6 +149,7 @@ export default function Admin() {
     },
     {
       accessorKey: "userName",
+      enableHiding: true,
       header: ({ column }) => <SortableHeader column={column}>Usuario</SortableHeader>,
       cell: ({ row }) => (
         <div className="flex items-center gap-3">
@@ -125,12 +159,17 @@ export default function Admin() {
       ),
     },
     {
+      accessorKey: "email",
+      header: ({ column }) => <SortableHeader column={column}>Email</SortableHeader>,
+    },
+    {
       accessorKey: "firstName",
       enableHiding: true,
       header: ({ column }) => <SortableHeader column={column}>Nombre</SortableHeader>,
     },
     {
       accessorKey: "lastName",
+      enableHiding: true,
       header: ({ column }) => <SortableHeader column={column}>Apellido</SortableHeader>,
     },
     {
@@ -213,6 +252,7 @@ export default function Admin() {
       </PageHeader>
       <DataTable
         columns={columns}
+        columnVisibility={columnVisibility}
         data={admins}
         defaultPageSize={10}
         defaultSorting={[{ id: "userName", desc: false }]}
