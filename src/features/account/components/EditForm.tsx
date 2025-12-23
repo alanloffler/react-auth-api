@@ -9,7 +9,7 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "@components/ui/field"
 import { Input } from "@components/ui/input";
 import { Loader } from "@components/Loader";
 
-import type z from "zod";
+import z from "zod";
 import { toast } from "sonner";
 import { type MouseEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -21,17 +21,23 @@ import { AccountService } from "@account/services/profile.service";
 import { AdminService } from "@admin/services/admin.service";
 import { profileSchema } from "@account/schemas/profile.schema";
 import { useAuthStore } from "@auth/auth.store";
+import { useDebounce } from "@core/hooks/useDebounce";
 import { useTryCatch } from "@core/hooks/useTryCatch";
 
 export function EditForm() {
   const [adminToUpdate, setAdminToUpdate] = useState<IAdmin | undefined>(undefined);
+  const [emailError, setEmailError] = useState<string | null>(null);
   const [icError, setIcError] = useState<string | null>(null);
   const [passwordField, setPasswordField] = useState<boolean>(true);
+  const [username, setUsername] = useState<string>("");
+  const [usernameError, setUsernameError] = useState<string | null>(null);
   const navigate = useNavigate();
   const ownAdmin = useAuthStore((state) => state.admin);
   const refreshAdmin = useAuthStore((state) => state.refreshAdmin);
   const { isLoading: isLoadingAdmin, tryCatch: tryCatchAdmin } = useTryCatch();
   const { isLoading: isSaving, tryCatch: tryCatchSubmit } = useTryCatch();
+
+  const debouncedUsername = useDebounce(username, 500);
 
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
@@ -45,6 +51,22 @@ export function EditForm() {
       userName: "",
     },
   });
+
+  useEffect(() => {
+    async function checkUsername() {
+      if (!debouncedUsername || debouncedUsername.length <= 3) return;
+      if (debouncedUsername === adminToUpdate?.userName) return;
+
+      const response = await AdminService.checkUsernameAvailability(debouncedUsername);
+      if (response.data === false) {
+        const message = "Nombre de usuario ya registrado";
+        setUsernameError(message);
+        form.setError("userName", { message });
+      }
+    }
+
+    checkUsername();
+  }, [debouncedUsername, adminToUpdate?.userName, form]);
 
   useEffect(() => {
     async function findOneWithCredentials(): Promise<void> {
@@ -82,8 +104,28 @@ export function EditForm() {
   }
 
   async function onSubmit(data: any): Promise<void> {
+    if (emailError) {
+      form.setError("email", { message: emailError });
+      return;
+    }
+
     if (icError) {
       form.setError("ic", { message: icError });
+      return;
+    }
+
+    if (usernameError) {
+      form.setError("userName", { message: usernameError });
+      return;
+    }
+
+    // Check again for race condition: before first check another admin use same ic
+    const emailAvailableResponse = await AdminService.checkEmailAvailability(data.email);
+
+    if (emailAvailableResponse.data === false) {
+      const errorMsg = "Email ya registrado";
+      setEmailError(errorMsg);
+      form.setError("email", { message: errorMsg });
       return;
     }
 
@@ -97,6 +139,16 @@ export function EditForm() {
         form.setError("ic", { message: errorMsg });
         return;
       }
+    }
+
+    // Check again for race condition: before first check another admin use same username
+    const usernameAvailableResponse = await AdminService.checkUsernameAvailability(data.userName);
+
+    if (usernameAvailableResponse.data === false) {
+      const errorMsg = "Nombre de usuario ya registrado";
+      setUsernameError(errorMsg);
+      form.setError("userName", { message: errorMsg });
+      return;
     }
 
     const updateData = data.password
@@ -176,8 +228,30 @@ export function EditForm() {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor="userName">Usuario</FieldLabel>
-                  <Input aria-invalid={fieldState.invalid} id="userName" {...field} />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  <Input
+                    aria-invalid={fieldState.invalid}
+                    id="userName"
+                    {...field}
+                    onChange={(e) => {
+                      setUsernameError(null);
+                      form.clearErrors("userName");
+
+                      const rawValue = e.target.value.toLowerCase();
+                      const noAtSigns = rawValue.replace(/@/g, "");
+                      const sanitizedContent = noAtSigns.replace(/[^a-z0-9.\-_]/g, "");
+                      const finalValue = `@${sanitizedContent}`;
+
+                      form.setValue("userName", finalValue, {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      });
+
+                      setUsername(finalValue);
+                    }}
+                  />
+                  {(fieldState.invalid || usernameError) && (
+                    <FieldError errors={usernameError ? [{ message: usernameError }] : [fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -238,8 +312,31 @@ export function EditForm() {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid} className="col-span-3">
                   <FieldLabel htmlFor="email">E-mail</FieldLabel>
-                  <Input aria-invalid={fieldState.invalid} id="email" {...field} />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  <Input
+                    aria-invalid={fieldState.invalid}
+                    id="email"
+                    {...field}
+                    onChange={async (e) => {
+                      field.onChange(e);
+                      setEmailError(null);
+                      form.clearErrors("email");
+
+                      const emailValue = e.target.value;
+                      const emailValidation = z.email().safeParse(emailValue);
+
+                      if (emailValidation.success && emailValue !== adminToUpdate?.email) {
+                        const response = await AdminService.checkEmailAvailability(emailValue);
+                        if (response.data === false) {
+                          const errorMsg = "Email ya registrado";
+                          setEmailError(errorMsg);
+                          form.setError("email", { message: errorMsg });
+                        }
+                      }
+                    }}
+                  />
+                  {(fieldState.invalid || emailError) && (
+                    <FieldError errors={emailError ? [{ message: emailError }] : [fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
