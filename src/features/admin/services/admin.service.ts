@@ -63,6 +63,11 @@ class AdminModuleService {
     return response.data;
   }
 
+  public async checkEmailAvailability(email: string): Promise<IApiResponse<boolean>> {
+    const response = await apiClient.get(`/admin/email-availability/${email}`);
+    return response.data;
+  }
+
   public async checkIcAvailability(id: string): Promise<IApiResponse<boolean>> {
     const response = await apiClient.get(`/admin/ic-availability/${id}`);
     return response.data;
