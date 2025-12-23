@@ -16,11 +16,13 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import type { IAdmin } from "@admin/interfaces/admin.interface";
 import type { IRole } from "@roles/interfaces/role.interface";
 import { AdminService } from "@admin/services/admin.service";
 import { RolesService } from "@roles/services/roles.service";
 import { updateAdminSchema } from "@admin/schemas/update-admin.schema";
 import { useAuthStore } from "@auth/auth.store";
+import { useDebounce } from "@core/hooks/useDebounce";
 import { usePermission } from "@core/hooks/usePermission";
 import { useTryCatch } from "@core/hooks/useTryCatch";
 
@@ -29,10 +31,13 @@ interface IProps {
 }
 
 export function EditForm({ adminId }: IProps) {
-  const [adminIC, setAdminIC] = useState<string>("");
+  const [adminToUpdate, setAdminToUpdate] = useState<IAdmin | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
   const [icError, setIcError] = useState<string | null>(null);
   const [passwordField, setPasswordField] = useState<boolean>(true);
   const [roles, setRoles] = useState<IRole[] | undefined>(undefined);
+  const [username, setUsername] = useState<string>("");
+  const [usernameError, setUsernameError] = useState<string | null>(null);
   const admin = useAuthStore((state) => state.admin);
   const canUpdatePassword = usePermission("admin-update-password");
   const navigate = useNavigate();
@@ -40,6 +45,8 @@ export function EditForm({ adminId }: IProps) {
   const { isLoading: isLoadingAdmin, tryCatch: tryCatchAdmin } = useTryCatch();
   const { isLoading: isLoadingRoles, tryCatch: tryCatchRoles } = useTryCatch();
   const { isLoading: isSaving, tryCatch: tryCatchSubmit } = useTryCatch();
+
+  const debouncedUsername = useDebounce(username, 500);
 
   const form = useForm<z.infer<typeof updateAdminSchema>>({
     resolver: zodResolver(updateAdminSchema),
@@ -70,6 +77,22 @@ export function EditForm({ adminId }: IProps) {
   }, [form.control, tryCatchRoles]);
 
   useEffect(() => {
+    async function checkUsername() {
+      if (!debouncedUsername || debouncedUsername.length <= 3) return;
+      if (debouncedUsername === adminToUpdate?.userName) return;
+
+      const response = await AdminService.checkUsernameAvailability(debouncedUsername);
+      if (response.data === false) {
+        const message = "Nombre de usuario ya registrado";
+        setUsernameError(message);
+        form.setError("userName", { message });
+      }
+    }
+
+    checkUsername();
+  }, [debouncedUsername, adminToUpdate?.userName, form]);
+
+  useEffect(() => {
     async function findOneWithCredentials(): Promise<void> {
       const [admin, adminError] = await tryCatchAdmin(AdminService.findOneWithCredentials(adminId));
 
@@ -91,7 +114,7 @@ export function EditForm({ adminId }: IProps) {
             roleId: admin.data.roleId,
           });
 
-          setAdminIC(admin.data.ic);
+          setAdminToUpdate(admin.data);
           getRoles();
         }
       }
@@ -106,21 +129,49 @@ export function EditForm({ adminId }: IProps) {
   }
 
   async function onSubmit(data: z.infer<typeof updateAdminSchema>): Promise<void> {
+    if (emailError) {
+      form.setError("email", { message: emailError });
+      return;
+    }
+
     if (icError) {
       form.setError("ic", { message: icError });
       return;
     }
 
-    // Check again for race condition: before first check another admin use same ic
-    if (data.ic !== adminIC) {
-      const icAvailableResponse = await AdminService.checkIcAvailability(data.ic);
+    if (usernameError) {
+      form.setError("userName", { message: usernameError });
+      return;
+    }
 
-      if (icAvailableResponse.data === false) {
-        const errorMsg = "DNI ya registrado";
-        setIcError(errorMsg);
-        form.setError("ic", { message: errorMsg });
-        return;
-      }
+    // Check again for race condition: before first check another admin use same ic
+    const emailAvailableResponse = await AdminService.checkEmailAvailability(data.email);
+
+    if (emailAvailableResponse.data === false) {
+      const errorMsg = "Email ya registrado";
+      setEmailError(errorMsg);
+      form.setError("email", { message: errorMsg });
+      return;
+    }
+
+    // Check again for race condition: before first check another admin use same ic
+    const icAvailableResponse = await AdminService.checkIcAvailability(data.ic);
+
+    if (icAvailableResponse.data === false) {
+      const errorMsg = "DNI ya registrado";
+      setIcError(errorMsg);
+      form.setError("ic", { message: errorMsg });
+      return;
+    }
+
+    // Check again for race condition: before first check another admin use same username
+    const usernameAvailableResponse = await AdminService.checkUsernameAvailability(data.userName);
+
+    if (usernameAvailableResponse.data === false) {
+      const errorMsg = "Nombre de usuario ya registrado";
+      setUsernameError(errorMsg);
+      form.setError("userName", { message: errorMsg });
+      return;
     }
 
     const updateData = data.password
@@ -135,7 +186,7 @@ export function EditForm({ adminId }: IProps) {
     }
 
     if (update?.statusCode === 200) {
-      if (adminIC === admin?.ic) {
+      if (adminToUpdate?.ic === admin?.ic) {
         refreshAdmin();
       }
       toast.success(update.message);
@@ -180,7 +231,7 @@ export function EditForm({ adminId }: IProps) {
                       setIcError(null);
                       form.clearErrors("ic");
 
-                      if (value.length > 7 && value !== adminIC) {
+                      if (value.length > 7 && value !== adminToUpdate?.ic) {
                         const response = await AdminService.checkIcAvailability(value);
                         if (response.data === false) {
                           const errorMsg = "DNI ya registrado";
@@ -209,16 +260,25 @@ export function EditForm({ adminId }: IProps) {
                     id="userName"
                     {...field}
                     onChange={(e) => {
+                      setUsernameError(null);
+                      form.clearErrors("userName");
+
                       const rawValue = e.target.value.toLowerCase();
                       const noAtSigns = rawValue.replace(/@/g, "");
                       const sanitizedContent = noAtSigns.replace(/[^a-z0-9.\-_]/g, "");
-                      form.setValue("userName", `@${sanitizedContent}`, {
+                      const finalValue = `@${sanitizedContent}`;
+
+                      form.setValue("userName", finalValue, {
                         shouldDirty: true,
                         shouldValidate: true,
                       });
+
+                      setUsername(finalValue);
                     }}
                   />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  {(fieldState.invalid || usernameError) && (
+                    <FieldError errors={usernameError ? [{ message: usernameError }] : [fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -281,8 +341,31 @@ export function EditForm({ adminId }: IProps) {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid} className="col-span-3">
                   <FieldLabel htmlFor="email">E-mail</FieldLabel>
-                  <Input aria-invalid={fieldState.invalid} id="email" {...field} />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  <Input
+                    aria-invalid={fieldState.invalid}
+                    id="email"
+                    {...field}
+                    onChange={async (e) => {
+                      field.onChange(e);
+                      setEmailError(null);
+                      form.clearErrors("email");
+
+                      const emailValue = e.target.value;
+                      const emailValidation = z.email().safeParse(emailValue);
+
+                      if (emailValidation.success && emailValue !== adminToUpdate?.email) {
+                        const response = await AdminService.checkEmailAvailability(emailValue);
+                        if (response.data === false) {
+                          const errorMsg = "Email ya registrado";
+                          setEmailError(errorMsg);
+                          form.setError("email", { message: errorMsg });
+                        }
+                      }
+                    }}
+                  />
+                  {(fieldState.invalid || emailError) && (
+                    <FieldError errors={emailError ? [{ message: emailError }] : [fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
