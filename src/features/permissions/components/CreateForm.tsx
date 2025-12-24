@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 import type z from "zod";
 import { toast } from "sonner";
-import { useEffect, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,7 +20,10 @@ import { permissionSchema } from "@permissions/schemas/permission.schema";
 import { useTryCatch } from "@core/hooks/useTryCatch";
 
 export function CreateForm() {
+  const [availableActions, setAvailableActions] = useState<{ name: string; value: string }[]>([]);
+  const [unavailableActions, setUnavailableActions] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { isLoading: isLoadingActions, tryCatch: tryCatchActions } = useTryCatch();
   const { isLoading: isSaving, tryCatch: tryCatchSubmit } = useTryCatch();
 
   const form = useForm<z.infer<typeof permissionSchema>>({
@@ -38,13 +41,36 @@ export function CreateForm() {
     name: "category",
   });
 
-  const availableActions = useMemo(() => {
-    if (!selectedCategory) return [];
+  useEffect(() => {
+    async function getAvailableActions() {
+      setAvailableActions([]);
 
-    const category = PERMISSIONS.find((cat) => cat.value === selectedCategory);
+      const category = PERMISSIONS.find((cat) => cat.value === selectedCategory);
 
-    return category?.actions || [];
-  }, [selectedCategory]);
+      const [response, error] = await tryCatchActions(PermissionsService.findAllByCategory(selectedCategory));
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+
+      if (response && response.statusCode === 200 && category) {
+        const usedPermissions = response.data || [];
+        const usedActionKeys = usedPermissions.filter((p) => p.category === selectedCategory).map((p) => p.actionKey);
+        const filteredActions = category.actions.filter((action) => !usedActionKeys.includes(action.value));
+
+        setAvailableActions(filteredActions);
+
+        if (filteredActions.length === 0) {
+          setUnavailableActions(true);
+        } else {
+          setUnavailableActions(false);
+        }
+      }
+    }
+
+    getAvailableActions();
+  }, [selectedCategory, tryCatchActions]);
 
   useEffect(() => {
     if (selectedCategory) {
@@ -134,13 +160,14 @@ export function CreateForm() {
                       </SelectTrigger>
                       <SelectContent>
                         {availableActions.map((action, index) => (
-                          <SelectItem key={index} value={action.value}>
+                          <SelectItem disabled={availableActions.length === 0} key={index} value={action.value}>
                             {action.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                    {unavailableActions && <FieldError errors={[{ message: "No hay acciones disponibles" }]} />}
                   </Field>
                 )}
               />
@@ -160,13 +187,18 @@ export function CreateForm() {
             </FieldGroup>
           </form>
         </CardContent>
-        <CardFooter className="justify-end gap-4 pt-4">
-          <Button variant="ghost" onClick={resetForm}>
-            Cancelar
-          </Button>
-          <Button disabled={!form.formState.isDirty} form="create-permission" type="submit" variant="default">
-            {isSaving ? <Loader text="Guardando" /> : "Guardar"}
-          </Button>
+        <CardFooter className="flex justify-between pt-4">
+          <div>
+            {isLoadingActions && <Loader className="text-sm" color="black" size={18} text="Cargando acciones" />}
+          </div>
+          <div className="flex gap-4">
+            <Button variant="ghost" onClick={resetForm}>
+              Cancelar
+            </Button>
+            <Button disabled={!form.formState.isDirty} form="create-permission" type="submit" variant="default">
+              {isSaving ? <Loader text="Guardando" /> : "Guardar"}
+            </Button>{" "}
+          </div>
         </CardFooter>
       </Card>
     </div>
