@@ -29,6 +29,11 @@ class PermissionsModuleService {
     return response.data;
   }
 
+  public async findAllByCategory(category: string): Promise<IApiResponse<IPermission[]>> {
+    const response = await apiClient.get(`/permissions/category/${category}`);
+    return response.data;
+  }
+
   public async findOne(id: string): Promise<IApiResponse<IPermission>> {
     const response = await apiClient.get(`/permissions/${id}`);
     return response.data;
