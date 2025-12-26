@@ -61,7 +61,7 @@ const data = {
           icon: LayoutDashboard,
         },
       ],
-      permission: "*",
+      permission: "settings-view",
     },
   ],
   navActions: [
