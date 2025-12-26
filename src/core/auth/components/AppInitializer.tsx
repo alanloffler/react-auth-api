@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { AuthService } from "@auth/services/auth.service";
 import { useAuthStore } from "@core/auth/auth.store";
+import { useSettingsStore } from "@settings/stores/settings.store";
 
 interface IProps {
   children: ReactNode;
@@ -19,10 +20,13 @@ export function AppInitializer({ children }: IProps) {
 
     async function initAuth() {
       const { admin, setAdmin } = useAuthStore.getState();
+      const { loadAppSettings } = useSettingsStore.getState();
 
       try {
         if (admin) {
           const response = await AuthService.getAdmin();
+          await loadAppSettings();
+
           if (isMounted) setAdmin(response.data);
         }
       } catch {
