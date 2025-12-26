@@ -262,7 +262,9 @@ const router = createBrowserRouter([
               </div>
             }
           >
-            <AppSettings />
+            <ProtectedRoute requiredPermission="settings-view">
+              <AppSettings />
+            </ProtectedRoute>
           </Suspense>
         ),
       },
@@ -276,7 +278,9 @@ const router = createBrowserRouter([
               </div>
             }
           >
-            <DashboardSettings />
+            <ProtectedRoute requiredPermission="settings-view">
+              <DashboardSettings />
+            </ProtectedRoute>
           </Suspense>
         ),
       },
