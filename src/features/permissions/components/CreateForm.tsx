@@ -43,6 +43,8 @@ export function CreateForm() {
 
   useEffect(() => {
     async function getAvailableActions() {
+      if (!selectedCategory) return;
+
       setAvailableActions([]);
 
       const category = PERMISSIONS.find((cat) => cat.value === selectedCategory);
