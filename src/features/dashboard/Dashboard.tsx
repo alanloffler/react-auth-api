@@ -43,7 +43,7 @@ export default function Dashboard() {
           <h1 className="font-semibold">Configuraciones</h1>
           <ul className="flex gap-3 pl-5">
             <li>
-              <ConfigButton icon={Package} text="Aplicación" url="/dashboard-settings" />
+              <ConfigButton icon={Package} text="Aplicación" url="/app-settings" />
             </li>
             <li>
               <ConfigButton icon={LayoutDashboard} text="Tablero" url="/dashboard-settings" />
