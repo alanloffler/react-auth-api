@@ -14,6 +14,14 @@ export const PERMISSIONS = [
     ],
   },
   {
+    name: "Configuraciones",
+    value: "settings",
+    actions: [
+      { name: "Editar", value: "settings-update" },
+      { name: "Ver", value: "settings-view" },
+    ],
+  },
+  {
     name: "Permisos",
     value: "permissions",
     actions: [
