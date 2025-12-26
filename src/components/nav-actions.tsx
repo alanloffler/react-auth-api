@@ -23,6 +23,7 @@ import {
 import type { ComponentType, SVGProps } from "react";
 
 import { useActiveRoute } from "@core/hooks/useActiveRoute";
+import { useSettingsStore } from "@settings/stores/settings.store";
 
 interface IProps {
   items: INavAction[];
@@ -37,7 +38,10 @@ interface INavAction {
 
 export function NavActions({ items }: IProps) {
   // const { isMobile } = useSidebar();
+  const { appSettings } = useSettingsStore();
   const { isActive } = useActiveRoute();
+
+  const showMenuIcons = appSettings.find((s) => s.key === "showMenuIcons")?.value === "true";
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -48,7 +52,7 @@ export function NavActions({ items }: IProps) {
             <Protected requiredPermission={item.permission}>
               <SidebarMenuButton asChild isActive={isActive(item.url)}>
                 <Link to={item.url}>
-                  <item.icon />
+                  {showMenuIcons && <item.icon />}
                   <span>{item.name}</span>
                 </Link>
               </SidebarMenuButton>
