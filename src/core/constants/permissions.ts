@@ -17,7 +17,9 @@ export const PERMISSIONS = [
     name: "Configuraciones",
     value: "settings",
     actions: [
+      { name: "Crear", value: "settings-create" },
       { name: "Editar", value: "settings-update" },
+      { name: "Eliminar permanente", value: "settings-delete-hard" },
       { name: "Ver", value: "settings-view" },
     ],
   },
