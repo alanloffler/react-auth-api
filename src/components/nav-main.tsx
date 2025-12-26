@@ -18,6 +18,7 @@ import {
 
 import { cn } from "@lib/utils";
 import { useActiveRoute } from "@core/hooks/useActiveRoute";
+import { useSettingsStore } from "@settings/stores/settings.store";
 
 export function NavMain({
   items,
@@ -35,10 +36,12 @@ export function NavMain({
     permission: string;
   }[];
 }) {
-  // TODO: manage by settings
-  const showTooltips = false;
+  const { appSettings } = useSettingsStore();
   const { isActive, isParentActive } = useActiveRoute();
   const { state } = useSidebar();
+
+  const showMenuIcons = appSettings.find((s) => s.key === "showMenuIcons")?.value === "true";
+  const showMenuTooltips = appSettings.find((s) => s.key === "showMenuTooltips")?.value === "true";
 
   return (
     <SidebarGroup>
@@ -47,12 +50,13 @@ export function NavMain({
         {items.map((item) =>
           item.items ? (
             state === "collapsed" ? (
+              // Menu with subitems
               <SidebarMenuItem key={item.title}>
                 <Protected requiredPermission={item.permission}>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <SidebarMenuButton
-                        tooltip={showTooltips ? item.title : undefined}
+                        tooltip={showMenuTooltips ? item.title : undefined}
                         className={cn(
                           "group-data-[collapsible=icon]:justify-center",
                           isParentActive(item.items) && "bg-sidebar-accent text-sidebar-accent-foreground",
@@ -74,7 +78,7 @@ export function NavMain({
                           key={subItem.title}
                         >
                           <Link to={subItem.url}>
-                            {subItem.icon && <subItem.icon />}
+                            {showMenuIcons && subItem.icon && <subItem.icon />}
                             {subItem.title}
                           </Link>
                         </DropdownMenuItem>
@@ -95,11 +99,11 @@ export function NavMain({
                     <CollapsibleTrigger asChild>
                       <SidebarMenuButton
                         className={cn("group-data-[collapsible=icon]:justify-center")}
-                        tooltip={showTooltips ? item.title : undefined}
+                        tooltip={showMenuTooltips ? item.title : undefined}
                       >
                         {/* This show active main collapsible item in open mode (use in cn) */}
                         {/* isParentActive(item.items) && "bg-sidebar-accent text-sidebar-accent-foreground", */}
-                        {item.icon && <item.icon />}
+                        {showMenuIcons && item.icon && <item.icon />}
                         <span className="group-data-[collapsible=icon]:sr-only">{item.title}</span>
                         <ChevronRight className="ml-auto transition-transform duration-200 group-data-[collapsible=icon]:sr-only group-data-[state=open]/collapsible:rotate-90" />
                       </SidebarMenuButton>
@@ -111,7 +115,7 @@ export function NavMain({
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton asChild isActive={isActive(subItem.url)}>
                             <Link to={subItem.url}>
-                              {subItem.icon && <subItem.icon />}
+                              {showMenuIcons && subItem.icon && <subItem.icon />}
                               <span className={isActive(subItem.url) ? "font-medium" : ""}>{subItem.title}</span>
                             </Link>
                           </SidebarMenuSubButton>
@@ -128,10 +132,10 @@ export function NavMain({
                 <SidebarMenuButton
                   asChild
                   isActive={isActive(item.url)}
-                  tooltip={showTooltips ? item.title : undefined}
+                  tooltip={showMenuTooltips ? item.title : undefined}
                 >
                   <Link to={item.url} className="group-data-[collapsible=icon]:justify-center">
-                    {item.icon && <item.icon />}
+                    {state === "collapsed" ? item.icon && <item.icon /> : showMenuIcons && item.icon && <item.icon />}
                     <span className="group-data-[collapsible=icon]:sr-only">{item.title}</span>
                   </Link>
                 </SidebarMenuButton>
