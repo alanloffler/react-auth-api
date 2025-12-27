@@ -4,7 +4,7 @@ import { Outlet } from "react-router";
 import { Separator } from "@components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@components/ui/sidebar";
 
-export function Home() {
+export function MainLayout() {
   return (
     <SidebarProvider className="h-full overflow-hidden">
       <AppSidebar />
