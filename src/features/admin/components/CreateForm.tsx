@@ -153,7 +153,7 @@ export function CreateForm() {
       </CardHeader>
       <CardContent className="flex-1">
         <form className="grid grid-cols-1 gap-6" id="create-admin" onSubmit={form.handleSubmit(onSubmit)}>
-          <FieldGroup className="grid grid-cols-2 gap-6">
+          <FieldGroup className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <Controller
               name="ic"
               control={form.control}
@@ -189,7 +189,7 @@ export function CreateForm() {
               )}
             />
           </FieldGroup>
-          <FieldGroup className="grid grid-cols-2 gap-6">
+          <FieldGroup className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <Controller
               name="userName"
               control={form.control}
@@ -235,7 +235,7 @@ export function CreateForm() {
               )}
             />
           </FieldGroup>
-          <FieldGroup className="grid grid-cols-2 gap-6">
+          <FieldGroup className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <Controller
               name="firstName"
               control={form.control}
@@ -264,7 +264,7 @@ export function CreateForm() {
               name="email"
               control={form.control}
               render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid} className="col-span-3">
+                <Field data-invalid={fieldState.invalid} className="col-span-5 md:col-span-3">
                   <FieldLabel htmlFor="email">E-mail</FieldLabel>
                   <Input
                     aria-invalid={fieldState.invalid}
@@ -299,7 +299,7 @@ export function CreateForm() {
               control={form.control}
               render={({ field, fieldState }) => {
                 return (
-                  <Field data-invalid={fieldState.invalid} className="col-span-2">
+                  <Field data-invalid={fieldState.invalid} className="col-span-5 md:col-span-2">
                     <FieldLabel htmlFor="roleId">Rol</FieldLabel>
                     <Select disabled={!roles} key={field.value} value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger id="roleId" aria-invalid={fieldState.invalid}>
@@ -319,7 +319,7 @@ export function CreateForm() {
               }}
             />
           </FieldGroup>
-          <FieldGroup className="grid grid-cols-2 gap-6">
+          <FieldGroup className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <Controller
               name="phoneNumber"
               control={form.control}
