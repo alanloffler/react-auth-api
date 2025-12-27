@@ -17,6 +17,7 @@ export default function Dashboard() {
   const user = useAuthStore((state) => state.admin);
   const { dashboardSettings } = useSettingsStore();
 
+  const showLinksAsCard = dashboardSettings.find((setting) => setting.key === "showLinksAsCard")?.value === "true";
   const showConfigButtons = dashboardSettings.find((setting) => setting.key === "showConfigButtons")?.value === "true";
   const showHelloMessage = dashboardSettings.find((setting) => setting.key === "showHelloMessage")?.value === "true";
 
@@ -35,14 +36,14 @@ export default function Dashboard() {
         {showAdmin && (
           <div className="grid grid-cols-4 gap-8 lg:grid-cols-6 xl:grid-cols-8">
             <ActionCard
-              asCard={showConfigButtons}
+              asCard={showLinksAsCard}
               icon={UsersRound}
               permission="admin-view"
               text="Administradores"
               url="/admin"
             />
             <ActionCard
-              asCard={showConfigButtons}
+              asCard={showLinksAsCard}
               icon={UserRoundPlus}
               permission="admin-create"
               text="Crear Administrador"
@@ -52,9 +53,9 @@ export default function Dashboard() {
         )}
         {showRoles && (
           <div className="grid grid-cols-4 gap-8 lg:grid-cols-6 xl:grid-cols-8">
-            <ActionCard asCard={showConfigButtons} icon={Shield} permission="roles-view" text="Roles" url="/roles" />
+            <ActionCard asCard={showLinksAsCard} icon={Shield} permission="roles-view" text="Roles" url="/roles" />
             <ActionCard
-              asCard={showConfigButtons}
+              asCard={showLinksAsCard}
               icon={ShieldPlus}
               permission="roles-create"
               text="Crear rol"
@@ -65,14 +66,14 @@ export default function Dashboard() {
         {showPermissions && (
           <div className="grid grid-cols-4 gap-8 lg:grid-cols-6 xl:grid-cols-8">
             <ActionCard
-              asCard={showConfigButtons}
+              asCard={showLinksAsCard}
               icon={KeyRound}
               permission="permissions-view"
               text="Permisos"
               url="/permissions"
             />
             <ActionCard
-              asCard={showConfigButtons}
+              asCard={showLinksAsCard}
               icon={KeyRoundPlus}
               permission="permissions-create"
               text="Crear permiso"
