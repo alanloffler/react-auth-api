@@ -53,7 +53,7 @@ export function NavUser() {
             <SidebarMenuButton
               key={admin.updatedAt}
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground mx-auto"
             >
               <div className="flex flex-1 items-center gap-2 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
                 <span className="flex size-6 items-center justify-center rounded-full bg-gray-400 p-1 text-sm font-semibold text-white">
