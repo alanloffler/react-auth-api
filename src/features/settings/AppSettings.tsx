@@ -1,59 +1,43 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@components/ui/card";
-import { Checkbox } from "@components/ui/checkbox";
-import { PageHeader } from "@components/pages/PageHeader";
+import { LockKeyhole } from "lucide-react";
 
-import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
+import { Loader } from "@components/Loader";
+import { PageHeader } from "@components/pages/PageHeader";
+import { Switch } from "@components/ui/switch";
+
 import { usePermission } from "@core/hooks/usePermission";
+import { useSettingsStore } from "@settings/stores/settings.store";
 
 export default function AppSettings() {
-  const [checked1, setChecked1] = useState<boolean>(true);
-  const [checked2, setChecked2] = useState<boolean>(true);
   const canEditSettings = usePermission("settings-update");
+  const { appSettings, loadingAppSettings, updateAppSetting } = useSettingsStore();
 
   return (
     <div className="flex flex-col gap-8">
       <PageHeader title="Configuraciones de la aplicación" />
-      <div className="grid grid-cols-2 gap-8">
-        <Card className="relative">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
+        <Card className="relative col-span-1 gap-3 lg:col-span-3 2xl:col-span-2">
           <CardHeader>
-            <CardTitle>Aspecto</CardTitle>
-            <CardDescription>Configurá los colores de la aplicación</CardDescription>
+            <CardTitle>Menú</CardTitle>
           </CardHeader>
-          <CardContent className="flex-1">
-            <div className="flex items-center gap-3">
-              <Checkbox
-                checked={checked1}
-                disabled={!canEditSettings}
-                id="colors"
-                onCheckedChange={() => {
-                  setChecked1(!checked1);
-                }}
-              />
-              <label className="select-none hover:cursor-pointer" htmlFor="colors">
-                Contenido que requiere permisos de edición
-              </label>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="relative">
-          <CardHeader>
-            <CardTitle>Tablero</CardTitle>
-            <CardDescription>Configurá el tablero de la aplicación</CardDescription>
-          </CardHeader>
-          <CardContent className="flex-1">
-            <div className="flex items-center gap-3">
-              <Checkbox
-                disabled={!canEditSettings}
-                checked={checked2}
-                id="dashboard"
-                onCheckedChange={() => {
-                  setChecked2(!checked2);
-                }}
-              />
-              <label className="select-none hover:cursor-pointer" htmlFor="dashboard">
-                Contenido que requiere permisos de edición
-              </label>
-            </div>
+          <CardContent className="flex flex-1 flex-col gap-2">
+            {appSettings.map((setting) => (
+              <div className="flex items-center gap-3" key={setting.id}>
+                <Switch
+                  disabled={!canEditSettings || loadingAppSettings[setting.id]}
+                  id={setting.id}
+                  checked={setting.value === "true"}
+                  onCheckedChange={(checked) => {
+                    updateAppSetting(setting.id, checked.toString());
+                  }}
+                />
+                <label className="select-none hover:cursor-pointer" htmlFor={setting.id}>
+                  {setting.title}
+                </label>
+                {loadingAppSettings[setting.id] && <Loader color="#000" />}
+                {!canEditSettings && <LockKeyhole className="text-muted-foreground h-3.5 w-3.5" />}
+              </div>
+            ))}
           </CardContent>
         </Card>
       </div>
