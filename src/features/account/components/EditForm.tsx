@@ -185,7 +185,7 @@ export function EditForm() {
       </CardHeader>
       <CardContent className="flex-1">
         <form className="grid grid-cols-1 gap-6" id="edit-form" onSubmit={form.handleSubmit(onSubmit)}>
-          <FieldGroup className="grid grid-cols-2 gap-6">
+          <FieldGroup className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <Field>
               <FieldLabel>ID</FieldLabel>
               <Input className="pointer-events-none" id="id" readOnly value={ownAdmin!.id} />
@@ -225,7 +225,7 @@ export function EditForm() {
               )}
             />
           </FieldGroup>
-          <FieldGroup className="grid grid-cols-2 gap-6">
+          <FieldGroup className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <Controller
               name="userName"
               control={form.control}
@@ -285,7 +285,7 @@ export function EditForm() {
               )}
             />
           </FieldGroup>
-          <FieldGroup className="grid grid-cols-2 gap-6">
+          <FieldGroup className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <Controller
               name="firstName"
               control={form.control}
@@ -314,7 +314,7 @@ export function EditForm() {
               name="email"
               control={form.control}
               render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid} className="col-span-3">
+                <Field data-invalid={fieldState.invalid} className="col-span-5 md:col-span-3">
                   <FieldLabel htmlFor="email">E-mail</FieldLabel>
                   <Input
                     aria-invalid={fieldState.invalid}
@@ -348,7 +348,7 @@ export function EditForm() {
               name="phoneNumber"
               control={form.control}
               render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid} className="col-span-2">
+                <Field data-invalid={fieldState.invalid} className="col-span-5 md:col-span-2">
                   <FieldLabel htmlFor="phone">Teléfono</FieldLabel>
                   <Input
                     aria-invalid={fieldState.invalid}
