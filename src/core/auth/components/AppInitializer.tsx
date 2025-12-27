@@ -20,12 +20,13 @@ export function AppInitializer({ children }: IProps) {
 
     async function initAuth() {
       const { admin, setAdmin } = useAuthStore.getState();
-      const { loadAppSettings } = useSettingsStore.getState();
+      const { loadAppSettings, loadDashboardSettings } = useSettingsStore.getState();
 
       try {
         if (admin) {
           const response = await AuthService.getAdmin();
           await loadAppSettings();
+          await loadDashboardSettings();
 
           if (isMounted) setAdmin(response.data);
         }
