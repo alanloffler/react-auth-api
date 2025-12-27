@@ -100,9 +100,9 @@ export default function ViewAdmin() {
   return (
     <section className="flex flex-col gap-6">
       <PageHeader title="Detalles del administrador" />
-      <Card className="relative w-fit p-10 text-center">
+      <Card className="relative w-full p-6 text-center md:max-w-100 md:p-10">
         {isLoadingAdmin ? (
-          <div className="flex min-w-100 justify-center">
+          <div className="flex justify-center">
             <Loader color="black" size={20} text="Cargando administrador" />
           </div>
         ) : (
@@ -112,7 +112,7 @@ export default function ViewAdmin() {
               <CardTitle className="text-xl">{`${admin?.firstName} ${admin?.lastName}`}</CardTitle>
               <CardDescription className="text-base">{admin?.role.name}</CardDescription>
             </CardHeader>
-            <CardContent className="min-w-100 flex-1 space-y-6 px-0">
+            <CardContent className="flex-1 space-y-6 px-0">
               <ul className="space-y-2">
                 <li className="flex justify-between">
                   <span className="font-semibold">Usuario</span>
