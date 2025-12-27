@@ -142,7 +142,7 @@ export function EditForm() {
       </CardHeader>
       <CardContent className="flex-1">
         <form className="grid grid-cols-1 gap-6" id="create-role" onSubmit={form.handleSubmit(onSubmit)}>
-          <FieldGroup className="grid grid-cols-2 gap-6">
+          <FieldGroup className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <Controller
               name="name"
               control={form.control}
