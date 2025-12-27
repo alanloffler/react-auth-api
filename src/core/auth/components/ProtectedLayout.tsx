@@ -1,7 +1,7 @@
-import { Home } from "@/features/home/Home";
-
+import { MainLayout } from "@layouts/MainLayout";
 import { Navigate } from "react-router";
-import { useAuthStore } from "@core/auth/auth.store";
+
+import { useAuthStore } from "@auth/auth.store";
 
 interface IProps {
   allowedRoles?: string[];
@@ -18,5 +18,5 @@ export function ProtectedLayout({ allowedRoles }: IProps) {
     return <Navigate to="/dashboard" replace />;
   }
 
-  return <Home />;
+  return <MainLayout />;
 }
