@@ -118,13 +118,14 @@ export default function ViewRole() {
   function translate(content: string) {
     if (content === "admin") return "Administradores";
     if (content === "permissions") return "Permisos";
+    if (content === "settings") return "Configuraciones";
     return content.charAt(0).toUpperCase() + content.slice(1);
   }
 
   return (
     <section className="flex flex-col gap-6">
       <PageHeader title="Detalles del rol" />
-      <Card className="relative w-full p-10 text-center lg:w-[80%] xl:w-[60%]">
+      <Card className="relative w-full p-6 text-center md:p-10 lg:w-[80%] xl:w-[60%]">
         {isLoadingRole ? (
           <div className="flex min-w-80 justify-center">
             <Loader color="black" size={20} text="Cargando rol" />
@@ -136,8 +137,8 @@ export default function ViewRole() {
               <CardTitle className="text-xl">{role?.name}</CardTitle>
               <CardDescription className="text-base">{role?.value}</CardDescription>
             </CardHeader>
-            <CardContent className="flex-1 space-y-6 px-0">
-              <ul className="space-y-2 text-start">
+            <CardContent className="flex flex-col gap-6 px-0">
+              <ul className="flex flex-col gap-2 text-start">
                 <li className="flex gap-5">
                   <span className="font-semibold">Nombre</span>
                   <span>{role?.name}</span>
@@ -151,50 +152,52 @@ export default function ViewRole() {
                   <span>{role?.description}</span>
                 </li>
                 <div className="flex flex-col gap-8">
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-4">
                     <span className="font-semibold">Permisos:</span>
                     <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3">
                       {role?.rolePermissions && role.rolePermissions.length > 0 ? (
-                        Object.entries(groupByCategory(role?.rolePermissions)).map(([category, permissions]) => (
-                          <div className="flex flex-col gap-3" key={`category-block-${category}`}>
-                            <div className="flex text-xs font-semibold text-neutral-600 uppercase">
-                              {translate(category)}
+                        Object.entries(groupByCategory(role?.rolePermissions))
+                          .sort(([a], [b]) => translate(a).localeCompare(translate(b)))
+                          .map(([category, permissions]) => (
+                            <div className="flex flex-col gap-3" key={`category-block-${category}`}>
+                              <div className="flex text-xs font-semibold text-neutral-600 uppercase">
+                                {translate(category)}
+                              </div>
+                              <ul className="flex flex-col gap-2 pl-4">
+                                {permissions.map((rp, idx) => (
+                                  <li
+                                    key={`permission-${idx}`}
+                                    className="flex items-center gap-2 text-sm font-medium text-neutral-600"
+                                  >
+                                    <span className="bg-primary/20 rounded-full p-1">
+                                      <Check className="text-primary h-2.5 w-2.5" />
+                                    </span>
+                                    {rp.permission?.name}
+                                  </li>
+                                ))}
+                              </ul>
                             </div>
-                            <ul className="flex flex-col gap-2 pl-4">
-                              {permissions.map((rp, idx) => (
-                                <li
-                                  key={`permission-${idx}`}
-                                  className="flex items-center gap-2 text-sm font-medium text-neutral-600"
-                                >
-                                  <span className="bg-primary/20 rounded-full p-1">
-                                    <Check className="text-primary h-2.5 w-2.5" />
-                                  </span>
-                                  {rp.permission?.name}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        ))
+                          ))
                       ) : (
                         <span>Sin permisos</span>
                       )}
                     </ul>
                   </div>
-                  <div className="flex flex-col items-start">
+                  <div className="flex flex-col items-start rounded-lg border bg-neutral-50 p-3">
                     <span className="font-semibold">Usando este rol:</span>
                     {role?.admins?.length && role.admins.length > 0 ? (
                       <ul className="flex flex-col gap-2 pt-2 pl-4">
                         {role?.admins.map((item, idx) => (
-                          <li className="flex items-center gap-3" key={`admins-${item.id}`}>
+                          <li className="flex items-center gap-3 text-sm" key={`admins-${item.id}`}>
                             <Badge className="min-w-[29px] text-xs" size="small" variant="ic">
                               {idx + 1}
                             </Badge>
-                            <span>{item.userName}</span>
-                            <Button className="text-foreground h-fit p-0 text-base font-normal" variant="link" asChild>
+                            <Button className="text-foreground h-fit p-0 font-normal" variant="link" asChild>
                               <Link to={`/admin/view/${item.id}`}>
                                 {item.firstName} {item.lastName}
                               </Link>
                             </Button>
+                            <span className="text-muted-foreground">{item.userName}</span>
                           </li>
                         ))}
                       </ul>
