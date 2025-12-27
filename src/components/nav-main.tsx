@@ -58,7 +58,7 @@ export function NavMain({
                       <SidebarMenuButton
                         tooltip={showMenuTooltips ? item.title : undefined}
                         className={cn(
-                          "group-data-[collapsible=icon]:justify-center",
+                          "group-data-[collapsible=icon]:mx-auto",
                           isParentActive(item.items) && "bg-sidebar-accent text-sidebar-accent-foreground",
                         )}
                       >
@@ -131,6 +131,7 @@ export function NavMain({
               <Protected requiredPermission={item.permission}>
                 <SidebarMenuButton
                   asChild
+                  className="group-data-[collapsible=icon]:mx-auto"
                   isActive={isActive(item.url)}
                   tooltip={showMenuTooltips ? item.title : undefined}
                 >
