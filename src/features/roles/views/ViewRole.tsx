@@ -189,7 +189,7 @@ export default function ViewRole() {
                             <Badge className="min-w-[29px] text-xs" size="small" variant="ic">
                               {idx + 1}
                             </Badge>
-                            <span>@{item.userName}</span>
+                            <span>{item.userName}</span>
                             <Button className="text-foreground h-fit p-0 text-base font-normal" variant="link" asChild>
                               <Link to={`/admin/view/${item.id}`}>
                                 {item.firstName} {item.lastName}
