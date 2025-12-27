@@ -16,7 +16,7 @@ export function TeamSwitcher({ teams }: IProps) {
         <Link to="/dashboard">
           <SidebarMenuButton
             size="lg"
-            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:cursor-pointer"
+            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground mx-auto hover:cursor-pointer"
           >
             <div className="bg-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
               <teams.logo className="size-4 text-white" />
