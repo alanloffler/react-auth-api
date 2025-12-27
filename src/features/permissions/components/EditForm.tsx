@@ -124,7 +124,7 @@ export function EditForm() {
                 name="name"
                 control={form.control}
                 render={({ field, fieldState }) => (
-                  <Field className="col-span-3" data-invalid={fieldState.invalid}>
+                  <Field className="col-span-5 md:col-span-3" data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="name">Nombre</FieldLabel>
                     <Input aria-invalid={fieldState.invalid} id="name" {...field} />
                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -132,7 +132,7 @@ export function EditForm() {
                 )}
               />
             </FieldGroup>
-            <FieldGroup className="grid grid-cols-2 gap-6">
+            <FieldGroup className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <Controller
                 name="category"
                 control={form.control}
