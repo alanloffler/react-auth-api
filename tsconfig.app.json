@@ -30,6 +30,7 @@
       "@components/*": ["./src/components/*"],
       "@core/*": ["./src/core/*"],
       "@dashboard/*": ["./src/features/dashboard/*"],
+      "@layouts/*": ["./src/features/layouts/*"],
       "@lib/*": ["./src/lib/*"],
       "@login/*": ["./src/features/login/*"],
       "@permissions/*": ["./src/features/permissions/*"],

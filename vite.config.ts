@@ -16,6 +16,7 @@ export default defineConfig({
       "@components": path.resolve(__dirname, "./src/components"),
       "@dashboard": path.resolve(__dirname, "./src/features/dashboard"),
       "@core": path.resolve(__dirname, "./src/core"),
+      "@layouts": path.resolve(__dirname, "./src/features/layouts"),
       "@lib": path.resolve(__dirname, "./src/lib"),
       "@login": path.resolve(__dirname, "./src/features/login"),
       "@permissions": path.resolve(__dirname, "./src/features/permissions"),
