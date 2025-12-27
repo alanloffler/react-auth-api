@@ -18,7 +18,10 @@ import { NavUser } from "@components/nav-user";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@components/ui/sidebar";
 import { TeamSwitcher } from "@components/team-switcher";
 
+import { cn } from "@lib/utils";
 import { useAuthStore } from "@auth/auth.store";
+import { useEffect, useRef, useState } from "react";
+import { useSidebar } from "@components/ui/sidebar";
 
 const data = {
   teams: {
@@ -102,12 +105,49 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         .join(",") || "",
   );
 
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [hasScroll, setHasScroll] = useState(false);
+  const { openMobile } = useSidebar();
+
+  useEffect(() => {
+    const checkScroll = () => {
+      if (contentRef.current) {
+        const hasVerticalScroll = contentRef.current.scrollHeight > contentRef.current.clientHeight;
+        setHasScroll(hasVerticalScroll);
+      }
+    };
+
+    checkScroll();
+
+    const timeoutId1 = setTimeout(checkScroll, 100);
+
+    window.addEventListener("resize", checkScroll);
+
+    const resizeObserver = new ResizeObserver(checkScroll);
+    const element = contentRef.current;
+    if (element) {
+      resizeObserver.observe(element);
+    }
+
+    return () => {
+      clearTimeout(timeoutId1);
+      window.removeEventListener("resize", checkScroll);
+      resizeObserver.disconnect();
+    };
+  }, [adminPermissions, openMobile]);
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
-      <SidebarContent key={adminPermissions}>
+      <SidebarContent
+        ref={contentRef}
+        className={cn(
+          hasScroll && "shadow-[inset_0_6px_6px_-6px_rgba(0,0,0,0.1),inset_0_-6px_6px_-6px_rgba(0,0,0,0.1)]",
+        )}
+        key={adminPermissions}
+      >
         <NavMain items={data.navMain} />
         <NavActions items={data.navActions} />
       </SidebarContent>
