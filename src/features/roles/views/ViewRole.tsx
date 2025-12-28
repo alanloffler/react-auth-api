@@ -147,7 +147,7 @@ export default function ViewRole() {
                   <span className="font-semibold">Valor</span>
                   <span>{role?.value}</span>
                 </li>
-                <li className="flex flex-col items-start">
+                <li className="flex gap-5">
                   <span className="font-semibold">Descripción</span>
                   <span>{role?.description}</span>
                 </li>
@@ -160,14 +160,14 @@ export default function ViewRole() {
                           .sort(([a], [b]) => translate(a).localeCompare(translate(b)))
                           .map(([category, permissions]) => (
                             <div className="flex flex-col gap-3" key={`category-block-${category}`}>
-                              <div className="flex text-xs font-semibold text-neutral-600 uppercase">
+                              <div className="dark:text-foreground flex text-xs font-semibold text-neutral-600 uppercase">
                                 {translate(category)}
                               </div>
                               <ul className="flex flex-col gap-2 pl-4">
                                 {permissions.map((rp, idx) => (
                                   <li
                                     key={`permission-${idx}`}
-                                    className="flex items-center gap-2 text-sm font-medium text-neutral-600"
+                                    className="dark:text-foreground flex items-center gap-2 text-sm font-medium text-neutral-600"
                                   >
                                     <span className="bg-primary/20 rounded-full p-1">
                                       <Check className="text-primary h-2.5 w-2.5" />
@@ -183,7 +183,7 @@ export default function ViewRole() {
                       )}
                     </ul>
                   </div>
-                  <div className="flex flex-col items-start rounded-lg border bg-neutral-50 p-3">
+                  <div className="dark:bg-background flex flex-col items-start rounded-lg border bg-neutral-50 p-3">
                     <span className="font-semibold">Usando este rol:</span>
                     {role?.admins?.length && role.admins.length > 0 ? (
                       <ul className="flex flex-col gap-2 pt-2 pl-4">
