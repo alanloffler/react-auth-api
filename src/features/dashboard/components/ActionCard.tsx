@@ -18,7 +18,7 @@ export function ActionCard({ asCard = true, icon: Icon, permission, text, url }:
     <Protected requiredPermission={permission}>
       <Link className="col-span-2" to={url}>
         {asCard ? (
-          <Card className="items-center gap-3 px-6 font-medium transition-colors duration-150 hover:bg-neutral-50">
+          <Card className="items-center gap-3 px-6 font-medium transition-colors duration-150 hover:bg-neutral-50 dark:hover:bg-neutral-950">
             <Icon className="h-6 w-6" />
             <span>{text}</span>
           </Card>
