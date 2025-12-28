@@ -1,5 +1,6 @@
 import { Ban, Eye, FilePenLine, Plus, RotateCcw, Trash2 } from "lucide-react";
 
+import { Badge } from "@components/Badge";
 import { Button } from "@components/ui/button";
 import { DataTable } from "@/components/data-table/DataTable";
 import { HoldButton } from "@components/ui/HoldButton";
@@ -88,8 +89,10 @@ export default function Permissions() {
       accessorKey: "id",
       header: () => <div className="text-center">ID</div>,
       cell: ({ row }) => (
-        <div className="flex w-fit place-self-center rounded-sm bg-neutral-100 px-2 py-1 text-xs text-neutral-600">
-          {row.original.id.slice(0, 5)}
+        <div className="flex justify-center">
+          <Badge size="small" variant="id">
+            {row.original.id.slice(0, 5)}
+          </Badge>
         </div>
       ),
     },
