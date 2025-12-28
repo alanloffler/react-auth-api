@@ -190,9 +190,7 @@ export function CreateForm() {
           </form>
         </CardContent>
         <CardFooter className="flex justify-between pt-4">
-          <div>
-            {isLoadingActions && <Loader className="text-sm" color="black" size={18} text="Cargando acciones" />}
-          </div>
+          <div>{isLoadingActions && <Loader className="text-sm" size={18} text="Cargando acciones" />}</div>
           <div className="flex gap-4">
             <Button variant="ghost" onClick={resetForm}>
               Cancelar
