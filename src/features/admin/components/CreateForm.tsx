@@ -343,7 +343,7 @@ export function CreateForm() {
         </form>
       </CardContent>
       <CardFooter className="flex items-center justify-between pt-4">
-        <div>{isLoadingRoles && <Loader className="text-sm" color="black" size={18} text="Cargando roles" />}</div>
+        <div>{isLoadingRoles && <Loader className="text-sm" size={18} text="Cargando roles" />}</div>
         <div className="flex gap-4">
           <Button variant="ghost" onClick={resetForm}>
             Cancelar
