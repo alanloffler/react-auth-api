@@ -107,7 +107,7 @@ export default function ViewPermission() {
       <Card className="relative w-full max-w-180 p-10 text-center">
         {isLoadingPermission ? (
           <div className="flex min-w-80 justify-center">
-            <Loader color="black" size={20} text="Cargando permiso" />
+            <Loader size={20} text="Cargando permiso" />
           </div>
         ) : (
           <>
