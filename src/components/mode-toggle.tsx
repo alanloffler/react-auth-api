@@ -4,9 +4,24 @@ import { Button } from "@components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@components/ui/dropdown-menu";
 
 import { useTheme } from "@core/providers/theme-provider";
+import { useSettingsStore } from "@settings/stores/settings.store";
+import { useAuthStore } from "@auth/auth.store";
 
 export function ModeToggle() {
+  const admin = useAuthStore((state) => state.admin);
+  const { appSettings, updateAppSetting } = useSettingsStore();
   const { setTheme } = useTheme();
+
+  async function handleThemeChange(theme: "light" | "dark" | "system") {
+    setTheme(theme);
+
+    if (admin) {
+      const themeSetting = appSettings.find((setting) => setting.submodule === "theme");
+      if (themeSetting) {
+        await updateAppSetting(themeSetting.id, theme);
+      }
+    }
+  }
 
   return (
     <DropdownMenu>
@@ -18,9 +33,9 @@ export function ModeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>Claro</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>Oscuro</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>Sistema</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleThemeChange("light")}>Claro</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleThemeChange("dark")}>Oscuro</DropdownMenuItem>
+        {/* <DropdownMenuItem onClick={() => handleThemeChange("system")}>Sistema</DropdownMenuItem> */}
       </DropdownMenuContent>
     </DropdownMenu>
   );
