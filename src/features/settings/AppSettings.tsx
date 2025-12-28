@@ -3,25 +3,61 @@ import { LockKeyhole } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
 import { Loader } from "@components/Loader";
 import { PageHeader } from "@components/pages/PageHeader";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select";
 import { Switch } from "@components/ui/switch";
 
 import { usePermission } from "@core/hooks/usePermission";
 import { useSettingsStore } from "@settings/stores/settings.store";
+import { useTheme, type Theme } from "@core/providers/theme-provider";
 
 export default function AppSettings() {
   const canEditSettings = usePermission("settings-update");
   const { appSettings, loadingAppSettings, updateAppSetting } = useSettingsStore();
+  const { setTheme } = useTheme();
+
+  const menuSettings = appSettings.filter((setting) => setting.submodule === "menu");
+  const themeSettings = appSettings.filter((setting) => setting.submodule === "theme");
+
+  async function handleThemeChange(settingId: string, value: string) {
+    setTheme(value as Theme);
+    await updateAppSetting(settingId, value);
+  }
 
   return (
     <div className="flex flex-col gap-8">
       <PageHeader title="Configuraciones de la aplicación" />
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
-        <Card className="relative col-span-1 gap-3 lg:col-span-3 2xl:col-span-2">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-6">
+        <Card className="relative col-span-1 gap-3 lg:col-span-3">
+          <CardHeader>
+            <CardTitle>Aspecto</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-1 flex-col gap-2">
+            {themeSettings.map((setting) => (
+              <div className="flex items-center gap-3" key={setting.id}>
+                <label className="select-none hover:cursor-pointer" htmlFor={setting.id}>
+                  {setting.title}
+                </label>
+                <Select onValueChange={(value) => handleThemeChange(setting.id, value)} value={setting.value}>
+                  <SelectTrigger disabled={!canEditSettings || loadingAppSettings[setting.id]}>
+                    <SelectValue placeholder={setting.title} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="light">Claro</SelectItem>
+                    <SelectItem value="dark">Oscuro</SelectItem>
+                  </SelectContent>
+                </Select>
+                {loadingAppSettings[setting.id] && <Loader color="#000" />}
+                {!canEditSettings && <LockKeyhole className="text-muted-foreground h-3.5 w-3.5" />}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+        <Card className="relative col-span-1 gap-3 lg:col-span-3">
           <CardHeader>
             <CardTitle>Menú</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-1 flex-col gap-2">
-            {appSettings.map((setting) => (
+            {menuSettings.map((setting) => (
               <div className="flex items-center gap-3" key={setting.id}>
                 <Switch
                   disabled={!canEditSettings || loadingAppSettings[setting.id]}
