@@ -373,9 +373,7 @@ export function EditForm() {
         </div>
       </CardContent>
       <CardFooter className="flex items-center justify-between pt-4">
-        <div>
-          {isLoadingAdmin && <Loader className="text-sm" color="black" size={18} text="Cargando tu información" />}
-        </div>
+        <div>{isLoadingAdmin && <Loader className="text-sm" size={18} text="Cargando tu información" />}</div>
         <div className="flex gap-4">
           <Button variant="ghost" onClick={handleCancel}>
             Cancelar
