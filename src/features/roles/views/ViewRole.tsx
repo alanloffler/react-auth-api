@@ -128,7 +128,7 @@ export default function ViewRole() {
       <Card className="relative w-full p-6 text-center md:p-10 lg:w-[80%] xl:w-[60%]">
         {isLoadingRole ? (
           <div className="flex min-w-80 justify-center">
-            <Loader color="black" size={20} text="Cargando rol" />
+            <Loader size={20} text="Cargando rol" />
           </div>
         ) : (
           <>
