@@ -199,9 +199,7 @@ export function EditForm() {
           </form>
         </CardContent>
         <CardFooter className="flex items-center justify-between pt-4">
-          <div>
-            {isLoadingPermission && <Loader className="text-sm" color="black" size={18} text="Descargando permiso" />}
-          </div>
+          <div>{isLoadingPermission && <Loader className="text-sm" size={18} text="Descargando permiso" />}</div>
           <div className="flex gap-4">
             <Button variant="ghost" onClick={resetForm}>
               Cancelar
