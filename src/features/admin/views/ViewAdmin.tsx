@@ -103,7 +103,7 @@ export default function ViewAdmin() {
       <Card className="relative w-full p-6 text-center md:max-w-100 md:p-10">
         {isLoadingAdmin ? (
           <div className="flex justify-center">
-            <Loader color="black" size={20} text="Cargando administrador" />
+            <Loader size={20} text="Cargando administrador" />
           </div>
         ) : (
           <>
