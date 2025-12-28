@@ -184,7 +184,7 @@ export function EditForm() {
             <FieldGroup>
               <div
                 className={cn(
-                  "flex flex-col gap-5 rounded-md border border-gray-200 p-6",
+                  "flex flex-col gap-5 rounded-md border p-6",
                   form.formState.errors.permissions && "border-destructive",
                 )}
               >
