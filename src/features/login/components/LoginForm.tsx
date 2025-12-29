@@ -93,7 +93,13 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
               />
               <Field>
                 <Button type="submit" className="h-11 w-full md:h-12">
-                  {isLogin ? <Loader text="Ingresando" /> : isFetching ? <Loader text="Cargando" /> : "Ingresar"}
+                  {isLogin ? (
+                    <Loader color="white" text="Ingresando" />
+                  ) : isFetching ? (
+                    <Loader color="white" text="Cargando" />
+                  ) : (
+                    "Ingresar"
+                  )}
                 </Button>
               </Field>
               <a href="#" className="text-xs underline-offset-2 hover:underline md:text-xs">

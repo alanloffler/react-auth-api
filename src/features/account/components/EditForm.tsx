@@ -365,12 +365,14 @@ export function EditForm() {
             />
           </FieldGroup>
         </form>
-        <div className="mt-8 flex items-center gap-3">
-          <span className="text-sm">Tu rol es</span>
-          <Badge size="normal" variant="role">
-            {adminToUpdate?.role.name}
-          </Badge>
-        </div>
+        {adminToUpdate && (
+          <div className="mt-8 flex items-center gap-3">
+            <span className="text-sm">Tu rol es</span>
+            <Badge size="normal" variant="role">
+              {adminToUpdate?.role.name}
+            </Badge>
+          </div>
+        )}
       </CardContent>
       <CardFooter className="flex items-center justify-between pt-4">
         <div>{isLoadingAdmin && <Loader className="text-sm" size={18} text="Cargando tu información" />}</div>
@@ -379,7 +381,7 @@ export function EditForm() {
             Cancelar
           </Button>
           <Button disabled={!form.formState.isDirty} form="edit-form" type="submit" variant="default">
-            {isSaving ? <Loader text="Guardando" /> : "Guardar"}
+            {isSaving ? <Loader color="white" text="Guardando" /> : "Guardar"}
           </Button>
         </div>
       </CardFooter>
