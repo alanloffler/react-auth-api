@@ -205,7 +205,7 @@ export function EditForm() {
               Cancelar
             </Button>
             <Button disabled={!form.formState.isDirty} form="create-permission" type="submit" variant="default">
-              {isSavingPermission ? <Loader text="Guardando" /> : "Guardar"}
+              {isSavingPermission ? <Loader color="white" text="Guardando" /> : "Guardar"}
             </Button>
           </div>
         </CardFooter>
