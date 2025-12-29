@@ -23,7 +23,7 @@ export function ActionCard({ asCard = true, icon: Icon, permission, text, url }:
             <span>{text}</span>
           </Card>
         ) : (
-          <div className="justify-left flex h-full items-center gap-3 rounded-xl p-6 font-medium transition-colors duration-150 hover:bg-neutral-100">
+          <div className="justify-left flex h-full items-center gap-3 rounded-xl p-6 font-medium transition-colors duration-150 hover:bg-neutral-100 dark:hover:bg-neutral-950">
             <Icon className="h-6 w-6" />
             <span>{text}</span>
           </div>
