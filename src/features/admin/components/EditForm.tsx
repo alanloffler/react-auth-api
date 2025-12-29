@@ -433,7 +433,7 @@ export function EditForm({ adminId }: IProps) {
             Cancelar
           </Button>
           <Button disabled={!form.formState.isDirty} form="edit-form" type="submit" variant="default">
-            {isSaving ? <Loader text="Guardando" /> : "Guardar"}
+            {isSaving ? <Loader color="white" text="Guardando" /> : "Guardar"}
           </Button>
         </div>
       </CardFooter>
