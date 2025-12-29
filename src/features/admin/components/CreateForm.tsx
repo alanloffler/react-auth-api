@@ -349,7 +349,7 @@ export function CreateForm() {
             Cancelar
           </Button>
           <Button disabled={!form.formState.isDirty} form="create-admin" type="submit" variant="default">
-            {isSaving ? <Loader text="Guardando" /> : "Guardar"}
+            {isSaving ? <Loader color="white" text="Guardando" /> : "Guardar"}
           </Button>
         </div>
       </CardFooter>
