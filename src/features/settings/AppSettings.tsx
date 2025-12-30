@@ -6,12 +6,13 @@ import { PageHeader } from "@components/pages/PageHeader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select";
 import { Switch } from "@components/ui/switch";
 
+import { useState } from "react";
+
 import type { TSyncMode } from "@settings/interfaces/sync-mode.type";
 import { ERoles } from "@auth/enums/role.enum";
 import { useAuthStore } from "@/core/auth/auth.store";
 import { usePermission } from "@core/hooks/usePermission";
 import { useSettingsStore } from "@settings/stores/settings.store";
-import { useState } from "react";
 import { useTheme, type Theme } from "@core/providers/theme-provider";
 
 export default function AppSettings() {
