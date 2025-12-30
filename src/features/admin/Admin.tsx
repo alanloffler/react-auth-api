@@ -19,18 +19,20 @@ import { ERoles } from "@auth/enums/role.enum";
 import { tryCatch } from "@core/utils/try-catch";
 import { useAuthStore } from "@auth/auth.store";
 import { useSidebar } from "@components/ui/sidebar";
+import { useTryCatch } from "@core/hooks/useTryCatch";
 
 export default function Admin() {
   const [admins, setAdmins] = useState<IAdmin[] | undefined>(undefined);
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean> | undefined>(undefined);
   const admin = useAuthStore((state) => state.admin);
+  const { isLoading: isLoadingAdmins, tryCatch: tryCatchAdmins } = useTryCatch();
   const { open: sidebarIsOpen } = useSidebar();
 
   const fetchAdmins = useCallback(async () => {
     const isSuperAdmin = admin?.role.value === ERoles.SUPER;
     const serviceByRole = isSuperAdmin ? AdminService.findAllSoftRemoved() : AdminService.findAll();
 
-    const [response, error] = await tryCatch(serviceByRole);
+    const [response, error] = await tryCatchAdmins(serviceByRole);
 
     if (error) {
       toast.error(error.message);
@@ -40,7 +42,7 @@ export default function Admin() {
     if (response && response.statusCode === 200) {
       setAdmins(response.data);
     }
-  }, [admin?.role.value]);
+  }, [admin?.role.value, tryCatchAdmins]);
 
   useEffect(() => {
     fetchAdmins();
@@ -126,7 +128,7 @@ export default function Admin() {
       cell: ({ row }) => (
         <div className="flex justify-center">
           <Badge size="small" variant="id">
-            {row.original.id.slice(0, 5)}
+            {row.original?.id?.slice(0, 5)}
           </Badge>
         </div>
       ),
@@ -182,13 +184,14 @@ export default function Admin() {
       cell: ({ row }) => (
         <div className="flex justify-center">
           <Badge size="small" variant="role">
-            {row.original.role.name}
+            {row.original.role?.name}
           </Badge>
         </div>
       ),
     },
     {
       id: "actions",
+      minSize: 168,
       cell: ({ row }) => (
         <div className="flex justify-end gap-2">
           <Button className="px-5! hover:text-sky-500" variant="outline" asChild>
@@ -251,11 +254,12 @@ export default function Admin() {
         </Protected>
       </PageHeader>
       <DataTable
-        columns={columns}
         columnVisibility={columnVisibility}
+        columns={columns}
         data={admins}
         defaultPageSize={10}
         defaultSorting={[{ id: "userName", desc: false }]}
+        loading={isLoadingAdmins}
         pageSizes={[5, 10, 20, 50]}
       />
     </div>
