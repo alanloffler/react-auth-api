@@ -6,7 +6,7 @@ import { ThemeProvider } from "@core/providers/theme-provider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
-  <ThemeProvider defaultTheme="dark" storageKey="react-auth-api-theme">
+  <ThemeProvider defaultTheme="light">
     <App />
   </ThemeProvider>,
   // </StrictMode>,
