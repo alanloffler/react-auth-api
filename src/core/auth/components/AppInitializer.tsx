@@ -11,20 +11,25 @@ interface IProps {
 
 export function AppInitializer({ children }: IProps) {
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
-  const hasInitialized = useRef<boolean>(false);
+  const admin = useAuthStore((state) => state.admin);
+  const isInitializing = useRef(false);
+  const lastAdminId = useRef<string | null>(null);
+  const loadAppSettings = useSettingsStore((state) => state.loadAppSettings);
+  const loadDashboardSettings = useSettingsStore((state) => state.loadDashboardSettings);
+  const setAdmin = useAuthStore((state) => state.setAdmin);
   const { setTheme } = useTheme();
 
   useEffect(() => {
-    if (hasInitialized.current) return;
-    hasInitialized.current = true;
-
     let isMounted = true;
 
     async function initAuth() {
-      const { admin, setAdmin } = useAuthStore.getState();
-      const { loadAppSettings, loadDashboardSettings } = useSettingsStore.getState();
+      if (isInitializing.current || (admin && lastAdminId.current === admin.id)) {
+        return;
+      }
 
-      const storedTheme = localStorage.getItem("vite-ui-theme");
+      isInitializing.current = true;
+
+      const storedTheme = localStorage.getItem("react-auth-theme");
       if (storedTheme && (storedTheme === "light" || storedTheme === "dark" || storedTheme === "system")) {
         setTheme(storedTheme);
       }
@@ -32,6 +37,7 @@ export function AppInitializer({ children }: IProps) {
       try {
         if (admin) {
           const response = await AuthService.getAdmin();
+
           await loadAppSettings();
           await loadDashboardSettings();
 
@@ -44,12 +50,21 @@ export function AppInitializer({ children }: IProps) {
             setTheme(themeSetting.value);
           }
 
-          if (isMounted) setAdmin(response.data);
+          if (isMounted && response.data) {
+            setAdmin(response.data);
+            lastAdminId.current = response.data.id;
+          }
+        } else {
+          lastAdminId.current = null;
         }
       } catch {
-        if (isMounted) setAdmin(undefined);
+        if (isMounted) {
+          setAdmin(undefined);
+          lastAdminId.current = null;
+        }
       } finally {
         if (isMounted) setIsInitialized(true);
+        isInitializing.current = false;
       }
     }
 
@@ -58,7 +73,7 @@ export function AppInitializer({ children }: IProps) {
     return () => {
       isMounted = false;
     };
-  }, [setTheme]);
+  }, [admin, setTheme, setAdmin, loadAppSettings, loadDashboardSettings]);
 
   if (!isInitialized) {
     return null;
