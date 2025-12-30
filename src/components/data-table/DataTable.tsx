@@ -1,4 +1,5 @@
 import { Pagination } from "@components/Pagination";
+import { Skeleton } from "@components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@components/ui/table";
 
 import {
@@ -12,8 +13,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { useState } from "react";
 import { cn } from "@lib/utils";
+import { useMemo, useState } from "react";
 
 interface DataTableProps<TData, TValue> {
   className?: string;
@@ -23,6 +24,7 @@ interface DataTableProps<TData, TValue> {
   defaultPageSize?: number;
   defaultSorting?: SortingState;
   pageSizes?: number[];
+  loading?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -33,16 +35,30 @@ export function DataTable<TData, TValue>({
   defaultPageSize = 5,
   defaultSorting = [],
   pageSizes = [5, 10, 20, 50],
+  loading,
 }: DataTableProps<TData, TValue>) {
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: defaultPageSize,
   });
   const [sorting, setSorting] = useState<SortingState>(defaultSorting);
+
+  const tableData = useMemo(() => (loading ? Array(5).fill({}) : data), [loading, data]);
+  const tableColumns = useMemo(
+    () =>
+      loading
+        ? columns.map((column) => ({
+            ...column,
+            cell: () => <Skeleton className="h-9 w-full" />,
+          }))
+        : columns,
+    [loading, columns],
+  );
+
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
-    data: data || [],
-    columns,
+    data: tableData || [],
+    columns: tableColumns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -63,7 +79,14 @@ export function DataTable<TData, TValue>({
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead className="py-2.5" key={header.id}>
+                  <TableHead
+                    className="py-2.5"
+                    key={header.id}
+                    style={{
+                      minWidth: header.column.columnDef.minSize,
+                      width: header.column.getSize(),
+                    }}
+                  >
                     {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 );
@@ -76,7 +99,15 @@ export function DataTable<TData, TValue>({
             table.getRowModel().rows.map((row) => (
               <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                  <TableCell
+                    style={{
+                      minWidth: cell.column.columnDef.minSize,
+                      width: cell.column.getSize(),
+                    }}
+                    key={cell.id}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
                 ))}
               </TableRow>
             ))
@@ -89,7 +120,9 @@ export function DataTable<TData, TValue>({
           )}
         </TableBody>
       </Table>
-      <Pagination table={table} setPagination={setPagination} pagination={pagination} pageSizes={pageSizes} />
+      {!loading && (
+        <Pagination table={table} setPagination={setPagination} pagination={pagination} pageSizes={pageSizes} />
+      )}
     </div>
   );
 }
