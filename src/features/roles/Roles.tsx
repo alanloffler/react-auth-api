@@ -18,16 +18,18 @@ import { ERoles } from "@auth/enums/role.enum";
 import { RolesService } from "@roles/services/roles.service";
 import { tryCatch } from "@core/utils/try-catch";
 import { useAuthStore } from "@auth/auth.store";
+import { useTryCatch } from "@core/hooks/useTryCatch";
 
 export default function Roles() {
   const [roles, setRoles] = useState<IRole[] | undefined>(undefined);
   const admin = useAuthStore((state) => state.admin);
+  const { isLoading: isLoadingRoles, tryCatch: tryCatchRoles } = useTryCatch();
 
   const fetchRoles = useCallback(async () => {
     const isSuperAdmin = admin?.role.value === ERoles.SUPER;
     const serviceByRole = isSuperAdmin ? RolesService.findAllSoftRemoved() : RolesService.findAll();
 
-    const [response, error] = await tryCatch(serviceByRole);
+    const [response, error] = await tryCatchRoles(serviceByRole);
 
     if (error) {
       toast.error(error.message);
@@ -37,7 +39,7 @@ export default function Roles() {
     if (response && response.statusCode === 200) {
       setRoles(response.data);
     }
-  }, [admin?.role.value]);
+  }, [admin?.role.value, tryCatchRoles]);
 
   useEffect(() => {
     fetchRoles();
@@ -113,6 +115,7 @@ export default function Roles() {
     },
     {
       id: "actions",
+      minSize: 168,
       cell: ({ row }) => (
         <div className="flex justify-end gap-2">
           <Button className="px-5! hover:text-sky-500" variant="outline" asChild>
@@ -179,7 +182,13 @@ export default function Roles() {
           </Button>
         </Protected>
       </PageHeader>
-      <DataTable columns={columns} data={roles} defaultPageSize={10} defaultSorting={[{ id: "name", desc: false }]} />
+      <DataTable
+        columns={columns}
+        data={roles}
+        defaultPageSize={10}
+        defaultSorting={[{ id: "name", desc: false }]}
+        loading={isLoadingRoles}
+      />
     </div>
   );
 }
