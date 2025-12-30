@@ -17,13 +17,15 @@ import type { IPermission } from "@permissions/interfaces/permission.interface";
 import { PermissionsService } from "@permissions/services/permissions.service";
 import { tryCatch } from "@core/utils/try-catch";
 import { useAuthStore } from "@auth/auth.store";
+import { useTryCatch } from "@core/hooks/useTryCatch";
 
 export default function Permissions() {
   const [permissions, setPermissions] = useState<IPermission[] | undefined>(undefined);
   const refreshAdmin = useAuthStore((state) => state.refreshAdmin);
+  const { isLoading: isLoadingPermissions, tryCatch: tryCatchPermissions } = useTryCatch();
 
   const fetchPermissions = useCallback(async () => {
-    const [response, error] = await tryCatch(PermissionsService.findAll());
+    const [response, error] = await tryCatchPermissions(PermissionsService.findAll());
 
     if (error) {
       toast.error(error.message);
@@ -33,7 +35,7 @@ export default function Permissions() {
     if (response && response.statusCode === 200) {
       setPermissions(response.data);
     }
-  }, []);
+  }, [tryCatchPermissions]);
 
   useEffect(() => {
     fetchPermissions();
@@ -116,6 +118,7 @@ export default function Permissions() {
     },
     {
       id: "actions",
+      minSize: 168,
       cell: ({ row }) => (
         <div className="flex justify-end gap-2">
           <Button className="px-5! hover:text-sky-500" variant="outline" asChild>
@@ -188,6 +191,7 @@ export default function Permissions() {
         data={permissions}
         defaultPageSize={10}
         defaultSorting={[{ id: "actionKey", desc: false }]}
+        loading={isLoadingPermissions}
       />
     </div>
   );
