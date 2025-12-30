@@ -6,11 +6,17 @@ import { PageHeader } from "@components/pages/PageHeader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select";
 import { Switch } from "@components/ui/switch";
 
+import type { TSyncMode } from "@settings/interfaces/sync-mode.type";
+import { ERoles } from "@auth/enums/role.enum";
+import { useAuthStore } from "@/core/auth/auth.store";
 import { usePermission } from "@core/hooks/usePermission";
 import { useSettingsStore } from "@settings/stores/settings.store";
+import { useState } from "react";
 import { useTheme, type Theme } from "@core/providers/theme-provider";
 
 export default function AppSettings() {
+  const [syncMode, setSyncMode] = useState<TSyncMode>("local");
+  const admin = useAuthStore((state) => state.admin);
   const canEditSettings = usePermission("settings-update");
   const { appSettings, loadingAppSettings, updateAppSetting } = useSettingsStore();
   const { setTheme } = useTheme();
@@ -20,12 +26,24 @@ export default function AppSettings() {
 
   async function handleThemeChange(settingId: string, value: string) {
     setTheme(value as Theme);
-    await updateAppSetting(settingId, value);
+    await updateAppSetting(settingId, value, syncMode);
   }
 
   return (
     <div className="flex flex-col gap-8">
-      <PageHeader title="Configuraciones de la aplicación" />
+      <PageHeader title="Configuraciones de la aplicación">
+        {admin?.role.value === ERoles.SUPER && (
+          <div className="flex items-center gap-3">
+            <label className="text-sm font-medium">
+              Actualizar en {syncMode === "remote" ? "base de datos" : "local"}
+            </label>
+            <Switch
+              checked={syncMode === "remote" ? true : false}
+              onCheckedChange={(value) => setSyncMode(value === true ? "remote" : "local")}
+            />
+          </div>
+        )}
+      </PageHeader>
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-6">
         <Card className="relative col-span-1 gap-3 lg:col-span-3">
           <CardHeader>
@@ -64,7 +82,7 @@ export default function AppSettings() {
                   id={setting.id}
                   checked={setting.value === "true"}
                   onCheckedChange={(checked) => {
-                    updateAppSetting(setting.id, checked.toString());
+                    updateAppSetting(setting.id, checked.toString(), syncMode);
                   }}
                 />
                 <label className="select-none hover:cursor-pointer" htmlFor={setting.id}>
