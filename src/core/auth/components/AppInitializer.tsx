@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { AuthService } from "@auth/services/auth.service";
-import { useAuthStore } from "@core/auth/auth.store";
+import { useAuthStore } from "@auth/stores/auth.store";
 import { useSettingsStore } from "@settings/stores/settings.store";
 import { useTheme } from "@core/providers/theme-provider";
 
