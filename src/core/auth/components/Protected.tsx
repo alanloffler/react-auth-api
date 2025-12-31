@@ -1,9 +1,11 @@
 import type { ReactNode } from "react";
-import { usePermission } from "@core/hooks/usePermission";
+
+import type { TPermission } from "@permissions/interfaces/permission.type";
+import { usePermission } from "@permissions/hooks/usePermission";
 
 interface IProps {
   children: ReactNode;
-  requiredPermission: string;
+  requiredPermission: TPermission;
   variant?: "invisible" | "disabled";
 }
 
