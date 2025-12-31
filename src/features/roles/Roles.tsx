@@ -17,7 +17,7 @@ import type { IRole } from "@roles/interfaces/role.interface";
 import { ERoles } from "@auth/enums/role.enum";
 import { RolesService } from "@roles/services/roles.service";
 import { tryCatch } from "@core/utils/try-catch";
-import { useAuthStore } from "@auth/auth.store";
+import { useAuthStore } from "@auth/stores/auth.store";
 import { useTryCatch } from "@core/hooks/useTryCatch";
 
 export default function Roles() {
