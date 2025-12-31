@@ -80,7 +80,9 @@ class ApiClient {
 
           processQueue(refreshError as AxiosError, false);
 
-          if (refreshError.response?.status === 401) {
+          const isAdminCheck = originalRequest.url?.includes("/auth/admin");
+
+          if (!isAdminCheck) {
             toast.error("Tu sesión ha expirado");
 
             setTimeout(() => {
