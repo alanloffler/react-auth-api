@@ -2,7 +2,7 @@ import { Ban, Eye, FilePenLine, Plus, RotateCcw, Trash2 } from "lucide-react";
 
 import { Badge } from "@components/Badge";
 import { Button } from "@components/ui/button";
-import { DataTable } from "@/components/data-table/DataTable";
+import { DataTable } from "@components/data-table/DataTable";
 import { HoldButton } from "@components/ui/HoldButton";
 import { Link } from "react-router";
 import { PageHeader } from "@components/pages/PageHeader";
