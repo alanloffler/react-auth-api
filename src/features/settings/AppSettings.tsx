@@ -11,7 +11,7 @@ import { useState } from "react";
 import type { TSyncMode } from "@settings/interfaces/sync-mode.type";
 import { ERoles } from "@auth/enums/role.enum";
 import { useAuthStore } from "@/core/auth/auth.store";
-import { usePermission } from "@core/hooks/usePermission";
+import { usePermission } from "@permissions/hooks/usePermission";
 import { useSettingsStore } from "@settings/stores/settings.store";
 import { useTheme, type Theme } from "@core/providers/theme-provider";
 
