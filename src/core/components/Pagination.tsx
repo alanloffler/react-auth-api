@@ -16,7 +16,7 @@ interface IProps {
 
 export function Pagination({ pageSizes, pagination, setPagination, table }: IProps) {
   return (
-    <section className={`flex items-center justify-end gap-2 p-5 md:gap-5`}>
+    <section className={`dark:bg-muted flex items-center justify-end gap-2 p-5 md:gap-5`}>
       <Select
         value={`${table.getState().pagination.pageSize}`}
         onValueChange={(e) => setPagination({ pageIndex: 0, pageSize: parseInt(e) })}
