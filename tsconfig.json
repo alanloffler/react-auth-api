@@ -15,7 +15,7 @@
       "@account/*": ["./src/features/account/*"],
       "@admin/*": ["./src/features/admin/*"],
       "@auth/*": ["./src/core/auth/*"],
-      "@components/*": ["./src/components/*"],
+      "@components/*": ["./src/core/components/*"],
       "@core/*": ["./src/core/*"],
       "@dashboard/*": ["./src/features/dashboard/*"],
       "@layouts/*": ["./src/features/layouts/*"],
