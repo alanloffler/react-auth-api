@@ -20,7 +20,7 @@ import type { IAdmin } from "@admin/interfaces/admin.interface";
 import { AccountService } from "@account/services/profile.service";
 import { AdminService } from "@admin/services/admin.service";
 import { profileSchema } from "@account/schemas/profile.schema";
-import { useAuthStore } from "@auth/auth.store";
+import { useAuthStore } from "@auth/stores/auth.store";
 import { useDebounce } from "@core/hooks/useDebounce";
 import { useTryCatch } from "@core/hooks/useTryCatch";
 
