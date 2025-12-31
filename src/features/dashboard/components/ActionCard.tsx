@@ -1,14 +1,16 @@
 import { Card } from "@components/ui/card";
 import { Link } from "react-router";
-import { Protected } from "@core/auth/components/Protected";
+import { Protected } from "@auth/components/Protected";
 
 import type { ComponentType, SVGProps } from "react";
 import type { LucideIcon } from "lucide-react";
 
+import type { TPermission } from "@permissions/interfaces/permission.type";
+
 interface IProps {
   asCard?: boolean;
   icon: LucideIcon | ComponentType<SVGProps<SVGSVGElement>>;
-  permission: string;
+  permission: TPermission;
   text: string;
   url: string;
 }
