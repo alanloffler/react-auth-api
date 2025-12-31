@@ -20,7 +20,7 @@ import type { IAdmin } from "@admin/interfaces/admin.interface";
 import { AdminService } from "@admin/services/admin.service";
 import { ERoles } from "@auth/enums/role.enum";
 import { tryCatch } from "@core/utils/try-catch";
-import { useAuthStore } from "@auth/auth.store";
+import { useAuthStore } from "@auth/stores/auth.store";
 import { usePermission } from "@permissions/hooks/usePermission";
 import { useTryCatch } from "@core/hooks/useTryCatch";
 
