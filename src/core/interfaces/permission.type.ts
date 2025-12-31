@@ -21,4 +21,5 @@ export type TPermission =
   | "settings-create"
   | "settings-delete-hard"
   | "settings-update"
-  | "settings-view";
+  | "settings-view"
+  | "*";
