@@ -18,7 +18,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   // useSidebar,
-} from "@/components/ui/sidebar";
+} from "@components/ui/sidebar";
 
 import type { ComponentType, SVGProps } from "react";
 
