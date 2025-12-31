@@ -73,7 +73,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className={cn("overflow-hidden rounded-md border shadow-sm", className)}>
-      <Table>
+      <Table className="dark:bg-muted">
         <TableHeader className="dark:bg-primary-foreground bg-neutral-100">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
