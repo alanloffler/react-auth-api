@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 import type { TRole } from "@auth/enums/role.enum";
-import { useAuthStore } from "@auth/auth.store";
+import { useAuthStore } from "@auth/stores/auth.store";
 
 type TVariant = "disabled" | "invisible";
 
