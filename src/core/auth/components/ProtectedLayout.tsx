@@ -1,7 +1,7 @@
 import { MainLayout } from "@layouts/MainLayout";
 import { Navigate } from "react-router";
 
-import { useAuthStore } from "@auth/auth.store";
+import { useAuthStore } from "@auth/stores/auth.store";
 
 interface IProps {
   allowedRoles?: string[];
