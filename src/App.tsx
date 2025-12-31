@@ -31,7 +31,7 @@ const DashboardSettings = lazy(() => import("./features/settings/DashboardSettin
 
 const Account = lazy(() => import("./features/account/Account"));
 
-const NotFound = lazy(() => import("./components/NotFound"));
+const NotFound = lazy(() => import("./core/components/NotFound"));
 
 const router = createBrowserRouter([
   {
