@@ -1,11 +1,13 @@
 import { useMemo } from "react";
+
+import type { TPermission } from "@core/interfaces/permission.type";
 import { useAuthStore } from "@auth/auth.store";
 
-export function usePermission(actionKey: string): boolean;
+export function usePermission(actionKey: TPermission): boolean;
 
-export function usePermission(actionKey: string[], type: "every" | "some"): boolean;
+export function usePermission(actionKey: TPermission[], type: "every" | "some"): boolean;
 
-export function usePermission(actionKey: string | string[], type?: "every" | "some"): boolean {
+export function usePermission(actionKey: TPermission | TPermission[], type?: "every" | "some"): boolean {
   const admin = useAuthStore((state) => state.admin);
 
   return useMemo(() => {
