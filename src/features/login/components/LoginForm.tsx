@@ -14,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthService } from "@auth/services/auth.service";
 import { cn } from "@lib/utils";
 import { loginSchema } from "@login/schemas/login.schema";
-import { useAuthStore } from "@auth/auth.store";
+import { useAuthStore } from "@auth/stores/auth.store";
 import { useTryCatch } from "@core/hooks/useTryCatch";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
