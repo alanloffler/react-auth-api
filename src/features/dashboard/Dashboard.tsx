@@ -6,7 +6,7 @@ import { ConfigButton } from "@dashboard/components/ConfigButton";
 import { KeyRoundPlus } from "@components/icons/KeyRoundPlus";
 import { PageHeader } from "@components/pages/PageHeader";
 
-import { useAuthStore } from "@auth/auth.store";
+import { useAuthStore } from "@auth/stores/auth.store";
 import { usePermission } from "@permissions/hooks/usePermission";
 import { useSettingsStore } from "@settings/stores/settings.store";
 
