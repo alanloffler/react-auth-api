@@ -16,26 +16,29 @@ import {
   useSidebar,
 } from "@components/ui/sidebar";
 
+import type { TPermission } from "@permissions/interfaces/permission.type";
 import { cn } from "@lib/utils";
 import { useActiveRoute } from "@core/hooks/useActiveRoute";
 import { useSettingsStore } from "@settings/stores/settings.store";
 
-export function NavMain({
-  items,
-}: {
+interface IProps {
   items: {
-    title: string;
-    url: string;
     icon?: LucideIcon;
     isActive?: boolean;
-    items?: {
-      icon?: LucideIcon;
-      title: string;
-      url: string;
-    }[];
-    permission: string;
+    items?: IItem[];
+    permission: TPermission;
+    title: string;
+    url: string;
   }[];
-}) {
+}
+
+interface IItem {
+  icon?: LucideIcon;
+  title: string;
+  url: string;
+}
+
+export function NavMain({ items }: IProps) {
   const { appSettings } = useSettingsStore();
   const { isActive, isParentActive } = useActiveRoute();
   const { state } = useSidebar();
