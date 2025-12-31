@@ -1,6 +1,6 @@
 import { Navigate } from "react-router";
 import { type ReactNode } from "react";
-import { useAuthStore } from "@core/auth/auth.store";
+import { useAuthStore } from "@auth/stores/auth.store";
 
 interface IProps {
   children: ReactNode;
