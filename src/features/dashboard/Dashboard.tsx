@@ -7,7 +7,7 @@ import { KeyRoundPlus } from "@components/icons/KeyRoundPlus";
 import { PageHeader } from "@components/pages/PageHeader";
 
 import { useAuthStore } from "@auth/auth.store";
-import { usePermission } from "@core/hooks/usePermission";
+import { usePermission } from "@permissions/hooks/usePermission";
 import { useSettingsStore } from "@settings/stores/settings.store";
 
 export default function Dashboard() {
