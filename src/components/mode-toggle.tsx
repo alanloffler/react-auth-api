@@ -3,9 +3,9 @@ import { Moon, Sun } from "lucide-react";
 import { Button } from "@components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@components/ui/dropdown-menu";
 
-import { useTheme } from "@core/providers/theme-provider";
-import { useSettingsStore } from "@settings/stores/settings.store";
 import { useAuthStore } from "@auth/auth.store";
+import { useSettingsStore } from "@settings/stores/settings.store";
+import { useTheme } from "@core/providers/theme-provider";
 
 export function ModeToggle() {
   const admin = useAuthStore((state) => state.admin);
@@ -18,7 +18,7 @@ export function ModeToggle() {
     if (admin) {
       const themeSetting = appSettings.find((setting) => setting.submodule === "theme");
       if (themeSetting) {
-        await updateAppSetting(themeSetting.id, theme);
+        await updateAppSetting(themeSetting.id, theme, "local");
       }
     }
   }
