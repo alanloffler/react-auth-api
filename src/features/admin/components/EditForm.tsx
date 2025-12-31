@@ -23,7 +23,7 @@ import { RolesService } from "@roles/services/roles.service";
 import { updateAdminSchema } from "@admin/schemas/update-admin.schema";
 import { useAuthStore } from "@auth/auth.store";
 import { useDebounce } from "@core/hooks/useDebounce";
-import { usePermission } from "@core/hooks/usePermission";
+import { usePermission } from "@permissions/hooks/usePermission";
 import { useTryCatch } from "@core/hooks/useTryCatch";
 
 interface IProps {
