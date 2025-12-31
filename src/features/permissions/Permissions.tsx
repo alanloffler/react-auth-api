@@ -16,7 +16,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { IPermission } from "@permissions/interfaces/permission.interface";
 import { PermissionsService } from "@permissions/services/permissions.service";
 import { tryCatch } from "@core/utils/try-catch";
-import { useAuthStore } from "@auth/auth.store";
+import { useAuthStore } from "@auth/stores/auth.store";
 import { useTryCatch } from "@core/hooks/useTryCatch";
 
 export default function Permissions() {
