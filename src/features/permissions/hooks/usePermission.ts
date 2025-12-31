@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
-import type { TPermission } from "@core/interfaces/permission.type";
-import { useAuthStore } from "@auth/auth.store";
+import type { TPermission } from "@permissions/interfaces/permission.type";
+import { useAuthStore } from "@auth/stores/auth.store";
 
 export function usePermission(actionKey: TPermission): boolean;
 
