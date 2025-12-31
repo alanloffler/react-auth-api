@@ -22,6 +22,7 @@ import {
 
 import type { ComponentType, SVGProps } from "react";
 
+import type { TPermission } from "@permissions/interfaces/permission.type";
 import { useActiveRoute } from "@core/hooks/useActiveRoute";
 import { useSettingsStore } from "@settings/stores/settings.store";
 
@@ -32,7 +33,7 @@ interface IProps {
 interface INavAction {
   icon: LucideIcon | ComponentType<SVGProps<SVGSVGElement>>;
   name: string;
-  permission: string;
+  permission: TPermission;
   url: string;
 }
 
