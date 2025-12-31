@@ -20,7 +20,7 @@ import type { IPermission } from "@permissions/interfaces/permission.interface";
 import { PermissionsService } from "@permissions/services/permissions.service";
 import { tryCatch } from "@core/utils/try-catch";
 import { useAuthStore } from "@core/auth/auth.store";
-import { usePermission } from "@core/hooks/usePermission";
+import { usePermission } from "@permissions/hooks/usePermission";
 import { useTryCatch } from "@core/hooks/useTryCatch";
 
 export default function ViewPermission() {
