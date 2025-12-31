@@ -13,7 +13,7 @@ export default defineConfig({
       "@account": path.resolve(__dirname, "./src/features/account"),
       "@admin": path.resolve(__dirname, "./src/features/admin"),
       "@auth": path.resolve(__dirname, "./src/core/auth"),
-      "@components": path.resolve(__dirname, "./src/components"),
+      "@components": path.resolve(__dirname, "./src/core/components"),
       "@dashboard": path.resolve(__dirname, "./src/features/dashboard"),
       "@core": path.resolve(__dirname, "./src/core"),
       "@layouts": path.resolve(__dirname, "./src/features/layouts"),
