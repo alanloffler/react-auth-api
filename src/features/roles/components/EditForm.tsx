@@ -24,7 +24,7 @@ import { PermissionsService } from "@permissions/services/permissions.service";
 import { RolesService } from "@roles/services/roles.service";
 import { cn } from "@lib/utils";
 import { roleSchema } from "@roles/schemas/role.schema";
-import { useAuthStore } from "@auth/auth.store";
+import { useAuthStore } from "@auth/stores/auth.store";
 import { useTryCatch } from "@core/hooks/useTryCatch";
 
 const CRITICAL_PERMISSIONS_FOR_SUPERADMIN = ["roles-view", "roles-update"];
