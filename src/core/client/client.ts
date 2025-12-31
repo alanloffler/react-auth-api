@@ -80,11 +80,13 @@ class ApiClient {
 
           processQueue(refreshError as AxiosError, false);
 
-          toast.error("Tu sesión ha expirado");
+          if (refreshError.response?.status === 401) {
+            toast.error("Tu sesión ha expirado");
 
-          setTimeout(() => {
-            window.location.replace("/");
-          }, 2000);
+            setTimeout(() => {
+              window.location.replace("/");
+            }, 2000);
+          }
 
           return Promise.reject(refreshError);
         } finally {
