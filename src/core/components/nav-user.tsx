@@ -15,7 +15,7 @@ import { toast } from "sonner";
 
 import { AuthService } from "@auth/services/auth.service";
 import { tryCatch } from "@core/utils/try-catch";
-import { useAuthStore } from "@auth/auth.store";
+import { useAuthStore } from "@auth/stores/auth.store";
 import { useNavigate } from "react-router";
 
 export function NavUser() {
