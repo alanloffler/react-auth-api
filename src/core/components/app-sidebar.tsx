@@ -18,10 +18,12 @@ import { NavUser } from "@components/nav-user";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@components/ui/sidebar";
 import { TeamSwitcher } from "@components/team-switcher";
 
-import { cn } from "@lib/utils";
-import { useAuthStore } from "@auth/auth.store";
 import { useEffect, useRef, useState } from "react";
 import { useSidebar } from "@components/ui/sidebar";
+
+import type { TPermission } from "@permissions/interfaces/permission.type";
+import { cn } from "@lib/utils";
+import { useAuthStore } from "@auth/stores/auth.store";
 
 const data = {
   teams: {
@@ -34,19 +36,19 @@ const data = {
       title: "Administradores",
       url: "/admin",
       icon: User2,
-      permission: "admin-view",
+      permission: "admin-view" as TPermission,
     },
     {
       title: "Roles",
       url: "/roles",
       icon: Shield,
-      permission: "roles-view",
+      permission: "roles-view" as TPermission,
     },
     {
       title: "Permisos",
       url: "/permissions",
       icon: KeyRound,
-      permission: "permissions-view",
+      permission: "permissions-view" as TPermission,
     },
     {
       title: "Configuraciones",
@@ -64,7 +66,7 @@ const data = {
           icon: LayoutDashboard,
         },
       ],
-      permission: "settings-view",
+      permission: "settings-view" as TPermission,
     },
   ],
   navActions: [
@@ -72,25 +74,25 @@ const data = {
       name: "Crear administrador",
       url: "/admin/create",
       icon: UserPlus2,
-      permission: "admin-create",
+      permission: "admin-create" as TPermission,
     },
     {
       name: "Crear rol",
       url: "/roles/create",
       icon: ShieldPlus,
-      permission: "roles-create",
+      permission: "roles-create" as TPermission,
     },
     {
       name: "Crear permiso",
       url: "/permissions/create",
       icon: KeyRoundPlus,
-      permission: "permissions-create",
+      permission: "permissions-create" as TPermission,
     },
     {
       name: "404",
       url: "/404",
       icon: OctagonAlert,
-      permission: "*",
+      permission: "*" as TPermission,
     },
   ],
 };
