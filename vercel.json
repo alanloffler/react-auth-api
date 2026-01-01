@@ -1,12 +1,12 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "source": "/api/:path*",
+      "destination": "/api/proxy"
     },
     {
-      "source": "/api/:path*",
-      "destination": "https://nest-auth-api-production-bb46.up.railway.app/:path*"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
