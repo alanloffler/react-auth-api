@@ -6,7 +6,7 @@
     },
     {
       "source": "/api/:path*",
-      "destination": "https://nest-auth-api-production-bb46.up.railway.app"
+      "destination": "https://nest-auth-api-production-bb46.up.railway.app/:path*"
     }
   ]
 }
