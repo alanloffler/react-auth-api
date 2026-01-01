@@ -194,24 +194,30 @@ body {
   }
 }
 
-.animate-spin {
-  animation: spin 0.35s linear infinite;
-}
+@layer utilities {
+  .animate-spin {
+    animation: spin 0.35s linear infinite;
+  }
 
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
 
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
+  ::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 6px;
+  }
 
-::-webkit-scrollbar-thumb {
-  background: var(--primary);
-  border-radius: 6px;
-}
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+  }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  .dark ::-webkit-scrollbar-track {
+    background: var(--accent);
+  }
 }
