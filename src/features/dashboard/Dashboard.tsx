@@ -81,7 +81,7 @@ export default function Dashboard() {
             />
           </div>
         )}
-        {showConfigButtons && (
+        {showConfigButtons && showPermissions && (
           <div className="flex flex-col gap-3">
             <h1 className="font-semibold">Configuraciones</h1>
             <ul className="flex gap-3 pl-5">
