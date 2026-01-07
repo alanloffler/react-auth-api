@@ -17,6 +17,7 @@ import type { IRole } from "@roles/interfaces/role.interface";
 import { AdminService } from "@admin/services/admin.service";
 import { RolesService } from "@roles/services/roles.service";
 import { createAdminSchema } from "@admin/schemas/create-admin.schema";
+import { tryCatch } from "@core/utils/try-catch";
 import { useDebounce } from "@core/hooks/useDebounce";
 import { useNavigate } from "react-router";
 import { useTryCatch } from "@core/hooks/useTryCatch";
@@ -64,30 +65,36 @@ export function CreateForm() {
     }
 
     // Check again for race condition: before first check another admin use same ic
-    const emailAvailableResponse = await AdminService.checkEmailAvailability(data.email);
+    const [emailAvailableResponse, emailAvailableError] = await tryCatch(
+      AdminService.checkEmailAvailability(data.email),
+    );
 
-    if (emailAvailableResponse.data === false) {
-      const errorMsg = "Email ya registrado";
+    if (emailAvailableResponse?.data === false || emailAvailableError) {
+      const errorMsg = emailAvailableError ? "Error al comprobar email" : "Email ya registrado";
       setEmailError(errorMsg);
       form.setError("email", { message: errorMsg });
       return;
     }
 
     // Check again for race condition: before first check another admin use same ic
-    const icAvailableResponse = await AdminService.checkIcAvailability(data.ic);
+    const [icAvailableResponse, icAvailableError] = await tryCatch(AdminService.checkIcAvailability(data.ic));
 
-    if (icAvailableResponse.data === false) {
-      const errorMsg = "DNI ya registrado";
+    if (icAvailableResponse?.data === false || icAvailableError) {
+      const errorMsg = icAvailableError ? "Error al comprobar DNI" : "DNI ya registrado";
       setIcError(errorMsg);
       form.setError("ic", { message: errorMsg });
       return;
     }
 
     // Check again for race condition: before first check another admin use same username
-    const usernameAvailableResponse = await AdminService.checkUsernameAvailability(data.userName);
+    const [usernameAvailableResponse, usernameAvailableError] = await tryCatch(
+      AdminService.checkUsernameAvailability(data.userName),
+    );
 
-    if (usernameAvailableResponse.data === false) {
-      const errorMsg = "Nombre de usuario ya registrado";
+    if (usernameAvailableResponse?.data === false || usernameAvailableError) {
+      const errorMsg = usernameAvailableError
+        ? "Error al comprobar nombre de usuario"
+        : "Nombre de usuario ya registrado";
       setUsernameError(errorMsg);
       form.setError("userName", { message: errorMsg });
       return;
@@ -110,9 +117,9 @@ export function CreateForm() {
     async function checkUsername() {
       if (!debouncedUsername || debouncedUsername.length <= 3) return;
 
-      const response = await AdminService.checkUsernameAvailability(debouncedUsername);
-      if (response.data === false) {
-        const message = "Nombre de usuario ya registrado";
+      const [response, error] = await tryCatch(AdminService.checkUsernameAvailability(debouncedUsername));
+      if (response?.data === false || error) {
+        const message = error ? "Error al comprobar nombre de usuario" : "Nombre de usuario ya registrado";
         setUsernameError(message);
         form.setError("userName", { message });
       }
@@ -173,9 +180,9 @@ export function CreateForm() {
                       form.clearErrors("ic");
 
                       if (value.length > 7) {
-                        const response = await AdminService.checkIcAvailability(value);
-                        if (response.data === false) {
-                          const errorMsg = "DNI ya registrado";
+                        const [response, error] = await tryCatch(AdminService.checkIcAvailability(value));
+                        if (response?.data === false || error) {
+                          const errorMsg = error ? "Error al comprobar DNI" : "DNI ya registrado";
                           setIcError(errorMsg);
                           form.setError("ic", { message: errorMsg });
                         }
@@ -194,10 +201,10 @@ export function CreateForm() {
               name="userName"
               control={form.control}
               render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
+                <Field data-invalid={fieldState.invalid || !!usernameError}>
                   <FieldLabel htmlFor="userName">Usuario</FieldLabel>
                   <Input
-                    aria-invalid={fieldState.invalid}
+                    aria-invalid={fieldState.invalid || !!usernameError}
                     id="userName"
                     {...field}
                     onChange={(e) => {
@@ -264,10 +271,10 @@ export function CreateForm() {
               name="email"
               control={form.control}
               render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid} className="col-span-5 md:col-span-3">
+                <Field data-invalid={fieldState.invalid || !!emailError} className="col-span-5 md:col-span-3">
                   <FieldLabel htmlFor="email">E-mail</FieldLabel>
                   <Input
-                    aria-invalid={fieldState.invalid}
+                    aria-invalid={fieldState.invalid || !!emailError}
                     id="email"
                     {...field}
                     onChange={async (e) => {
@@ -279,9 +286,9 @@ export function CreateForm() {
                       const emailValidation = z.email().safeParse(emailValue);
 
                       if (emailValidation.success) {
-                        const response = await AdminService.checkEmailAvailability(emailValue);
-                        if (response.data === false) {
-                          const errorMsg = "Email ya registrado";
+                        const [response, error] = await tryCatch(AdminService.checkEmailAvailability(emailValue));
+                        if (response?.data === false || error) {
+                          const errorMsg = error ? "Error al comprobar email" : "Email ya registrado";
                           setEmailError(errorMsg);
                           form.setError("email", { message: errorMsg });
                         }
