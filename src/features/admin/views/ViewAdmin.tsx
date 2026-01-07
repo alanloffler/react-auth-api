@@ -140,9 +140,11 @@ export default function ViewAdmin() {
                     <Badge size="small" variant="red">
                       Eliminado
                     </Badge>
-                    <HoldButton callback={() => id && restoreAdmin(id)} size="icon" type="restore" variant="outline">
-                      <RotateCcw className="h-4 w-4" />
-                    </HoldButton>
+                    <Protected requiredPermission="admin-restore">
+                      <HoldButton callback={() => id && restoreAdmin(id)} size="icon" type="restore" variant="outline">
+                        <RotateCcw className="h-4 w-4" />
+                      </HoldButton>
+                    </Protected>
                   </div>
                 ) : (
                   <>
