@@ -1,3 +1,5 @@
+import { Eye, EyeOff } from "lucide-react";
+
 import { Button } from "@components/ui/button";
 import { Card, CardContent } from "@components/ui/card";
 import { Controller } from "react-hook-form";
@@ -6,6 +8,7 @@ import { Input } from "@components/ui/input";
 import { Loader } from "@components/Loader";
 
 import { toast } from "sonner";
+import { type MouseEvent, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { z } from "zod";
@@ -18,6 +21,7 @@ import { useAuthStore } from "@auth/stores/auth.store";
 import { useTryCatch } from "@core/hooks/useTryCatch";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
+  const [passwordField, setPasswordField] = useState<boolean>(true);
   const navigate = useNavigate();
   const { isLoading: isFetching, tryCatch: tryCatchAdmin } = useTryCatch();
   const { isLoading: isLogin, tryCatch: tryCatchSubmit } = useTryCatch();
@@ -53,6 +57,11 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     }
   }
 
+  function togglePasswordField(event: MouseEvent<HTMLButtonElement>): void {
+    event.preventDefault();
+    setPasswordField(!passwordField);
+  }
+
   return (
     <div className={cn("flex w-full flex-col gap-6", className)} {...props}>
       <Card className="mx-auto w-full max-w-6xl overflow-hidden p-0">
@@ -80,13 +89,21 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="password">Contraseña</FieldLabel>
-                    <Input
-                      {...field}
-                      aria-invalid={fieldState.invalid}
-                      id="password"
-                      className="h-11 md:h-12"
-                      type="password"
-                    />
+                    <div className="flex items-center gap-2">
+                      <Input
+                        {...field}
+                        aria-invalid={fieldState.invalid}
+                        id="password"
+                        className="h-11 md:h-12"
+                        type={passwordField ? "password" : "text"}
+                      />
+                      <button
+                        className="p-1 transition-colors duration-150 hover:text-sky-500"
+                        onClick={(e) => togglePasswordField(e)}
+                      >
+                        {passwordField ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
+                      </button>
+                    </div>
                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                   </Field>
                 )}
