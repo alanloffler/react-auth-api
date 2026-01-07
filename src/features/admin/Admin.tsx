@@ -209,9 +209,11 @@ export default function Admin() {
             </Protected>
           )}
           {row.original.deletedAt ? (
-            <HoldButton callback={() => restoreAdmin(row.original.id)} size="icon" type="restore" variant="outline">
-              <RotateCcw className="h-4 w-4" />
-            </HoldButton>
+            <Protected requiredPermission="admin-restore">
+              <HoldButton callback={() => restoreAdmin(row.original.id)} size="icon" type="restore" variant="outline">
+                <RotateCcw className="h-4 w-4" />
+              </HoldButton>
+            </Protected>
           ) : (
             <>
               <Protected requiredPermission="admin-delete">
